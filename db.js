@@ -16,7 +16,7 @@ const pool = new Pool({
 });
 
 const connect = () => {
-  pool.query('select * from share_api_causes', (err, result) => {
+  pool.query('', (err, result) => {
     // console.log(err, result.rows);
     // if(process.env.ENV){
     	console.log("this is " + environment + " environments")
