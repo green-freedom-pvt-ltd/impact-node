@@ -4,10 +4,9 @@ This file is responsible for all db connections
 */
 
 const pg = require('pg');
-
 const { Pool, Client } = require('pg');
-var environment = process.env.ENV;
 
+var environment = process.env.ENV;
 var config = require('config');
 
 var dbConfig = config.get('Customer.dbConfig');
@@ -35,8 +34,13 @@ const getCauses = (cb) => {
   });
 }
 
+const query = (text, params, callback) => {
+    return pool.query(text, params, callback);
+  }
+
 
 module.exports = {
   connect,
-  getCauses
+  getCauses,
+  query
 };
