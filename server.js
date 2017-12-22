@@ -9,11 +9,12 @@ const app=express();
 
 app.get('/', (req, res) => res.send("Welcome to Node Postgres Express POC !!"))
 
-app.get('/causes', (req, res, next) => db.getCauses((err, causes) => {
-	if(err){
-		return next(err);
+app.get('/causes', (req, res, next) => db.getCauses((causes, err) => {
+	if(causes){
+		return next(causes);
 	};
 }));
+
 
 
 
