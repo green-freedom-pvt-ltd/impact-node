@@ -1,7 +1,7 @@
+require('newrelic');
 const express = require('express');
 const db = require('./db/index');
 const logger = require('./logger');
-
 db.connect();
 
 
