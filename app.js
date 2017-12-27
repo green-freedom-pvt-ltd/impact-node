@@ -3,9 +3,10 @@ var environment = process.env.ENV;
 var config = require('config');
 
 var sequilizeConfig = config.get('Customer.sequilize');
+var dbConfig = config.get('Customer.dbConfig');
 
-var sequelize = new Sequelize(sequilizeConfig.database_name, sequilizeConfig.user, sequilizeConfig.password, {
-    host:sequilizeConfig.host,
+var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
+    host:dbConfig.host,
     dialect:sequilizeConfig.dialect,
     pool: sequilizeConfig.pool,
   });

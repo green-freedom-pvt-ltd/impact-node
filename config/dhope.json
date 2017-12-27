@@ -6,7 +6,7 @@
   	  "host": "localhost",
   	  "database": "share_backend_dev_api",
   	  "password": "welcome@1",
-  	  "port": 5432,
+  	  "port": 5432
     },
     "credit": {
       "initialLimit": 100,
