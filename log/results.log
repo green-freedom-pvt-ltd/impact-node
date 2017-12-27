@@ -1,8 +1,0 @@
-{"level":"info","message":"Hello world","timestamp":"13:34:54"}
-{"level":"warn","message":"Warning message","timestamp":"13:34:54"}
-{"level":"debug","message":"Debugging info","timestamp":"13:34:54"}
-{"level":"info","message":"inside server","timestamp":"13:34:54"}
-{"level":"warn","message":"inside server 2","timestamp":"13:34:54"}
-{"level":"debug","message":"inside server 3","timestamp":"13:34:54"}
-{"level":"debug","message":"entering get cause","timestamp":"13:35:06"}
-{"level":"debug","message":"inside if cause","timestamp":"13:35:06"}
