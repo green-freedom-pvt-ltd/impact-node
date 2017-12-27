@@ -28,6 +28,7 @@ const logger = new (winston.Logger)({
 });
 
 
+
 logger.info('Hello world');
 logger.warn('Warning message');
 logger.debug('Debugging info');
@@ -37,6 +38,4 @@ const loginto = (data) => {
 };
 
 
-module.exports = {
-	loginto
-};
+module.exports = logger;
