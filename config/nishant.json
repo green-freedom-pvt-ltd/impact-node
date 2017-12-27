@@ -1,0 +1,17 @@
+{
+    // Customer module configs
+    "Customer": {
+      "dbConfig": {
+        "user": "nsihant",
+        "host": "localhost",
+        "database": "share_backend_dev_api",
+        "password": "Impact123",
+        "port": 5432
+      },
+      "credit": {
+        "initialLimit": 100,
+        // Set low for development
+        "initialDays": 1
+      }
+    }
+  }
