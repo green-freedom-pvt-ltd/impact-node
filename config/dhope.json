@@ -3,15 +3,27 @@
   "Customer": {
     "dbConfig": {
       "user": "abhijeet",
-	  "host": "localhost",
-	  "database": "share_backend_dev_api",
-	  "password": "welcome@1",
-	  "port": 5432,
+  	  "host": "localhost",
+  	  "database": "share_backend_dev_api",
+  	  "password": "welcome@1",
+  	  "port": 5432
     },
     "credit": {
       "initialLimit": 100,
       // Set low for development
       "initialDays": 1
+    },
+    "sequilize":{
+      "database_name": "share_backend_dev_api",
+      "user": "abhijeet", 
+      "password": "welcome@1", 
+      "host": "localhost",
+      "dialect": "postgres",
+      "pool": {
+        "max": 5,
+        "min": 0,
+        "idle": 10000
+      }
     }
   }
 }

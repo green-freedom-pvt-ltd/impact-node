@@ -2,7 +2,7 @@
     // Customer module configs
     "Customer": {
       "dbConfig": {
-        "user": "nsihant",
+        "user": "nishant",
         "host": "localhost",
         "database": "share_backend_dev_api",
         "password": "Impact123",
@@ -12,6 +12,22 @@
         "initialLimit": 100,
         // Set low for development
         "initialDays": 1
+      },
+      "sequilize":{
+        "database_name": "share_backend_dev_api",
+        "user": "nishant", 
+        "password": "Impact123", 
+        "host": "localhost",
+        "dialect": "postgres",
+        "pool": {
+          "max": 5,
+          "min": 0,
+          "idle": 10000
+        }
       }
     }
   }
+
+
+
+  
