@@ -1,17 +1,13 @@
 var Sequelize = require("sequelize");
+var environment = process.env.ENV;
+var config = require('config');
 
+var sequilizeConfig = config.get('Customer.sequilize');
 
-var sequelize = new Sequelize('share_backend_dev_api', 'nishant', 'Impact123', {
-    host: 'localhost',
-    dialect: 'postgres',
-  
-    pool: {
-      max: 5,
-      min: 0,
-      idle: 10000
-    },
-  
-  
+var sequelize = new Sequelize(sequilizeConfig.database_name, sequilizeConfig.user, sequilizeConfig.password, {
+    host:sequilizeConfig.host,
+    dialect:sequilizeConfig.dialect,
+    pool: sequilizeConfig.pool,
   });
 
 
