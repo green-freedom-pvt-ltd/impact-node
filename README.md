@@ -26,5 +26,5 @@ Tech Stack
 - Sequelize
 - Git
 - New Relic
-- Chai/Mocha
-- Swagger
+- Jest
+- Winston logger

@@ -8,7 +8,7 @@ db.connect();
 const app=express();
 
 
-app.get('/', (req, res) => res.send("Welcome to Node Postgres Express POC !!"))
+app.get('/', (req, res) => res.send("Welcome to Node Postgres Express POC !!"));
 
 app.get('/causes', (req, res, next) => db.getCauses((causes, err) => {
 	logger.debug('entering get cause');
@@ -17,6 +17,10 @@ app.get('/causes', (req, res, next) => db.getCauses((causes, err) => {
 		return next(causes);
 	};
 }));
+
+
+
+app.get('/causespromise', (req, res, next) => res.send(db.getImportantData()));
 
 
 logger.info('inside server');

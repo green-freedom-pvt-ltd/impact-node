@@ -35,6 +35,11 @@ const getCauses = (cb) => {
   });
 }
 
+const getImportantData = () => {
+    return "important data";
+    // console.log(err, result.rows);
+}
+
 const query = (text, params, callback) => {
     return pool.query(text, params, callback);
   }
@@ -43,5 +48,6 @@ const query = (text, params, callback) => {
 module.exports = {
   connect,
   getCauses,
+  getImportantData,
   query
 };
