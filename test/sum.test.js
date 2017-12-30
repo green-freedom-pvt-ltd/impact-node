@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 const sum = require('./sum');
 const db = require('../db/index');
 
