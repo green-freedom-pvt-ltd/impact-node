@@ -1,19 +1,28 @@
 var Sequelize = require("sequelize");
 var environment = process.env.ENV;
 var config = require('config');
-
+// var CityController = require('./controller');
 var sequilizeConfig = config.get('Customer.sequilize');
 var dbConfig = config.get('Customer.dbConfig');
 
 var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
-    host:dbConfig.host,
-    dialect:sequilizeConfig.dialect,
-    pool: sequilizeConfig.pool,
-  });
+  host: dbConfig.host,
+  dialect: sequilizeConfig.dialect,
+  pool: sequilizeConfig.pool,
+});
 
 
   const City = sequelize.import("./models/share_api_city")
-  City.findAll();
+  
+  var city =City.findAll({ limit: 2,
+    where: {
+      id: 2
+    }
+  }).then((city)=>{
+    console.log("CITY",city[0]);
+    let name = JSON.stringify(city);
+   console.log("CITY",name);
+  })
   // var User = sequelize.define('user', {
   //   firstName: {
   //     type: Sequelize.STRING,
@@ -28,7 +37,7 @@ var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passwor
   // }, {
   //   freezeTableName: true // Model tableName will be the same as the model name
   // });
-  
+
 
 
 
@@ -41,7 +50,7 @@ var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passwor
   //     age:26
   //   });
   // });
-  
+
   //Insert item into User model/table
   // City.create({  
   //   city:'Baran'
@@ -49,5 +58,5 @@ var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passwor
   // .then(city => {
   //   console.log(`New ${city.city}, with id ${city.id} has been created.`);
   // });
- 
- 
+
+
