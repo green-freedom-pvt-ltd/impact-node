@@ -4,6 +4,7 @@ const express = require('express');
 const db = require('./db/index');
 const logger = require('./logger');
 const City = require('./controllers/cityController');
+var bodyParser = require('body-parser')
 
 
 db.connect();
@@ -11,6 +12,9 @@ db.connect();
 
 const app = express();
 
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 app.get('/', (req, res) => res.send("Welcome to Node Postgres Express POC !!"));
 

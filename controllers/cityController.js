@@ -26,10 +26,11 @@ const City = sequelize.import("../models/share_api_city")
 //     city: 'Khandala'
 //   });
 
-module.exports = {
+var cityModel = {
 //Create New city
   createCity(req, res) {
-    const city = req.query.city;
+    const city = req.body.city;
+    console.log("req.body------------",req.body);
     console.log("CITY",city);
     return City
       .create({
@@ -80,8 +81,4 @@ module.exports = {
 };
 
 
-// module.exports ={
-//     getCities,
-//     // insertCity,
-//     createCity
-// };
+module.exports = cityModel;
