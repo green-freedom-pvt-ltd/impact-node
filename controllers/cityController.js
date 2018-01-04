@@ -50,13 +50,21 @@ var cityModel = {
 
   //Update single city
   updateCity(req, res) {
-    console.log("req.body------------", req.body);
-    console.log("req...........", req.params);
+    // console.log("req...........", req.params);
     const newCity = req.body.city;
     const oldCityId = req.params.id;
     City.update({ city: newCity }, { where: { id: oldCityId } })
       .then(city => {
-        res.status(201).send("City updated successfully");
+        console.log("city------------", city[0]);
+        City.findAndCount({
+          where: { id: oldCityId }
+        }).then(city => {
+          // res.json(city);
+          res.status(201).send(city);
+        });
+
+        // res.status(201).send("City updated successfully");
+        // res.json(city)
       })
       .catch(error => res.status(400).send(error));
   },
