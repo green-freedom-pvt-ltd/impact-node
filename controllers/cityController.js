@@ -12,7 +12,7 @@ var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passwor
   dialect: sequilizeConfig.dialect,
   pool: sequilizeConfig.pool,
 });
-const City = sequelize.import("../models/share_api_city")
+const City = sequelize.import("../models/share_api_city");
 
 
 
@@ -27,17 +27,17 @@ const City = sequelize.import("../models/share_api_city")
 //   });
 
 var cityModel = {
-//Create New city
+  //Create New city
   createCity(req, res) {
     const city = req.body.city;
-    console.log("req.body------------",req.body);
-    console.log("CITY",city);
+    console.log("req.body------------", req.body);
+    console.log("CITY", city);
     return City
       .create({
         city: city
       })
       .then(city => {
-           res.status(201).send(city);
+        res.status(201).send(city);
       })
       .catch(error => res.status(400).send(error));
   },
@@ -46,6 +46,20 @@ var cityModel = {
   //     .then(cities => res.status(200).send(cities))
   //     .catch(error => res.status(400).send(error));
   // },
+
+
+  //Update single city
+  updateCity(req, res) {
+    console.log("req.body------------", req.body);
+    console.log("req...........", req.params);
+    const newCity = req.body.city;
+    const oldCityId = req.params.id;
+    City.update({ city: newCity }, { where: { id: oldCityId } })
+      .then(city => {
+        res.status(201).send("City updated successfully");
+      })
+      .catch(error => res.status(400).send(error));
+  },
 
   //GET all cities
   getCities(req, res) {
@@ -76,7 +90,17 @@ var cityModel = {
       .then(city => {
         res.json(city);
       });
-  }
+  },
+
+
+  // City.update({
+  //   city:city,
+  // },where: {
+  //   id:req.query.id,
+  // }) 
+
+
+
 
 };
 

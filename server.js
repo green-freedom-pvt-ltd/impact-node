@@ -35,6 +35,7 @@ app.get('/city', City.getCities);
 app.post('/city',City.createCity);
 app.get('/city/:id',City.getParticularCity);
 app.delete('/city/:id',City.destroyCity);
+app.put('/city/:id',City.updateCity);
 
 // app.get('/city', (req, res, next) =>  getCity.insertCity((city,err)=>{
 
