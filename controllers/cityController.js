@@ -1,3 +1,5 @@
+// import { json } from "../../../../.cache/typescript/2.6/node_modules/@types/express";
+
 
 
 var Sequelize = require("sequelize");
@@ -54,10 +56,16 @@ var cityModel = {
 
   //GET all cities
   getCities(req, res) {
-    return City.findAndCountAll()
-      .then(city => {
-        console.log(city.count);
-        res.json(city);
+    const offset = req.param.page;
+    return City.findAndCountAll({offset:offset,limit:10})
+    .then(city => {
+      var cities = JSON.stringify(city);
+     //  console.log(JSON.stringify(cities));
+      cities = JSON.parse(cities);
+      cities.next ='localhost:3000/city/?page=5';
+      cities.prev = null;
+      res.json(cities);
+         
       });
   },
 
