@@ -16,15 +16,6 @@ const City = sequelize.import("../models/share_api_city");
 
 
 
-// var getCities =(cb) => City.findAll({ offset: 5, limit: 10 }).then((city)=>{
-
-//     let name = JSON.stringify(city,null,2);
-//     return cb(name);
-//   });
-
-// var insertCity =(cb) => City.create({
-//     city: 'Khandala'
-//   });
 
 var cityModel = {
   //Create New city
@@ -41,11 +32,6 @@ var cityModel = {
       })
       .catch(error => res.status(400).send(error));
   },
-  // list(req, res) {
-  //   return City.findAll({ offset: 5, limit: 10 })
-  //     .then(cities => res.status(200).send(cities))
-  //     .catch(error => res.status(400).send(error));
-  // },
 
 
   //Update single city
@@ -62,9 +48,6 @@ var cityModel = {
           // res.json(city);
           res.status(201).send(city);
         });
-
-        // res.status(201).send("City updated successfully");
-        // res.json(city)
       })
       .catch(error => res.status(400).send(error));
   },
@@ -99,14 +82,6 @@ var cityModel = {
         res.json(city);
       });
   },
-
-
-  // City.update({
-  //   city:city,
-  // },where: {
-  //   id:req.query.id,
-  // }) 
-
 
 
 
