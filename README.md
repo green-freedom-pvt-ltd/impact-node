@@ -12,8 +12,11 @@ You can set up config files with environment specific data
 
     export NODE_ENV=prod
 
- 
+ You can run Jest for verifing your test cases by using 
 
+    npm test
+
+ 
 Tech Stack
 ----------
 - Node
