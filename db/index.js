@@ -6,12 +6,9 @@ This file is responsible for managing all db connections
 
 */
 
-const pg = require('pg');
 const { Pool, Client } = require('pg');
-
 var environment = process.env.ENV;
 var config = require('config');
-
 var dbConfig = config.get('Customer.dbConfig');
 
 const pool = new Pool(dbConfig);
@@ -26,28 +23,11 @@ const connect = () => {
   });
 };
 
-
-// this db call gets all causes
-const getCauses = (cb) => {
-  pool.query('select * from share_api_causes', (err, result) => {
-    return cb(JSON.stringify(result.rows, null, 2));
-    // console.log(err, result.rows);
-  });
-}
-
-const getImportantData = () => {
-    return "important data";
-    // console.log(err, result.rows);
-}
-
 const query = (text, params, callback) => {
     return pool.query(text, params, callback);
-  }
-
+}
 
 module.exports = {
   connect,
-  getCauses,
-  getImportantData,
   query
 };

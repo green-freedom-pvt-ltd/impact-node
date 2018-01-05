@@ -20,8 +20,8 @@ const City = sequelize.import("../models/share_api_city");
 var cityModel = {
   //Create New city
   createCity(req, res) {
-    const city = req.body.city;
     console.log("req.body------------", req.body);
+    const city = req.body.city;
     console.log("CITY", city);
     return City
       .create({
@@ -36,8 +36,8 @@ var cityModel = {
 
   //Update single city
   updateCity(req, res) {
-    // console.log("req...........", req.params);
     const newCity = req.body.city;
+    console.log("req...........", req.body);
     const oldCityId = req.params.id;
     City.update({ city: newCity }, { where: { id: oldCityId } })
       .then(city => {
