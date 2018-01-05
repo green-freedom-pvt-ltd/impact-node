@@ -13,12 +13,12 @@ db.connect();
 
 const app = express();
 
-app.use('/', routes);
 
 // 
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+app.use('/', routes);
 
 // app.get('/', (req, res) => res.send("Welcome to Node Postgres Express POC !!"));
 
@@ -35,11 +35,11 @@ app.get('/causespromise', (req, res, next) => res.send(db.getImportantData()));
 
 
 logger.info('inside server');
-app.get('/city', City.getCities);
-app.post('/city',City.createCity);
-app.get('/city/:id',City.getParticularCity);
-app.delete('/city/:id',City.destroyCity);
-app.put('/city/:id',City.updateCity);
+// app.get('/city', City.getCities);
+// app.post('/city',City.createCity);
+// app.get('/city/:id',City.getParticularCity);
+// app.delete('/city/:id',City.destroyCity);
+// app.put('/city/:id',City.updateCity);
 
 logger.info('inside server');
 

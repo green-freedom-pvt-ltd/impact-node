@@ -14,7 +14,6 @@ const pool = new Pool(dbConfig);
 const getCauses = (cb) => {
   pool.query('select * from share_api_causes', (err, result) => {
     return cb(JSON.stringify(result.rows, null, 2));
-    // console.log(err, result.rows);
   });
 }
 
