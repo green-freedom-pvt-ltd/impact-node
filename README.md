@@ -5,7 +5,7 @@ This project consists a Proof of Concept for a scalable backend node application
 To get started -
 
     git clone https://github.com/dhope21/node-postgres.git
-    cd node-postgres
+    cd impact-node
     npm install
 	
 You can set up config files with environment specific data 
@@ -16,6 +16,12 @@ You can set up config files with environment specific data
 
     npm test
 
+To start your server use 
+
+    node server.js
+or
+   
+    npm start dev
  
 Tech Stack
 ----------
