@@ -15,7 +15,7 @@ var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passwor
   pool: sequilizeConfig.pool,
 });
 const City = sequelize.import("../models/share_api_city");
-
+const baseUrl = 'http://localhost:3000/city';
 
 
 
@@ -56,14 +56,20 @@ var cityModel = {
 
   //GET all cities
   getCities(req, res) {
-    const offset = req.param.page;
-    return City.findAndCountAll({offset:offset,limit:10})
+    var page = parseInt(req.query.page) || 1;
+    var limit = 10;
+    
+    var offset = page ==1?0:((page-1) * limit);
+    console.log("OFFSET..............",offset);
+    return City.findAndCountAll({offset:offset,limit:limit})
     .then(city => {
+      const pageCount = Math.ceil(parseInt(city.count)/limit);
+    console.log("pageCount..............",pageCount);      
       var cities = JSON.stringify(city);
      //  console.log(JSON.stringify(cities));
       cities = JSON.parse(cities);
-      cities.next ='localhost:3000/city/?page=5';
-      cities.prev = null;
+      cities.next =page == pageCount?null:`${baseUrl}/?page=${page+1}`;
+      cities.prev = page-1<=0?null:`${baseUrl}/?page=${page-1}`;
       res.json(cities);
          
       });
