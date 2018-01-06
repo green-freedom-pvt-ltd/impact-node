@@ -5,24 +5,21 @@ This project consists a Proof of Concept for a scalable backend node application
 To get started -
 
     git clone https://github.com/dhope21/node-postgres.git
-    cd impact-node
+    cd node-postgres
     npm install
 	
 You can set up config files with environment specific data 
 
     export NODE_ENV=prod
 
- You can run Jest for verifing your test cases by using 
+ To run jest test cases
 
-    npm test
-
-To start your server use 
+     npm test
+For starting server
 
     node server.js
-or
-   
-    npm start dev
- 
+Open the browser at http://localhost:3000/
+
 Tech Stack
 ----------
 - Node
@@ -35,5 +32,5 @@ Tech Stack
 - Sequelize
 - Git
 - New Relic
-- Jest
-- Winston logger
+- Chai/Mocha
+- Swagger
