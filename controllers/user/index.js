@@ -14,30 +14,42 @@ var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passwor
   pool: sequilizeConfig.pool,
 });
 const User = sequelize.import("../../models/share_api_users");
+const UserToken = sequelize.import("../../models/oauth2_provider_accesstoken");
 const baseUrl = 'http://localhost:3000/users';
 
 
 
 var userModel = {
-  
 
-  //GET all cities
+  //GET all users
   getUsers(req, res) {
-    var page = parseInt(req.query.page) || 1;
-    var limit = 10;
-    
-    var offset = page ==1?0:((page-1) * limit);
-    console.log("OFFSET..............",offset);
-    return User.findAndCountAll({offset:offset,limit:limit})
+    return User.findAndCountAll({offset:0,limit:2})
     .then(users => {
-      const pageCount = Math.ceil(parseInt(users.count)/limit);
-    console.log("pageCount..............",pageCount);      
-      var cities = JSON.stringify(users);
-     //  console.log(JSON.stringify(cities));
-      cities = JSON.parse(cities);
-      cities.next =page == pageCount?null:`${baseUrl}/?page=${page+1}`;
-      cities.prev = page-1<=0?null:`${baseUrl}/?page=${page-1}`;
-      res.json(cities);
+      // users = JSON.parse(users);
+      console.log("inside user get..............",users.rows);      
+      res.json(users);
+         
+      });
+  },
+
+  authenticate(req, res){
+    const token = req.headers.authorization;
+    var parts = token.split(' ')
+    // console.log("inside user auth..............",token,parts);      
+    UserToken.findAndCountAll({
+        where: { token: parts[1] }
+        // offset:0,limit:2
+      })
+    .then(userstoken => {
+      // users = JSON.parse(users);
+      // console.log("inside user get..............",users.rows); 
+      console.log("inside user auth get user..............",userstoken.rows[0].id);      
+      User.findAndCountAll({where: { user_id: userstoken.rows[0].id }})
+      .then(users => {
+        // users = JSON.parse(users);
+        res.json(users);
+        });     
+      // res.json(userstoken);
          
       });
   },

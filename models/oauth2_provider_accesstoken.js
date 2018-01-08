@@ -36,7 +36,12 @@ module.exports = function(sequelize, DataTypes) {
         key: 'user_id'
       }
     }
-  }, {
+  }, 
+    {
+      freezeTableName: true, // Model tableName will be the same as the model name
+      timestamps:false     
+    }, 
+    {
     tableName: 'oauth2_provider_accesstoken'
   });
 };
