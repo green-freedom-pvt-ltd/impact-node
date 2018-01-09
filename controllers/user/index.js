@@ -24,9 +24,7 @@ function getPagination(objectResponse, currPage, url, limit) {
 
   const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
 
-  console.log("Hello WORLD.........", objectResponse, currPage, totalPage, url, limit);
   objectResponse = JSON.stringify(objectResponse);
-  //  console.log(JSON.stringify(cities));
   objectResponse = JSON.parse(objectResponse);
 
   objectResponse.next = currPage == totalPage ? null : `${url}/?page=${currPage + 1}`;
@@ -50,14 +48,15 @@ var userModel = {
   getUsers(req, res) {
     var limit = pagination.SMALL; // Set limit to SMALL(5)
     var getPageOffset = getOffset(req.query, limit); //get Offset function returns page and offset value
-    var page = getPageOffset.page; 
+    var page = getPageOffset.page;
     var offset = getPageOffset.offset;
 
     return User.findAndCountAll({ offset: offset, limit: limit })
       .then(users => {
-        console.log("RESPONSE.........",users.rows.length);
-    // getPagination function is used to add pagination in API response
-        res.json(getPagination(users, page, baseUrl,limit)); 
+        // console.log("RESPONSE.........", users.rows.length);
+        // getPagination function is used to add pagination in API response
+        var user = getPagination(users, page, baseUrl, limit)
+        res.json(user);
       });
   },
 

@@ -16,6 +16,10 @@ var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passwor
 const City = sequelize.import("../models/share_api_city");
 const baseUrl = 'http://localhost:3000/city';
 
+
+
+// getPagination function is used to add pagination in API response. It takes response object,
+//current page from query url, base url and limit
 function getPagination(objectResponse, currPage,url,limit) {
 
   const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
@@ -30,6 +34,7 @@ function getPagination(objectResponse, currPage,url,limit) {
   return objectResponse;
 }
 
+//get Offset function used to get page and offset value from url
 function getOffset(urlQuery, limit) {
   var page = parseInt(urlQuery.page) || 1;
   var offset = page == 1 ? 0 : ((page - 1) * limit);
