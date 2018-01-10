@@ -1,19 +1,12 @@
 // import { json } from "../../../../.cache/typescript/2.6/node_modules/@types/express";
 
-var Sequelize = require("sequelize");
-var environment = process.env.ENV;
 var config = require('config');
-var sequilizeConfig = config.get('Customer.sequilize');
-var dbConfig = config.get('Customer.dbConfig');
 var pagination = config.get('Customer.pagination');
 const logger = require('../logger');
 
-var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
-  host: dbConfig.host,
-  dialect: sequilizeConfig.dialect,
-  pool: sequilizeConfig.pool,
-});
-const City = sequelize.import("../models/share_api_city");
+
+const db = require('../db/index');
+
 const baseUrl = 'http://localhost:3000/city';
 
 
@@ -50,7 +43,7 @@ var cityModel = {
     console.log("req.body------------", req.body);
     const city = req.body.city;
     console.log("CITY", city);
-    return City
+    return db.city
       .create({
         city: city
       })
@@ -66,10 +59,10 @@ var cityModel = {
     const newCity = req.body.city;
     console.log("req...........", req.body);
     const oldCityId = req.params.id;
-    City.update({ city: newCity }, { where: { id: oldCityId } })
+    db.city.update({ city: newCity }, { where: { id: oldCityId } })
       .then(city => {
         console.log("city------------", city[0]);
-        City.findAndCount({
+        db.city.findAndCount({
           where: { id: oldCityId }
         }).then(city => {
           // res.json(city);
@@ -87,7 +80,7 @@ var cityModel = {
     var page= getPageOffset.page;
     var offset= getPageOffset.offset;
     console.log("OFFSET..............", page,offset);
-    return City.findAndCountAll({ offset: offset, limit: limit })
+    return db.city.findAndCountAll({ offset: offset, limit: limit })
       .then(city => {
         res.json(getPagination(city, page, baseUrl,limit));
         // var cities = JSON.stringify(city);
@@ -104,7 +97,7 @@ var cityModel = {
   // GET one city by id
   getParticularCity(req, res) {
     const id = req.params.id;
-    City.findAndCount({
+    db.city.findAndCount({
       where: { id: id }
     })
       .then(city => {
@@ -115,7 +108,7 @@ var cityModel = {
   // DELETE single city
   destroyCity(req, res) {
     const id = req.params.id;
-    City.destroy({
+    db.city.destroy({
       where: { id: id }
     })
       .then(city => {
