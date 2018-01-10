@@ -7,6 +7,7 @@ var config = require('config');
 var sequilizeConfig = config.get('Customer.sequilize');
 var dbConfig = config.get('Customer.dbConfig');
 const logger = require('../../logger');
+const pagination = config.get('Customer.pagination');
 
 var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
   host: dbConfig.host,
@@ -15,37 +16,65 @@ var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passwor
 });
 const User = sequelize.import("../../models/share_api_users");
 const UserToken = sequelize.import("../../models/oauth2_provider_accesstoken");
-const baseUrl = 'http://localhost:3000/users';
+const baseUrl = 'http://localhost:3000/user';
 
+// getPagination function is used to add pagination in API response. It takes response object,
+//current page from query url, base url and limit
+function getPagination(objectResponse, currPage, url, limit) {
 
+  const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
+
+  objectResponse = JSON.stringify(objectResponse);
+  objectResponse = JSON.parse(objectResponse);
+
+  objectResponse.next = currPage == totalPage ? null : `${url}/?page=${currPage + 1}`;
+  objectResponse.prev = currPage - 1 <= 0 ? null : `${url}/?page=${currPage - 1}`;
+  return objectResponse;
+}
+
+//get Offset function used to get page and offset value from url
+function getOffset(urlQuery, limit) {
+  var page = parseInt(urlQuery.page) || 1;
+  var offset = page == 1 ? 0 : ((page - 1) * limit);
+  return {
+    page: page,
+    offset: offset
+  }
+}
 
 var userModel = {
 
   //GET all users
   getUsers(req, res) {
-    return User.findAndCountAll({offset:0,limit:2})
-    .then(users => {
-      console.log("inside user get..............",users.rows);      
-      res.json(users);
-         
+    var limit = pagination.SMALL; // Set limit to SMALL(5)
+    var getPageOffset = getOffset(req.query, limit); //get Offset function returns page and offset value
+    var page = getPageOffset.page;
+    var offset = getPageOffset.offset;
+
+    return User.findAndCountAll({ offset: offset, limit: limit })
+      .then(users => {
+        // console.log("RESPONSE.........", users.rows.length);
+        // getPagination function is used to add pagination in API response
+        var user = getPagination(users, page, baseUrl, limit)
+        res.json(user);
       });
   },
 
 
-// this api takes auth token from the headers and verifys it
-// if user exists it returns the user object
-  authenticate(req, res){
+  // this api takes auth token from the headers and verifys it
+  // if user exists it returns the user object
+  authenticate(req, res) {
     const token = req.headers.authorization;
     var parts = token.split(' ')
     UserToken.findAndCountAll({
-        where: { token: parts[1] }
-      })
-    .then(userstoken => {
-      // console.log("inside user auth get user..............",userstoken.rows[0].id);      
-      User.findAndCountAll({where: { user_id: userstoken.rows[0].id }})
-      .then(users => {
-        res.json(users);
-        });     
+      where: { token: parts[1] }
+    })
+      .then(userstoken => {
+        // console.log("inside user auth get user..............",userstoken.rows[0].id);      
+        User.findAndCountAll({ where: { user_id: userstoken.rows[0].id } })
+          .then(users => {
+            res.json(users);
+          });
       });
   },
 
