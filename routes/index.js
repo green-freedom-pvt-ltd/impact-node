@@ -6,7 +6,7 @@ const City = require('../controllers/cityController');
 // include all routes for city
 routes.use('/city', require('./city'))
 routes.use('/user', require('./user'))
-
+routes.use('/runLocation', require('./runLocation'))
 
 // landing page route
 routes.get('/', (req, res) => {
