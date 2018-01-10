@@ -2,20 +2,10 @@
 
 
 
-var Sequelize = require("sequelize");
 var config = require('config');
-var sequilizeConfig = config.get('Customer.sequilize');
-var dbConfig = config.get('Customer.dbConfig');
 const logger = require('../../logger');
+const db = require('../../db/index');
 const pagination = config.get('Customer.pagination');
-
-var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
-  host: dbConfig.host,
-  dialect: sequilizeConfig.dialect,
-  pool: sequilizeConfig.pool,
-});
-const User = sequelize.import("../../models/share_api_users");
-const UserToken = sequelize.import("../../models/oauth2_provider_accesstoken");
 const baseUrl = 'http://localhost:3000/user';
 
 // getPagination function is used to add pagination in API response. It takes response object,
@@ -51,7 +41,7 @@ var userModel = {
     var page = getPageOffset.page;
     var offset = getPageOffset.offset;
 
-    return User.findAndCountAll({ offset: offset, limit: limit })
+    return db.users.findAndCountAll({ offset: offset, limit: limit })
       .then(users => {
         // console.log("RESPONSE.........", users.rows.length);
         // getPagination function is used to add pagination in API response
@@ -66,12 +56,12 @@ var userModel = {
   authenticate(req, res) {
     const token = req.headers.authorization;
     var parts = token.split(' ')
-    UserToken.findAndCountAll({
+    db.usersToken.findAndCountAll({
       where: { token: parts[1] }
     })
       .then(userstoken => {
         // console.log("inside user auth get user..............",userstoken.rows[0].id);      
-        User.findAndCountAll({ where: { user_id: userstoken.rows[0].id } })
+        db.users.findAndCountAll({ where: { user_id: userstoken.rows[0].id } })
           .then(users => {
             res.json(users);
           });
