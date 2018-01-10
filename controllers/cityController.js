@@ -3,39 +3,13 @@
 var config = require('config');
 var pagination = config.get('Customer.pagination');
 const logger = require('../logger');
+const pagin = require('../middleware/pagination');
 
 
 const db = require('../db/index');
 
 const baseUrl = 'http://localhost:3000/city';
 
-
-
-// getPagination function is used to add pagination in API response. It takes response object,
-//current page from query url, base url and limit
-function getPagination(objectResponse, currPage,url,limit) {
-
-  const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
-
-  console.log("Hello WORLD.........", objectResponse, currPage, totalPage, url,limit);
-  objectResponse = JSON.stringify(objectResponse);
-  //  console.log(JSON.stringify(cities));
-  objectResponse = JSON.parse(objectResponse);
-  objectResponse.limit = limit;
-  objectResponse.next = currPage == totalPage ? null : `${url}/?page=${currPage + 1}`;
-  objectResponse.prev = currPage - 1 <= 0 ? null : `${url}/?page=${currPage - 1}`;
-  return objectResponse;
-}
-
-//get Offset function used to get page and offset value from url
-function getOffset(urlQuery, limit) {
-  var page = parseInt(urlQuery.page) || 1;
-  var offset = page == 1 ? 0 : ((page - 1) * limit);
-  return {
-    page: page, 
-    offset: offset
-  }
-}
 
 var cityModel = {
   //Create New city
@@ -74,21 +48,9 @@ var cityModel = {
 
   //GET all cities
   getCities(req, res) {
-
-    var limit = pagination.NORMAL;
-    var getPageOffset = getOffset(req.query, limit);
-    var page= getPageOffset.page;
-    var offset= getPageOffset.offset;
-    console.log("OFFSET..............", page,offset);
-    return db.city.findAndCountAll({ offset: offset, limit: limit })
+    return db.city.findAndCountAll(pagin.getOffset(pagination.SMALL,req.query))
       .then(city => {
-        res.json(getPagination(city, page, baseUrl,limit));
-        // var cities = JSON.stringify(city);
-        // //  console.log(JSON.stringify(cities));
-        // cities = JSON.parse(cities);
-
-        // res.json(getPagination(cities, page, pageCount, baseUrl));
-
+        res.json(pagin.getPagination(city, req.query, baseUrl));
       });
   },
 
