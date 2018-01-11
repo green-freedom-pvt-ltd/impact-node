@@ -1,9 +1,11 @@
 
-var config = require('config');
-var pagination = config.get('Customer.pagination');
+// var config = require('config');
+// var pagination = config.get('Customer.pagination');
 const logger = require('../logger');
 const pagin = require('../middleware/pagination');
 const db = require('../db/index');
+const env = require('../config/settings');
+const paginconfig = env.pagination;
 
 const baseUrl = 'http://localhost:3000/userFeedback';
 
@@ -20,15 +22,15 @@ var feedback = {
             })
                 .then(feedback => {
                     var url = baseUrl + '/' + user_id;
-                    res.json(pagin.getPagination(feedback, req.query, url, pagination.NORMAL));
+                    res.json(pagin.getPagination(feedback, req.query, url, paginconfig.NORMAL));
                 })
         }
         //get all runs
         else {
-            return db.feedback.findAndCountAll(pagin.getOffset(pagination.NORMAL, req.query))
+            return db.feedback.findAndCountAll(pagin.getOffset(paginconfig.SMALL, req.query))
                 .then(feedback => {
                     // console.log("limit", pagination.NORMAL);
-                    res.json(pagin.getPagination(feedback, req.query, baseUrl, pagination.NORMAL));
+                    res.json(pagin.getPagination(feedback, req.query, baseUrl, paginconfig.SMALL));
                 })
         }
 
