@@ -50,7 +50,7 @@ var cityModel = {
   getCities(req, res) {
     return db.city.findAndCountAll(pagin.getOffset(pagination.SMALL,req.query))
       .then(city => {
-        res.json(pagin.getPagination(city, req.query, baseUrl));
+        res.json(pagin.getPagination(city, req.query, baseUrl,pagination.SMALL));
       });
   },
 

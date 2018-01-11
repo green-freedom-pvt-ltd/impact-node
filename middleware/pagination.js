@@ -9,7 +9,6 @@ var pagination = {
 //current page from query url, base url and limit
 	getPagination(objectResponse, urlQuery,url,limit) {
 	  var currPage = parseInt(urlQuery.page) || 1;
-	  var limit = pagination.SMALL;
 
 	  const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
 
