@@ -50,6 +50,19 @@ var userModel = {
       });
   },
 
+  //GET SINGLE USER
+  getUser(req, res) {
+
+    var userId = req.params.id;
+    return db.users.findById(userId)
+      .then(user => {
+        // console.log("RESPONSE.........", users.rows.length);
+        // getPagination function is used to add pagination in API response
+
+        res.json(user);
+      });
+  },
+
 
   // this api takes auth token from the headers and verifys it
   // if user exists it returns the user object

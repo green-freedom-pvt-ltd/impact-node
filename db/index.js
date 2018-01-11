@@ -34,8 +34,9 @@ db.sequelize = sequelize;
 db.users = require('../models/share_api_users.js')(sequelize, Sequelize);
 db.usersToken = require('../models/oauth2_provider_accesstoken.js')(sequelize, Sequelize);
 db.city = require('../models/share_api_city.js')(sequelize, Sequelize);
-
-
+db.runLocation = require  ('../models/share_api_runlocations.js')(sequelize, Sequelize);
+db.runs = require  ('../models/share_api_runs.js')(sequelize, Sequelize);
+db.feedback = require  ('../models/share_api_userfeedback.js')(sequelize, Sequelize);
 
 
 
