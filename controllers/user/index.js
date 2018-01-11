@@ -53,17 +53,22 @@ var userModel = {
   // if user exists it returns the user object
   authenticate(req, res) {
     const token = req.headers.authorization;
+    console.log("inside user auth get user..............",token);      
+    if (token) {
     var parts = token.split(' ')
     db.usersToken.findAndCountAll({
       where: { token: parts[1] }
     })
       .then(userstoken => {
-        // console.log("inside user auth get user..............",userstoken.rows[0].id);      
         db.users.findAndCountAll({ where: { user_id: userstoken.rows[0].id } })
           .then(users => {
             res.json(users);
           });
       });
+    } else {
+      res.status(400).send('Current password does not match');
+    }
+    
   },
 
 };
