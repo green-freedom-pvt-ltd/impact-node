@@ -15,7 +15,6 @@ var dbConfig = config.get('Customer.dbConfig');
 const pool = new Pool(dbConfig);
 var Sequelize = require("sequelize");
 var sequilizeConfig = config.get('Customer.sequilize');
-const pagination = config.get('Customer.pagination');
 
 
 

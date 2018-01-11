@@ -1,7 +1,6 @@
 'use strict'
 
 var config = require('config');
-var pagination = config.get('Customer.pagination');
 
 
 var pagination = {
