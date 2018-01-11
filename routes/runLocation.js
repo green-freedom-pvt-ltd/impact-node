@@ -6,6 +6,7 @@ const Runs = require('../controllers/runs/runLocationController');
 
 // these are the routes for city
 routes.get('/', Runs.getRuns);
+routes.get('/:run_id', Runs.getRuns);
 
 
 

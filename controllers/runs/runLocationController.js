@@ -19,18 +19,25 @@ const RunLocation = sequelize.import("../../models/share_api_runlocations.js");
 
 var runLocationModel = {
 
-    //GET all runs
+    //GET single runs
     getRuns(req, res) {
-        const run_id= req.query.run_id ||167308;
-
-        return RunLocation.findAndCountAll({ where: { run_id_id: run_id } })
+        var run_id = req.params.run_id;
+        run_id = parseInt(run_id);
+        if(run_id){
+            return RunLocation.findAndCountAll({ where: { run_id_id: run_id } }, { order: [sequelize.col('batch_num')] })
             .then(runs => {
-                //runs = JSON.stringify(runs, null, 4);
-                //runs = JSON.parse(runs);
-              console.log(runs.rows[0].client_run_id);
-              res.json(runs);
+                res.json(runs);
             })
-          
+        }
+        //get all runs
+        else{
+            return RunLocation.findAndCountAll({limit:pagination.SMALL})
+            .then(runs => {
+                res.json(runs);
+            })
+        }
+        
+
     },
 
 };
