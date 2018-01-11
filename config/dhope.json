@@ -24,12 +24,6 @@
         "min": 0,
         "idle": 10000
       }
-    },
-    "pagination": {
-      "SMALL":5,
-      "NORMAL": 20,
-      "MEDIUM": 50,
-      "LARGE": 100
     }
   }
 }

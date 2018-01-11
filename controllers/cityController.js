@@ -1,10 +1,10 @@
 // import { json } from "../../../../.cache/typescript/2.6/node_modules/@types/express";
 
 var config = require('config');
-var pagination = config.get('Customer.pagination');
 const logger = require('../logger');
 const pagin = require('../middleware/pagination');
-
+const env = require('../config/settings');
+const paginconfig = env.pagination;
 
 const db = require('../db/index');
 
@@ -48,9 +48,9 @@ var cityModel = {
 
   //GET all cities
   getCities(req, res) {
-    return db.city.findAndCountAll(pagin.getOffset(pagination.SMALL,req.query))
+    return db.city.findAndCountAll(pagin.getOffset(paginconfig.SMALL,req.query))
       .then(city => {
-        res.json(pagin.getPagination(city, req.query, baseUrl,pagination.SMALL));
+        res.json(pagin.getPagination(city, req.query, baseUrl,paginconfig.SMALL));
       });
   },
 
