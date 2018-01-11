@@ -4,22 +4,21 @@ var config = require('config');
 var pageLimit = config.get('Customer.pagination');
 
 var pagination = {
-	// getPagination function is used to add pagination in API response. It takes response object,
-	//current page from query url, base url and limit
-	getPagination(objectResponse, urlQuery, url, limit) {
-		var currPage = parseInt(urlQuery.page) || 1;
-		console.log("LIMIT........", limit);
-		var limit = limit || pageLimit.SMALL;
-		const totalPage = objectResponse.count > limit ? Math.ceil(parseInt(objectResponse.count) / limit) : 1;
+// getPagination function is used to add pagination in API response. It takes response object,
+//current page from query url, base url and limit
+	getPagination(objectResponse, urlQuery,url,limit) {
+	  var currPage = parseInt(urlQuery.page) || 1;
 
-		//console.log("Hello WORLD.........", currPage, totalPage, url, limit);
-		objectResponse = JSON.stringify(objectResponse);
-		//  console.log(JSON.stringify(cities));
-		objectResponse = JSON.parse(objectResponse);
-		objectResponse.limit = limit;
-		objectResponse.next = currPage == totalPage ? null : `${url}/?page=${currPage + 1}`;
-		objectResponse.prev = currPage - 1 <= 0 ? null : `${url}/?page=${currPage - 1}`;
-		return objectResponse;
+	  const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
+
+	  // console.log("Hello WORLD.........", objectResponse, currPage, totalPage, url,limit);
+	  objectResponse = JSON.stringify(objectResponse);
+	  //  console.log(JSON.stringify(cities));
+	  objectResponse = JSON.parse(objectResponse);
+	  objectResponse.limit = limit;
+	  objectResponse.next = currPage == totalPage ? null : `${url}/?page=${currPage + 1}`;
+	  objectResponse.prev = currPage - 1 <= 0 ? null : `${url}/?page=${currPage - 1}`;
+	  return objectResponse;
 	},
 
 	//get Offset function used to get page and offset value from url
