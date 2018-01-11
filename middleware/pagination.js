@@ -2,7 +2,6 @@
 
 var config = require('config');
 
-
 var pagination = {
 // getPagination function is used to add pagination in API response. It takes response object,
 //current page from query url, base url and limit
@@ -21,20 +20,21 @@ var pagination = {
 	  return objectResponse;
 	},
 
-//get Offset function used to get page and offset value from url
+	//get Offset function used to get page and offset value from url
 	getOffset(limit, urlQuery) {
-		if(limit){
-		  // var limit = pagination.SMALL;
-		  var page = 1;
-		  if (urlQuery && urlQuery.page) {
-			  page = parseInt(urlQuery.page);
-		  }
-		  var offset = page == 1 ? 0 : ((page - 1) * limit);
-		  console.log('limit------------',limit, urlQuery, page);
-		  return {
-		    limit: limit, 
-		    offset: offset
-		  };
+		if (limit) {
+			// var limit = pagination.SMALL;
+			var page = 1;
+			if (urlQuery && urlQuery.page) {
+				console.log('limit123------------', limit, urlQuery, page);
+				page = parseInt(urlQuery.page);
+			}
+			var offset = page == 1 ? 0 : ((page - 1) * limit);
+			console.log('limit------------', limit,offset, urlQuery, page);
+			return {
+				limit: limit,
+				offset: offset
+			};
 		} else {
 			return;
 		}
