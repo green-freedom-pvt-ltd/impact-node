@@ -1,7 +1,6 @@
 'use strict'
 
 var config = require('config');
-var pageLimit = config.get('Customer.pagination');
 
 var pagination = {
 // getPagination function is used to add pagination in API response. It takes response object,

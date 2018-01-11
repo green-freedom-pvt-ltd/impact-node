@@ -5,9 +5,10 @@
 var config = require('config');
 const logger = require('../../logger');
 const db = require('../../db/index');
-const pagination = config.get('Customer.pagination');
 const baseUrl = 'http://localhost:3000/user';
 const pagin = require('../../middleware/pagination');
+const env = require('../../config/settings');
+const paginconfig = env.pagination;
 
 // getPagination function is used to add pagination in API response. It takes response object,
 //current page from query url, base url and limit
@@ -37,12 +38,12 @@ var userModel = {
 
   //GET all users
   getUsers(req, res) {
-
-    return db.users.findAndCountAll(pagin.getOffset(pagination.SMALL,req.query))
+    console.log("paginconfig------------------",paginconfig.SMALL);
+    return db.users.findAndCountAll(pagin.getOffset(paginconfig.SMALL,req.query))
       .then(users => {
         // console.log("RESPONSE.........", users.rows.length);
         // getPagination function is used to add pagination in API response
-        var user = pagin.getPagination(users, req.query, baseUrl, pagination.SMALL)
+        var user = pagin.getPagination(users, req.query, baseUrl, paginconfig.SMALL)
         res.json(user);
       });
   },
