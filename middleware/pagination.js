@@ -26,11 +26,11 @@ var pagination = {
 			// var limit = pagination.SMALL;
 			var page = 1;
 			if (urlQuery && urlQuery.page) {
-				console.log('limit123------------', limit, urlQuery, page);
+				// console.log('limit123------------', limit, urlQuery, page);
 				page = parseInt(urlQuery.page);
 			}
 			var offset = page == 1 ? 0 : ((page - 1) * limit);
-			console.log('limit------------', limit,offset, urlQuery, page);
+			// console.log('limit------------', limit,offset, urlQuery, page);
 			return {
 				limit: limit,
 				offset: offset

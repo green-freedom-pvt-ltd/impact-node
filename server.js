@@ -18,12 +18,15 @@ app.use(bodyParser.urlencoded({
 }));
 
 // this middleware is for checking authentication for all requests
-app.use('/', authmw());
+// app.use('/', authmw());
 app.use('/', routes);
 
-
+// this is a test API
 app.get('/causespromise', (req, res, next) => res.send(db.getImportantData()));
 
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log('listening on port ' + port));
+
+
+module.exports = app
