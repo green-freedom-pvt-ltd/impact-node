@@ -14,7 +14,7 @@ var pagination = {
 	  objectResponse = JSON.stringify(objectResponse);
 	  //  console.log(JSON.stringify(cities));
 	  objectResponse = JSON.parse(objectResponse);
-	  objectResponse.limit = limit;
+	  objectResponse.limit = limit || 5 ;
 	  objectResponse.next = currPage == totalPage ? null : `${url}/?page=${currPage + 1}`;
 	  objectResponse.prev = currPage - 1 <= 0 ? null : `${url}/?page=${currPage - 1}`;
 	  return objectResponse;
