@@ -26,6 +26,7 @@
     "grunt": "^1.0.1",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-watch": "^1.0.0",
-    "jest": "^22.0.4"
+    "jest": "^22.0.4",
+    "supertest": "^3.0.0"
   }
 }
