@@ -48,6 +48,7 @@ var userModel = {
       });
   },
 
+
   //GET SINGLE USER
   getUser(req, res) {
 

@@ -10,5 +10,4 @@ routes.get('/:id', User.getUser);
 routes.get('/auth', User.authenticate);
 
 
-
 module.exports = routes;
