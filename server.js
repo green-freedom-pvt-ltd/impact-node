@@ -18,7 +18,11 @@ app.use(bodyParser.urlencoded({
 }));
 
 // this middleware is for checking authentication for all requests
+<<<<<<< HEAD
 // app.use('/', authmw());
+=======
+app.use('/', authmw());
+>>>>>>> 365030f7e6fbba6169dac4aab42e6c18330be350
 app.use('/', routes);
 
 // this is a test API

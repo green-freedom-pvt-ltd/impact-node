@@ -53,12 +53,12 @@ var userModel = {
   getUser(req, res) {
 
     var userId = req.params.id;
-    return db.users.findById(userId)
+    return db.users.findAndCountAll({where:{user_id:userId}})
       .then(user => {
         // console.log("RESPONSE.........", users.rows.length);
         // getPagination function is used to add pagination in API response
-
-        res.json(user);
+        var paginationUser = pagin.getPagination(user, req.query, baseUrl, paginconfig.SMALL)
+        res.json(paginationUser);
       });
   },
 

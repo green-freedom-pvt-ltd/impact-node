@@ -11,6 +11,7 @@ module.exports = function(options) {
 
     console.log("This request is being autheticated")
     const token = req.headers.authorization;
+    console.log("inside user auth get user..............",token);      
     if (token) {
     var parts = token.split(' ')
     db.usersToken.findAndCountAll({

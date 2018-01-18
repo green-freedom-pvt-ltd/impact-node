@@ -36,11 +36,17 @@ db.city = require('../models/share_api_city.js')(sequelize, Sequelize);
 db.runLocation = require  ('../models/share_api_runlocations.js')(sequelize, Sequelize);
 db.runs = require  ('../models/share_api_runs.js')(sequelize, Sequelize);
 db.feedback = require  ('../models/share_api_userfeedback.js')(sequelize, Sequelize);
+<<<<<<< HEAD
 
 
 
 
 
+=======
+db.impactLeague =require ('../models/share_api_impactleague')(sequelize, Sequelize);
+db.team = require ('../models/share_api_team')(sequelize, Sequelize);
+db.employee =require ('../models/share_api_employee')(sequelize, Sequelize);
+>>>>>>> 365030f7e6fbba6169dac4aab42e6c18330be350
 
 
 // this connects the application to the database
