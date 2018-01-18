@@ -2,51 +2,87 @@
 
 
 
-var Sequelize = require("sequelize");
 var config = require('config');
-var sequilizeConfig = config.get('Customer.sequilize');
-var dbConfig = config.get('Customer.dbConfig');
 const logger = require('../../logger');
+const db = require('../../db/index');
+const baseUrl = 'http://localhost:3000/user';
+const pagin = require('../../middleware/pagination');
+const env = require('../../config/settings');
+const paginconfig = env.pagination;
 
-var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
-  host: dbConfig.host,
-  dialect: sequilizeConfig.dialect,
-  pool: sequilizeConfig.pool,
-});
-const User = sequelize.import("../../models/share_api_users");
-const UserToken = sequelize.import("../../models/oauth2_provider_accesstoken");
-const baseUrl = 'http://localhost:3000/users';
+// getPagination function is used to add pagination in API response. It takes response object,
+//current page from query url, base url and limit
+function getPagination(objectResponse, currPage, url, limit) {
 
+  const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
 
+  objectResponse = JSON.stringify(objectResponse);
+  objectResponse = JSON.parse(objectResponse);
+
+  objectResponse.next = currPage == totalPage ? null : `${url}/?page=${currPage + 1}`;
+  objectResponse.prev = currPage - 1 <= 0 ? null : `${url}/?page=${currPage - 1}`;
+  return objectResponse;
+}
+
+//get Offset function used to get page and offset value from url
+function getOffset(urlQuery, limit) {
+  var page = parseInt(urlQuery.page) || 1;
+  var offset = page == 1 ? 0 : ((page - 1) * limit);
+  return {
+    page: page,
+    offset: offset
+  }
+}
 
 var userModel = {
 
   //GET all users
   getUsers(req, res) {
-    return User.findAndCountAll({offset:0,limit:2})
-    .then(users => {
-      console.log("inside user get..............",users.rows);      
-      res.json(users);
-         
+    console.log("paginconfig------------------",paginconfig.SMALL);
+    return db.users.findAndCountAll(pagin.getOffset(paginconfig.SMALL,req.query))
+      .then(users => {
+        // console.log("RESPONSE.........", users.rows.length);
+        // getPagination function is used to add pagination in API response
+        var user = pagin.getPagination(users, req.query, baseUrl, paginconfig.SMALL)
+        res.json(user);
       });
   },
 
 
-// this api takes auth token from the headers and verifys it
-// if user exists it returns the user object
-  authenticate(req, res){
-    const token = req.headers.authorization;
-    var parts = token.split(' ')
-    UserToken.findAndCountAll({
-        where: { token: parts[1] }
-      })
-    .then(userstoken => {
-      // console.log("inside user auth get user..............",userstoken.rows[0].id);      
-      User.findAndCountAll({where: { user_id: userstoken.rows[0].id }})
-      .then(users => {
-        res.json(users);
-        });     
+  //GET SINGLE USER
+  getUser(req, res) {
+
+    var userId = req.params.id;
+    return db.users.findAndCountAll({where:{user_id:userId}})
+      .then(user => {
+        // console.log("RESPONSE.........", users.rows.length);
+        // getPagination function is used to add pagination in API response
+        var paginationUser = pagin.getPagination(user, req.query, baseUrl, paginconfig.SMALL)
+        res.json(paginationUser);
       });
+  },
+
+
+  // this api takes auth token from the headers and verifys it
+  // if user exists it returns the user object
+  authenticate(req, res) {
+    const token = req.headers.authorization;
+    console.log("inside user auth get user..............",token);      
+    if (token) {
+    var parts = token.split(' ')
+    db.usersToken.findAndCountAll({
+      where: { token: parts[1] }
+    })
+      .then(userstoken => {
+        db.users.findAndCountAll({ where: { user_id: userstoken.rows[0].id } })
+          .then(users => {
+            res.json(users);
+          });
+      });
+    } else {
+      res.status(400).send('Current password does not match');
+    }
+    
   },
 
 };

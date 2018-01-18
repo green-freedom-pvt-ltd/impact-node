@@ -12,14 +12,11 @@ You can set up config files with environment specific data
 
     export NODE_ENV=prod
 
- To run jest test cases
+ You can run Jest for verifing your test cases by using 
 
-     npm test
-For starting server
+    npm test
 
-    node server.js
-Open the browser at http://localhost:3000/
-
+ 
 Tech Stack
 ----------
 - Node
@@ -32,5 +29,5 @@ Tech Stack
 - Sequelize
 - Git
 - New Relic
-- Chai/Mocha
-- Swagger
+- Jest
+- Winston logger
