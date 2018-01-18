@@ -1,33 +1,35 @@
 {
-    // Customer module configs
-    "Customer": {
-      "dbConfig": {
-        "user": "nishant",
-        "host": "localhost",
-        "database": "share_backend_dev_api",
-        "password": "Impact123",
-        "port": 5432
-      },
-      "credit": {
-        "initialLimit": 100,
-        // Set low for development
-        "initialDays": 1
-      },
-      "sequilize":{
-        "database_name": "share_backend_dev_api",
-        "user": "nishant", 
-        "password": "Impact123", 
-        "host": "localhost",
-        "dialect": "postgres",
-        "pool": {
-          "max": 5,
-          "min": 0,
-          "idle": 10000
-        }
+  // Customer module configs
+  "Customer": {
+    "dbConfig": {
+      "user": "nishant",
+      "host": "localhost",
+      "database": "share_backend_dev_api",
+      "password": "Impact123",
+      "port": 5432
+    },
+    "credit": {
+      "initialLimit": 100,
+      // Set low for development
+      "initialDays": 1
+    },
+    "sequilize": {
+      "database_name": "share_backend_dev_api",
+      "user": "nishant",
+      "password": "Impact123",
+      "host": "localhost",
+      "dialect": "postgres",
+      "pool": {
+        "max": 5,
+        "min": 0,
+        "idle": 10000
       }
+    },
+    "pagination": {
+      "SMALL":5,
+      "NORMAL": 20,
+      "MEDIUM": 50,
+      "LARGE": 100
     }
   }
-
-
-
-  
+}
