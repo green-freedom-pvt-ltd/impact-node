@@ -25,32 +25,27 @@ var userModel = {
   getUsers(req, res) {
     return User.findAndCountAll({offset:0,limit:2})
     .then(users => {
-      // users = JSON.parse(users);
       console.log("inside user get..............",users.rows);      
       res.json(users);
          
       });
   },
 
+
+// this api takes auth token from the headers and verifys it
+// if user exists it returns the user object
   authenticate(req, res){
     const token = req.headers.authorization;
     var parts = token.split(' ')
-    // console.log("inside user auth..............",token,parts);      
     UserToken.findAndCountAll({
         where: { token: parts[1] }
-        // offset:0,limit:2
       })
     .then(userstoken => {
-      // users = JSON.parse(users);
-      // console.log("inside user get..............",users.rows); 
-      console.log("inside user auth get user..............",userstoken.rows[0].id);      
+      // console.log("inside user auth get user..............",userstoken.rows[0].id);      
       User.findAndCountAll({where: { user_id: userstoken.rows[0].id }})
       .then(users => {
-        // users = JSON.parse(users);
         res.json(users);
         });     
-      // res.json(userstoken);
-         
       });
   },
 
