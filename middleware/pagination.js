@@ -1,23 +1,60 @@
-'use strict'
-
 var config = require('config');
+const { URL, URLSearchParams } = require('url');
+const logger = require('../logger');
 
+
+function createQuery(urlQuery) {
+	var whereQuery = {};
+	var keys = Object.keys(urlQuery);
+	for (var i = 0; i < keys.length; i++) {
+		logger.info('inside loop', keys[i], urlQuery[keys[i]]);
+
+		whereQuery[keys[i]] = urlQuery[keys[i]];
+
+	}
+	return whereQuery;
+}
 var pagination = {
-// getPagination function is used to add pagination in API response. It takes response object,
-//current page from query url, base url and limit
-	getPagination(objectResponse, urlQuery,url,limit) {
-	  var currPage = parseInt(urlQuery.page) || 1;
+	// getPagination function is used to add pagination in API response. It takes response object,
+	//current page from query url, base url and limit
+	getPagination(objectResponse, req, url, limit) {
+		var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+		
 
-	  const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
+		var getQuery = createQuery(req.query);
+		
+		const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
 
-	  // console.log("Hello WORLD.........", objectResponse, currPage, totalPage, url,limit);
-	  objectResponse = JSON.stringify(objectResponse);
-	  //  console.log(JSON.stringify(cities));
-	  objectResponse = JSON.parse(objectResponse);
-	  objectResponse.limit = limit || 5 ;
-	  objectResponse.next = currPage == totalPage ? null : `${url}/?page=${currPage + 1}`;
-	  objectResponse.prev = currPage - 1 <= 0 ? null : `${url}/?page=${currPage - 1}`;
-	  return objectResponse;
+		objectResponse = JSON.stringify(objectResponse);
+		objectResponse = JSON.parse(objectResponse);
+		objectResponse.limit = limit || 5;
+		if (req.query.page) {
+			var currPage = parseInt(req.query.page);
+
+			var next = new URL(fullUrl);
+			var nextUrl = next;
+			nextUrl.searchParams.set('page', currPage + 1);
+
+			var prev = new URL(fullUrl);
+			var prevUrl = prev;
+			prevUrl.searchParams.set('page', currPage - 1);
+
+			objectResponse.next = currPage == totalPage ? null : nextUrl.href;
+			objectResponse.prev = currPage - 1 <= 0 ? null : prevUrl.href;
+
+		}
+		else {
+			var currPage = 1;
+			objectResponse.next = currPage == totalPage ? null : `${fullUrl}?page=${currPage + 1}`;
+			objectResponse.prev = currPage - 1 <= 0 ? null : `${fullUrl}?page=${currPage - 1}`;
+
+		}
+
+
+		// console.log("Hello WORLD.........", objectResponse, currPage, totalPage, url,limit);
+
+
+		return objectResponse;
 	},
 
 	//get Offset function used to get page and offset value from url

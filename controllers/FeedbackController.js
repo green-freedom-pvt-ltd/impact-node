@@ -6,7 +6,8 @@ const env = require('../config/settings');
 const paginconfig = env.pagination;
 var Sequelize = require("sequelize");
 
-const baseUrl = 'http://localhost:3000/userFeedback';
+
+const baseUrl = 'http://localhost:3000/';
 const filterList = ['user_id_id', 'is_chat', 'tag', 'sub_tag', 'is_ios'];
 
 // This function helps us build a query object to pass in sequalize find function 
@@ -28,16 +29,21 @@ function createQuery(urlQuery) {
 var feedback = {
     //get all feedback for particular users and filters
     getFeedback(req, res) {
+
+  
         var urlQuery = req.query;
         var whereQuery = createQuery(urlQuery);
         logger.info("whereQuery----------",urlQuery, whereQuery);
+        logger.info("Full URL----------",req.originalUrl);
+     
         return db.feedback.findAndCountAll({
             where: whereQuery,
             limit: paginconfig.SMALL,
-            offset: urlQuery.page ? ((urlQuery.page - 1) * paginconfig.SMALL) : 0
+            offset: isNaN(urlQuery.page)?1:urlQuery.page == 1 ?0: ((urlQuery.page - 1) * paginconfig.SMALL)
+            // page == 1 ? 0 : ((page - 1) * limit);
         })
         .then(feedback => {
-            res.json(pagin.getPagination(feedback, req.query, baseUrl, paginconfig.SMALL));
+            res.json(pagin.getPagination(feedback, req, baseUrl, paginconfig.SMALL));
         })
 
     },
