@@ -75,7 +75,20 @@ var pagination = {
 		} else {
 			return;
 		}
-	}
+	}, 
+
+	createQuery(urlQuery, filterList) {
+	    var whereQuery = {};
+	    var keys = Object.keys(urlQuery);
+	    for (var i = 0; i < keys.length; i++) {
+	      // logger.info('inside loop', keys[i], urlQuery[keys[i]], filterList.includes(keys[i]));
+	      if (filterList.includes(keys[i])) {
+	        whereQuery[keys[i]]= urlQuery[keys[i]];
+	      }
+	    }
+	    return whereQuery;
+	},
+
 
 
 };

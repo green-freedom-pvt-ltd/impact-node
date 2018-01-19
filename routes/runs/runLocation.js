@@ -1,6 +1,4 @@
 const routes = require('express').Router();
-
-const causedb = require('../../db/cause');
 const Runs = require('../../controllers/runs/runLocationController');
 
 
