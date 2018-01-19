@@ -47,25 +47,17 @@ var runModel = {
                 })
         }
         //get all runs
-<<<<<<< HEAD
-        else {
-            return db.runs.findAndCountAll(pagin.getOffset(paginconfig.SMALL, req.query))
-=======
         
         if(req.query)
         {
             console.log("REQ...",req.query);
             return db.runs.findAndCountAll({where:req.query,limit:paginconfig.SMALL})
->>>>>>> 365030f7e6fbba6169dac4aab42e6c18330be350
                 .then(runs => {
                     res.json(pagin.getPagination(runs, req.query, baseUrl,paginconfig.SMALL));
                 })
         }
     },
-<<<<<<< HEAD
-=======
     
->>>>>>> 365030f7e6fbba6169dac4aab42e6c18330be350
 }
 
 

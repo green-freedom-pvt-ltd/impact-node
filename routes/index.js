@@ -9,12 +9,9 @@ routes.use('/user', require('./user'))
 routes.use('/runLocation', require('./runs/runLocation'))
 routes.use('/runs', require('./runs/runs'));
 routes.use('/userFeedback', require('./userFeedback'));
-<<<<<<< HEAD
-=======
 routes.use('/impactleague', require('./impactleague'));
 routes.use('/teams', require('./team'));
 routes.use('/employeelist', require('./employee'));
->>>>>>> 365030f7e6fbba6169dac4aab42e6c18330be350
 
 // landing page route
 routes.get('/', (req, res) => {
