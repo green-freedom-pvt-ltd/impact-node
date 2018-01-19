@@ -1,6 +1,4 @@
 const routes = require('express').Router();
-const logger = require('../logger');
-const causedb = require('../db/cause');
 const City = require('../controllers/cityController');
 
 
