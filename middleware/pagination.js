@@ -2,6 +2,7 @@ var config = require('config');
 const { URL, URLSearchParams } = require('url');
 const logger = require('../logger');
 var Sequelize = require("sequelize");
+const filterOptionsList = ['gt','gte', 'lt', 'lte' , 'like'];
 
 const Op = Sequelize.Op
 
@@ -91,16 +92,17 @@ var pagination = {
 	      // this code if for adding more filter options in the query
 	      // it identifies if there is any identifier and automatically adds
 	      // it to the sequalize where query object
-	      // var filterParameter =keys[i];
-	      // var filterOptions = filterParameter.split(".");
-	      // if (filterOptions.length > 1){
-	      // 	if (filterList.includes(filterOptions[0])) {
-	      //   	whereQuery[filterOptions[0]]= urlQuery[keys[i]];
-	      //   	// whereQuery[filterOptions[0]][Op[filterOptions[1]]]= urlQuery[keys[i]];
+	      var filterParameter =keys[i];
+	      var filterOptions = filterParameter.split(".");
+	      if (filterOptions.length > 1){
+	      	if (filterList.includes(filterOptions[0]) && filterOptionsList.includes(filterOptions[1])) {
+	        		whereQuery[filterOptions[0]]= {
+	        			[Op[filterOptions[1]]]: urlQuery[keys[i]]
+	        		};
 
-	      // 		console.log('filterOptions-----------',whereQuery);
-	      // 	}
-	      // }
+	      		console.log('whereQuery-----------',whereQuery, filterOptions[0]);
+	      	}
+	      }
 	    }
 	    return whereQuery;
 	},
