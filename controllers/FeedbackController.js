@@ -8,7 +8,7 @@ var Sequelize = require("sequelize");
 
 
 const baseUrl = 'http://localhost:3000/';
-const filterList = ['user_id_id', 'is_chat', 'tag', 'sub_tag', 'is_ios'];
+const filterList = ['user_id_id', 'is_chat', 'tag', 'sub_tag', 'is_ios', 'id'];
 
 var feedback = {
     //get all feedback for particular users and filters

@@ -1,19 +1,21 @@
 var config = require('config');
 const { URL, URLSearchParams } = require('url');
 const logger = require('../logger');
+var Sequelize = require("sequelize");
 
+const Op = Sequelize.Op
 
-function createQuery(urlQuery) {
-	var whereQuery = {};
-	var keys = Object.keys(urlQuery);
-	for (var i = 0; i < keys.length; i++) {
-		logger.info('inside loop', keys[i], urlQuery[keys[i]]);
+// function createQuery(urlQuery) {
+// 	var whereQuery = {};
+// 	console.log('urlQuery----------',urlQuery)
+// 	var keys = Object.keys(urlQuery);
+// 	for (var i = 0; i < keys.length; i++) {
+// 		logger.info('inside loop', keys[i], urlQuery[keys[i]]);
+// 		whereQuery[keys[i]] = urlQuery[keys[i]];
 
-		whereQuery[keys[i]] = urlQuery[keys[i]];
-
-	}
-	return whereQuery;
-}
+// 	}
+// 	return whereQuery;
+// }
 var pagination = {
 	// getPagination function is used to add pagination in API response. It takes response object,
 	//current page from query url, base url and limit
@@ -21,7 +23,7 @@ var pagination = {
 		var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
 		
 
-		var getQuery = createQuery(req.query);
+		// var getQuery = pagination.createQuery(req.query);
 		
 		const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
 
@@ -77,14 +79,28 @@ var pagination = {
 		}
 	}, 
 
+	// logger.info('inside loop', keys[i], urlQuery[keys[i]], filterList.includes(keys[i]));
 	createQuery(urlQuery, filterList) {
 	    var whereQuery = {};
 	    var keys = Object.keys(urlQuery);
 	    for (var i = 0; i < keys.length; i++) {
-	      // logger.info('inside loop', keys[i], urlQuery[keys[i]], filterList.includes(keys[i]));
 	      if (filterList.includes(keys[i])) {
 	        whereQuery[keys[i]]= urlQuery[keys[i]];
 	      }
+
+	      // this code if for adding more filter options in the query
+	      // it identifies if there is any identifier and automatically adds
+	      // it to the sequalize where query object
+	      // var filterParameter =keys[i];
+	      // var filterOptions = filterParameter.split(".");
+	      // if (filterOptions.length > 1){
+	      // 	if (filterList.includes(filterOptions[0])) {
+	      //   	whereQuery[filterOptions[0]]= urlQuery[keys[i]];
+	      //   	// whereQuery[filterOptions[0]][Op[filterOptions[1]]]= urlQuery[keys[i]];
+
+	      // 		console.log('filterOptions-----------',whereQuery);
+	      // 	}
+	      // }
 	    }
 	    return whereQuery;
 	},
