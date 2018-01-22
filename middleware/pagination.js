@@ -6,73 +6,41 @@ const filterOptionsList = ['gt','gte', 'lt', 'lte' , 'like'];
 
 const Op = Sequelize.Op
 
-// function createQuery(urlQuery) {
-// 	var whereQuery = {};
-// 	console.log('urlQuery----------',urlQuery)
-// 	var keys = Object.keys(urlQuery);
-// 	for (var i = 0; i < keys.length; i++) {
-// 		logger.info('inside loop', keys[i], urlQuery[keys[i]]);
-// 		whereQuery[keys[i]] = urlQuery[keys[i]];
-
-// 	}
-// 	return whereQuery;
-// }
 var pagination = {
-	// getPagination function is used to add pagination in API response. It takes response object,
-	//current page from query url, base url and limit
+	// This function takes the respons object and
+	// attaches to it
+	// 1. limit
+	// 2. next page
+	// 3. previous page
 	getPagination(objectResponse, req, url, limit) {
 		var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-		
-
-		// var getQuery = pagination.createQuery(req.query);
-		
 		const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
-
-		objectResponse = JSON.stringify(objectResponse);
-		objectResponse = JSON.parse(objectResponse);
 		objectResponse.limit = limit || 5;
+		var currPage = 1;
 		if (req.query.page) {
-			var currPage = parseInt(req.query.page);
-
-			var next = new URL(fullUrl);
-			var nextUrl = next;
-			nextUrl.searchParams.set('page', currPage + 1);
-
-			var prev = new URL(fullUrl);
-			var prevUrl = prev;
-			prevUrl.searchParams.set('page', currPage - 1);
-
-			objectResponse.next = currPage == totalPage ? null : nextUrl.href;
-			objectResponse.prev = currPage - 1 <= 0 ? null : prevUrl.href;
-
+			currPage = parseInt(req.query.page);
 		}
-		else {
-			var currPage = 1;
-			var next = new URL(fullUrl);
-			next.searchParams.append('page', currPage + 1);
-			var prev = new URL(fullUrl);
-			prev.searchParams.append('page', currPage - 1);
+		var next = new URL(fullUrl);
+		var nextUrl = next;
+		nextUrl.searchParams.set('page', currPage + 1);
+		var prev = new URL(fullUrl);
+		var prevUrl = prev;
+		prevUrl.searchParams.set('page', currPage - 1);
+		objectResponse.next = currPage == totalPage ? null : nextUrl.href;
+		objectResponse.prev = currPage - 1 <= 0 ? null : prevUrl.href;
 
-			
-			objectResponse.next = currPage == totalPage ? null : next.href;
-			objectResponse.prev = currPage - 1 <= 0 ? null : prev.href;
-
-		}
-		// console.log("Hello WORLD.........", objectResponse, currPage, totalPage, url,limit);
 		return objectResponse;
 	},
 
-	//get Offset function used to get page and offset value from url
+	// This function is used to calculate and offset value 
+	// based on the the page numbers and limit of the API
 	getOffset(limit, urlQuery) {
 		if (limit) {
-			// var limit = pagination.SMALL;
 			var page = 1;
 			if (urlQuery && urlQuery.page) {
-				// console.log('limit123------------', limit, urlQuery, page);
 				page = parseInt(urlQuery.page);
 			}
 			var offset = page == 1 ? 0 : ((page - 1) * limit);
-			// console.log('limit------------', limit,offset, urlQuery, page);
 			return {
 				limit: limit,
 				offset: offset
@@ -82,7 +50,9 @@ var pagination = {
 		}
 	}, 
 
-	// logger.info('inside loop', keys[i], urlQuery[keys[i]], filterList.includes(keys[i]));
+	// this function takes the url query from the client 
+	// and converts it into a sequalize query for fetching
+	// the models.
 	createQuery(urlQuery, filterList) {
 	    var whereQuery = {};
 	    var keys = Object.keys(urlQuery);
@@ -90,7 +60,6 @@ var pagination = {
 	      if (filterList.includes(keys[i])) {
 	        whereQuery[keys[i]]= urlQuery[keys[i]];
 	      }
-
 	      // this code if for adding more filter options in the query
 	      // it identifies if there is any identifier and automatically adds
 	      // it to the sequalize where query object
