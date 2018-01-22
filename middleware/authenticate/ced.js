@@ -1,5 +1,5 @@
-const User = require('../controllers/user/index');
-const db = require('../db/index');
+const User = require('../../controllers/user/index');
+const db = require('../../db/index');
 
 module.exports = function(options) {
   return function(req, res, next) {
@@ -10,17 +10,11 @@ module.exports = function(options) {
     // If the user does note exist we return a 400
     const token = req.headers.authorization;
     if (token) {
-    var parts = token.split(' ')
-    db.usersToken.findAndCountAll({
-      where: { token: parts[1] }
-    })
-      .then(userstoken => {
-      if (userstoken.rows.length == 1){
+      if (token == '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa'){
     	 next()
       }  else {
         res.status(404).send('Please contact customer care');
       }
-      });
     } else {
       res.status(400).send('Please add Authorization Headers');
     }

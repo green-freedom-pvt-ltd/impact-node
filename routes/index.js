@@ -5,7 +5,8 @@ const causedb = require('../db/cause');
 
 // include all routes for city
 routes.use('/user', require('./user'))
-routes.use('/v2', require('./v2/index'));
+routes.use('/v0/ced', require('./v0/ced'));
+routes.use('/v0/app', require('./v0/app'));
 
 // landing page route
 routes.get('/', (req, res) => {
