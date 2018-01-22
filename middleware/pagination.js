@@ -48,15 +48,17 @@ var pagination = {
 		}
 		else {
 			var currPage = 1;
-			objectResponse.next = currPage == totalPage ? null : `${fullUrl}?page=${currPage + 1}`;
-			objectResponse.prev = currPage - 1 <= 0 ? null : `${fullUrl}?page=${currPage - 1}`;
+			var next = new URL(fullUrl);
+			next.searchParams.append('page', currPage + 1);
+			var prev = new URL(fullUrl);
+			prev.searchParams.append('page', currPage - 1);
+
+			
+			objectResponse.next = currPage == totalPage ? null : next.href;
+			objectResponse.prev = currPage - 1 <= 0 ? null : prev.href;
 
 		}
-
-
 		// console.log("Hello WORLD.........", objectResponse, currPage, totalPage, url,limit);
-
-
 		return objectResponse;
 	},
 
