@@ -1,7 +1,8 @@
 require('newrelic');
 const express = require('express');
 // const db = require('./db/index');
-const authmw = require('./middleware/authenticate');
+const appAuth = require('./middleware/authenticate/app');
+const cedAuth = require('./middleware/authenticate/ced');
 const logger = require('./logger');
 var bodyParser = require('body-parser');
 const routes = require('./routes');
@@ -18,7 +19,8 @@ app.use(bodyParser.urlencoded({
 }));
 
 // this middleware is for checking authentication for all requests
-app.use('/', authmw());
+app.use('/v0/ced', cedAuth());
+app.use('/v0/app', appAuth());
 app.use('/', routes);
 
 // this is a test API
