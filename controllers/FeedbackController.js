@@ -17,17 +17,19 @@ var feedback = {
   
         var urlQuery = req.query;
         var whereQuery = pagin.createQuery(urlQuery, filterList);
-        // logger.info("whereQuery----------",urlQuery, whereQuery);
-        // logger.info("Full URL----------",req.originalUrl);
      
         return db.feedback.findAndCountAll({
             where: whereQuery,
             limit: paginconfig.SMALL,
-            offset: isNaN(urlQuery.page)?1:urlQuery.page == 1 ?0: ((urlQuery.page - 1) * paginconfig.SMALL)
-            // page == 1 ? 0 : ((page - 1) * limit);
+            offset: (urlQuery.page == 0 || (isNaN(urlQuery.page))?1:urlQuery.page == 1) ? 0: ((urlQuery.page - 1) * paginconfig.SMALL)
+         
         })
         .then(feedback => {
             res.json(pagin.getPagination(feedback, req, baseUrl, paginconfig.SMALL));
+        })
+        .catch(err =>{
+            console.log("CAME in catch");
+            throw new Error("PLease check URL");
         })
 
     },
