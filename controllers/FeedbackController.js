@@ -17,8 +17,8 @@ var feedback = {
   
         var urlQuery = req.query;
         var whereQuery = pagin.createQuery(urlQuery, filterList);
-        logger.info("whereQuery----------",urlQuery, whereQuery);
-        logger.info("Full URL----------",req.originalUrl);
+        // logger.info("whereQuery----------",urlQuery, whereQuery);
+        // logger.info("Full URL----------",req.originalUrl);
      
         return db.feedback.findAndCountAll({
             where: whereQuery,
