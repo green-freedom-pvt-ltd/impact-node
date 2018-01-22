@@ -99,8 +99,6 @@ var pagination = {
 	        		whereQuery[filterOptions[0]]= {
 	        			[Op[filterOptions[1]]]: urlQuery[keys[i]]
 	        		};
-
-	      		console.log('whereQuery-----------',whereQuery, filterOptions[0]);
 	      	}
 	      }
 	    }
