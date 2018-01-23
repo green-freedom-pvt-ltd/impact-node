@@ -23,12 +23,11 @@ var pagination = {
 		var next = new URL(fullUrl);
 		var nextUrl = next;
 		nextUrl.searchParams.set('page', currPage + 1);
-		var prev = new URL(fullUrl);
-		var prevUrl = prev;
-		prevUrl.searchParams.set('page', currPage - 1);
+		var previous = new URL(fullUrl);
+		var previousUrl = previous;
+		previousUrl.searchParams.set('page', currPage - 1);
 		objectResponse.next = currPage == totalPage ? null : nextUrl.href;
-		objectResponse.prev = currPage - 1 <= 0 ? null : prevUrl.href;
-
+		objectResponse.previous = currPage - 1 <= 0 ? null : previousUrl.href;
 		return objectResponse;
 	},
 
