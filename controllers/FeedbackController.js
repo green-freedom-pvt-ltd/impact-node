@@ -24,9 +24,8 @@ var feedback = {
             res.json(pagin.getPagination(feedback, req,paginconfig.SMALL));
         })
         .catch(err =>{
-            logger.warn("CAME in catch");
-            console.log("CAME in catch",err);
-            throw new Error("PLease check URL");
+            res.status(500).send({ error: 'Something failed! Contact the admin.' })
+            throw new Error(err);
         })
 
     },

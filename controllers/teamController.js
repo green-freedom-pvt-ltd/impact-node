@@ -24,13 +24,13 @@ var Team = {
             offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * paginconfig.SMALL)
 
         })
-            .then(team => {
-                res.json(pagin.getPagination(team, req,paginconfig.SMALL));
-            })
-            .catch(err => {
-                console.log("CAME in catch", err);
-                throw new Error("PLease check URL");
-            })
+        .then(team => {
+            res.json(pagin.getPagination(team, req,paginconfig.SMALL));
+        })
+        .catch(err =>{
+            res.status(500).send({ error: 'Something failed! Contact the admin.' })
+            throw new Error(err);
+        })
 
     }
 }

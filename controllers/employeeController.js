@@ -25,6 +25,10 @@ var Employee = {
          
             res.json(pagin.getPagination(employee, req, paginconfig.SMALL));
           })
+          .catch(err =>{
+            res.status(500).send({ error: 'Something failed! Contact the admin.' })
+            throw new Error(err);
+        })
     }
 }
 
