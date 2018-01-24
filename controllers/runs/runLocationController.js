@@ -32,19 +32,10 @@ var runLocationModel = {
                 //res.json(runlocation);
                 res.json(pagin.getPagination(runlocation, req, paginconfig.SMALL));
             })
-            .catch(err => {
-                console.log("CAME in catch");
-                throw new Error("PLease check URL");
+            .catch(err =>{
+                res.status(500).send({ error: 'Something failed! Contact the admin.' })
+                throw new Error(err);
             })
-
-
-
-
-
-
-
-
-
 
         // if (run_id) {
         //     return db.runLocation.findAndCountAll({ where: { run_id_id: run_id } }, pagin.getOffset(paginconfig.SMALL, req.query))

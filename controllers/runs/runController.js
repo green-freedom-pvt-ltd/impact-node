@@ -26,8 +26,8 @@ var runModel = {
             res.json(pagin.getPagination(runs, req, paginconfig.SMALL));
         })
         .catch(err =>{
-            console.log("CAME in catch", err);
-            throw new Error("PLease check URL");
+            res.status(500).send({ error: 'Something failed! Contact the admin.' })
+            throw new Error(err);
         })
     },
     

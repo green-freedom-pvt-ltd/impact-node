@@ -27,13 +27,13 @@ var League = {
             offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * paginconfig.SMALL)
 
         })
-            .then(league => {
-                res.json(pagin.getPagination(league, req, paginconfig.SMALL));
-            })
-            .catch(err => {
-                console.log("CAME in catch", err);
-                throw new Error("PLease check URL");
-            })
+        .then(league => {
+            res.json(pagin.getPagination(league, req, paginconfig.SMALL));
+        })
+        .catch(err =>{
+            res.status(500).send({ error: 'Something failed! Contact the admin.' })
+            throw new Error(err);
+        })
 
     }
 }
