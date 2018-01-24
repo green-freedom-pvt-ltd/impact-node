@@ -8,7 +8,7 @@ var Sequelize = require("sequelize");
 
 
 const baseUrl = 'http://localhost:3000/';
-const filterList = ['user_id_id', 'is_chat', 'tag', 'sub_tag', 'is_ios'];
+const filterList = ['user_id_id','is_chat', 'tag', 'sub_tag', 'is_ios'];
 
 var feedback = {
     //get all feedback for particular users and filters
@@ -17,7 +17,7 @@ var feedback = {
   
         var urlQuery = req.query;
         var whereQuery = pagin.createQuery(urlQuery, filterList);
-     
+     logger.info("Where query",whereQuery);
         return db.feedback.findAndCountAll({
             where: whereQuery,
             limit: paginconfig.SMALL,
@@ -30,7 +30,7 @@ var feedback = {
             res.json(pagin.getPagination(feedback, req, baseUrl, paginconfig.SMALL));
         })
         .catch(err =>{
-            console.log("CAME in catch");
+            console.log("CAME in catch",err);
             throw new Error("PLease check URL");
         })
 

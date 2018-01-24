@@ -6,7 +6,7 @@ const db = require('../../db/index');
 const env = require('../../config/settings');
 const paginconfig = env.pagination;
 
-
+const filterList = ['user_id_id', 'run_id', 'is_flag'];
 
 const baseUrl = 'http://localhost:3000/runLocation';
 
@@ -18,20 +18,48 @@ var runLocationModel = {
     getRunLocations(req, res) {
         var run_id = req.params.run_id;
         run_id = parseInt(run_id);
-        if (run_id) {
-            return db.runLocation.findAndCountAll({ where: { run_id_id: run_id } }, pagin.getOffset(paginconfig.SMALL, req.query))
-                .then(runs => {
-                    res.json(pagin.getPagination(runs, req.query, baseUrl,paginconfig.SMALL));
-                })
-        }
-        //get all runs
-        else {
-            return db.runLocation.findAndCountAll(pagin.getOffset(paginconfig.SMALL, req.query))
-                .then(runs => {
-                    
-                    res.json(pagin.getPagination(runs, req.query, baseUrl,paginconfig.SMALL));
-                })
-        }
+
+        var urlQuery = req.query;
+        var whereQuery = pagin.createQuery(urlQuery, filterList);
+
+        return db.runLocation.findAndCountAll({
+            where: whereQuery,
+            limit: paginconfig.SMALL,
+            offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * paginconfig.SMALL)
+
+        })
+            .then(runlocation => {
+                //res.json(runlocation);
+                res.json(pagin.getPagination(runlocation, req, baseUrl, paginconfig.SMALL));
+            })
+            .catch(err => {
+                console.log("CAME in catch");
+                throw new Error("PLease check URL");
+            })
+
+
+
+
+
+
+
+
+
+
+        // if (run_id) {
+        //     return db.runLocation.findAndCountAll({ where: { run_id_id: run_id } }, pagin.getOffset(paginconfig.SMALL, req.query))
+        //         .then(runs => {
+        //             res.json(pagin.getPagination(runs, req.query, baseUrl,paginconfig.SMALL));
+        //         })
+        // }
+        // //get all runs
+        // else {
+        //     return db.runLocation.findAndCountAll(pagin.getOffset(paginconfig.SMALL, req.query))
+        //         .then(runs => {
+
+        //             res.json(pagin.getPagination(runs, req.query, baseUrl,paginconfig.SMALL));
+        //         })
+        // }
 
 
     },
