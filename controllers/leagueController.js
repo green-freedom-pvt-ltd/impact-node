@@ -8,7 +8,7 @@ const env = require('../config/settings');
 const paginconfig = env.pagination;
 
 const baseUrl = 'http://localhost:3000/impactleague';
-
+const filterList = [];
 
 var League = {
 
@@ -16,26 +16,25 @@ var League = {
     getLeague(req, res) {
         var league = req.params.id;
         league = parseInt(league);
-    
-        if (league) {
-            return db.impactLeague.findAndCountAll({
-                where: {
-                    id: league
-                }
+
+
+
+        var urlQuery = req.query;
+        var whereQuery = pagin.createQuery(urlQuery, filterList);
+        logger.info("Where query", whereQuery);
+        return db.impactLeague.findAndCountAll({
+            where: whereQuery,
+            limit: paginconfig.SMALL,
+            offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * paginconfig.SMALL)
+
+        })
+            .then(league => {
+                res.json(pagin.getPagination(league, req, baseUrl, paginconfig.SMALL));
             })
-                .then(league => {
-                   
-                    res.json(pagin.getPagination(league, req.query, baseUrl, paginconfig.NORMAL));
-                })
-        }
-        //get all leagues
-        else {
-            return db.impactLeague.findAndCountAll(pagin.getOffset(paginconfig.SMALL, req.query))
-                .then(league => {
-                    // console.log("limit", pagination.NORMAL);
-                    res.json(pagin.getPagination(league, req.query, baseUrl, paginconfig.SMALL));
-                })
-        }
+            .catch(err => {
+                console.log("CAME in catch", err);
+                throw new Error("PLease check URL");
+            })
 
     }
 }
