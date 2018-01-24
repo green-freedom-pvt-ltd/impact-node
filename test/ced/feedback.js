@@ -6,7 +6,7 @@ const app = require('../../server')
 
 // this test case tests if the response code for
 // get request is 200
-test('It should response the GET method', (done) => {
+test('get user feedback from ced route', (done) => {
     request(app)
     .get('/v0/ced/userFeedback/')
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
@@ -16,7 +16,6 @@ test('It should response the GET method', (done) => {
         done();
     });
 });
-
 
 // this test case gets list of cities and
 // passes the test if the total count of 

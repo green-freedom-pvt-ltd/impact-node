@@ -13,7 +13,7 @@ const filterList = ['user_id_id', 'is_chat', 'tag', 'sub_tag', 'is_ios'];
 var feedback = {
     //get all feedback for particular users and filters
     getFeedback(req, res) {
-        logger.info('feedback----------',req.headers);
+        // logger.info('feedback----------',req.headers);
         var urlQuery = req.query;
         var whereQuery = pagin.createQuery(urlQuery, filterList);
         return db.feedback.findAndCountAll({
