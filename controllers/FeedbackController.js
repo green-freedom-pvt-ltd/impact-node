@@ -6,17 +6,14 @@ const env = require('../config/settings');
 const paginconfig = env.pagination;
 var Sequelize = require("sequelize");
 
-
-const baseUrl = 'http://localhost:3000/';
 const filterList = ['user_id_id','is_chat', 'tag', 'sub_tag', 'is_ios'];
 
 var feedback = {
     //get all feedback for particular users and filters
     getFeedback(req, res) {
-        // logger.info('feedback----------',req.headers);
+    
         var urlQuery = req.query;
         var whereQuery = pagin.createQuery(urlQuery, filterList);
-        logger.info("Where query",whereQuery);
         return db.feedback.findAndCountAll({
             where: whereQuery,
             limit: paginconfig.SMALL,
@@ -24,7 +21,7 @@ var feedback = {
             order: Sequelize.literal('id DESC')
         })
         .then(feedback => {
-            res.json(pagin.getPagination(feedback, req, baseUrl, paginconfig.SMALL));
+            res.json(pagin.getPagination(feedback, req,paginconfig.SMALL));
         })
         .catch(err =>{
             logger.warn("CAME in catch");

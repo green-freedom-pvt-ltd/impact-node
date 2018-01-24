@@ -7,7 +7,6 @@ const db = require('../db/index');
 const env = require('../config/settings');
 const paginconfig = env.pagination;
 
-const baseUrl = 'http://localhost:3000/impactleague';
 const filterList = [];
 
 var League = {
@@ -29,7 +28,7 @@ var League = {
 
         })
             .then(league => {
-                res.json(pagin.getPagination(league, req, baseUrl, paginconfig.SMALL));
+                res.json(pagin.getPagination(league, req, paginconfig.SMALL));
             })
             .catch(err => {
                 console.log("CAME in catch", err);

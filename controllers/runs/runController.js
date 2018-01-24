@@ -3,7 +3,6 @@ var config = require('config');
 const logger = require('../../logger');
 const pagin = require('../../middleware/pagination');
 const db = require('../../db/index');
-const baseUrl = 'http://localhost:3000/runs';
 const env = require('../../config/settings');
 const paginconfig = env.pagination;
 
@@ -24,7 +23,7 @@ var runModel = {
          
         })
         .then(runs => {
-            res.json(pagin.getPagination(runs, req, baseUrl, paginconfig.SMALL));
+            res.json(pagin.getPagination(runs, req, paginconfig.SMALL));
         })
         .catch(err =>{
             console.log("CAME in catch", err);

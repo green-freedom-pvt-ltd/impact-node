@@ -2,7 +2,7 @@ var config = require('config');
 const { URL, URLSearchParams } = require('url');
 const logger = require('../logger');
 var Sequelize = require("sequelize");
-const filterOptionsList = ['gt','gte', 'lt', 'lte' , 'like'];
+const filterOptionsList = ['gt', 'gte', 'lt', 'lte', 'like'];
 
 const Op = Sequelize.Op
 
@@ -14,10 +14,12 @@ var pagination = {
 	// 3. previous page
 
 
-	
-	getPagination(objectResponse, req, url, limit) {
+
+	getPagination(objectResponse, req, limit) {
 		var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
 		const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
+		objectResponse.results = objectResponse.rows;
+		delete objectResponse.rows;
 		objectResponse.limit = limit || 5;
 		var currPage = 1;
 		if (req.query.page) {
@@ -30,7 +32,7 @@ var pagination = {
 		var prevUrl = prev;
 		prevUrl.searchParams.set('page', currPage - 1);
 		objectResponse.next = currPage >= totalPage ? null : nextUrl.href;
-		objectResponse.prev = currPage - 1 <= 0 || currPage >= totalPage ? null : prevUrl.href;
+		objectResponse.previous = currPage - 1 <= 0 || currPage >= totalPage ? null : prevUrl.href;
 
 		return objectResponse;
 	},
@@ -51,32 +53,32 @@ var pagination = {
 		} else {
 			return;
 		}
-	}, 
+	},
 
 	// this function takes the url query from the client 
 	// and converts it into a sequalize query for fetching
 	// the models.
 	createQuery(urlQuery, filterList) {
-	    var whereQuery = {};
-	    var keys = Object.keys(urlQuery);
-	    for (var i = 0; i < keys.length; i++) {
-	      if (filterList.includes(keys[i])) {
-	        whereQuery[keys[i]]= urlQuery[keys[i]];
-	      }
-	      // this code if for adding more filter options in the query
-	      // it identifies if there is any identifier and automatically adds
-	      // it to the sequalize where query object
-	      var filterParameter =keys[i];
-	      var filterOptions = filterParameter.split(".");
-	      if (filterOptions.length > 1){
-	      	if (filterList.includes(filterOptions[0]) && filterOptionsList.includes(filterOptions[1])) {
-	        		whereQuery[filterOptions[0]]= {
-	        			[Op[filterOptions[1]]]: urlQuery[keys[i]]
-	        		};
-	      	}
-	      }
-	    }
-	    return whereQuery;
+		var whereQuery = {};
+		var keys = Object.keys(urlQuery);
+		for (var i = 0; i < keys.length; i++) {
+			if (filterList.includes(keys[i])) {
+				whereQuery[keys[i]] = urlQuery[keys[i]];
+			}
+			// this code if for adding more filter options in the query
+			// it identifies if there is any identifier and automatically adds
+			// it to the sequalize where query object
+			var filterParameter = keys[i];
+			var filterOptions = filterParameter.split(".");
+			if (filterOptions.length > 1) {
+				if (filterList.includes(filterOptions[0]) && filterOptionsList.includes(filterOptions[1])) {
+					whereQuery[filterOptions[0]] = {
+						[Op[filterOptions[1]]]: urlQuery[keys[i]]
+					};
+				}
+			}
+		}
+		return whereQuery;
 	},
 
 
