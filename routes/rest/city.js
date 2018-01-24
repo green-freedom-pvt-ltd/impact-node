@@ -1,5 +1,5 @@
 const routes = require('express').Router();
-const City = require('../controllers/cityController');
+const City = require('../../controllers/cityController');
 
 
 // these are the routes for city

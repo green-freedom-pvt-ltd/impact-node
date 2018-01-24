@@ -12,6 +12,9 @@ var pagination = {
 	// 1. limit
 	// 2. next page
 	// 3. previous page
+
+
+	
 	getPagination(objectResponse, req, url, limit) {
 		var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
 		const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
@@ -26,8 +29,8 @@ var pagination = {
 		var prev = new URL(fullUrl);
 		var prevUrl = prev;
 		prevUrl.searchParams.set('page', currPage - 1);
-		objectResponse.next = currPage == totalPage ? null : nextUrl.href;
-		objectResponse.prev = currPage - 1 <= 0 ? null : prevUrl.href;
+		objectResponse.next = currPage >= totalPage ? null : nextUrl.href;
+		objectResponse.prev = currPage - 1 <= 0 || currPage >= totalPage ? null : prevUrl.href;
 
 		return objectResponse;
 	},
