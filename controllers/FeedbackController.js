@@ -13,23 +13,21 @@ const filterList = ['user_id_id','is_chat', 'tag', 'sub_tag', 'is_ios'];
 var feedback = {
     //get all feedback for particular users and filters
     getFeedback(req, res) {
-
-  
+        // logger.info('feedback----------',req.headers);
         var urlQuery = req.query;
         var whereQuery = pagin.createQuery(urlQuery, filterList);
-     logger.info("Where query",whereQuery);
+        logger.info("Where query",whereQuery);
         return db.feedback.findAndCountAll({
             where: whereQuery,
             limit: paginconfig.SMALL,
             offset: (urlQuery.page == 0 || (isNaN(urlQuery.page))?1:urlQuery.page == 1) ? 0: ((urlQuery.page - 1) * paginconfig.SMALL),
             order: Sequelize.literal('id DESC')
-         
         })
         .then(feedback => {
-            console.log('feedback----------',feedback);
             res.json(pagin.getPagination(feedback, req, baseUrl, paginconfig.SMALL));
         })
         .catch(err =>{
+            logger.warn("CAME in catch");
             console.log("CAME in catch",err);
             throw new Error("PLease check URL");
         })

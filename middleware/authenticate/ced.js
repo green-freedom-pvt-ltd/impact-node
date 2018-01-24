@@ -13,7 +13,7 @@ module.exports = function(options) {
       if (token == '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa'){
     	 next()
       }  else {
-        res.status(404).send('Please contact customer care');
+        res.status(401).send('Please contact customer care');
       }
     } else {
       res.status(400).send('Please add Authorization Headers');
