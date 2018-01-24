@@ -5,7 +5,6 @@
 var config = require('config');
 const logger = require('../../logger');
 const db = require('../../db/index');
-const baseUrl = 'http://localhost:3000/user';
 const pagin = require('../../middleware/pagination');
 const env = require('../../config/settings');
 const paginconfig = env.pagination;
@@ -27,9 +26,7 @@ var userModel = {
       offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * paginconfig.SMALL)
     })
       .then(user => {
-       user= parseJSON(user.rows[0].location_array)
-       console.log("Run Location",parseJSON(user.rows[0].location_array))
-        res.json(pagin.getPagination(user, req, baseUrl, paginconfig.SMALL));
+           res.json(pagin.getPagination(user, req, paginconfig.SMALL));
       })
 
   },

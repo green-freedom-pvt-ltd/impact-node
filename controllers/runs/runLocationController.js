@@ -8,7 +8,7 @@ const paginconfig = env.pagination;
 
 const filterList = ['user_id_id', 'run_id', 'is_flag'];
 
-const baseUrl = 'http://localhost:3000/runLocation';
+
 
 
 
@@ -30,7 +30,7 @@ var runLocationModel = {
         })
             .then(runlocation => {
                 //res.json(runlocation);
-                res.json(pagin.getPagination(runlocation, req, baseUrl, paginconfig.SMALL));
+                res.json(pagin.getPagination(runlocation, req, paginconfig.SMALL));
             })
             .catch(err => {
                 console.log("CAME in catch");
