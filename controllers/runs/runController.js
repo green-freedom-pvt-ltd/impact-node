@@ -27,7 +27,7 @@ var runModel = {
             res.json(pagin.getPagination(runs, req, baseUrl, paginconfig.SMALL));
         })
         .catch(err =>{
-            console.log("CAME in catch");
+            console.log("CAME in catch", err);
             throw new Error("PLease check URL");
         })
     },

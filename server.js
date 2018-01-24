@@ -27,7 +27,7 @@ app.use('/', routes);
 app.get('/causespromise', (req, res, next) => res.send(db.getImportantData()));
 
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 app.listen(port, () => console.log('listening on port ' + port));
 
 

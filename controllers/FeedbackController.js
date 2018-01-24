@@ -21,10 +21,12 @@ var feedback = {
         return db.feedback.findAndCountAll({
             where: whereQuery,
             limit: paginconfig.SMALL,
-            offset: (urlQuery.page == 0 || (isNaN(urlQuery.page))?1:urlQuery.page == 1) ? 0: ((urlQuery.page - 1) * paginconfig.SMALL)
+            offset: (urlQuery.page == 0 || (isNaN(urlQuery.page))?1:urlQuery.page == 1) ? 0: ((urlQuery.page - 1) * paginconfig.SMALL),
+            order: Sequelize.literal('id DESC')
          
         })
         .then(feedback => {
+            console.log('feedback----------',feedback);
             res.json(pagin.getPagination(feedback, req, baseUrl, paginconfig.SMALL));
         })
         .catch(err =>{
