@@ -22,7 +22,9 @@ test('get user feedback from ced route', (done) => {
     });
 });
 
+// Happy cases
 
+// 1. check count
 // check api count greater than 200
 test('get user feedback from ced route', (done) => {
     request(app)
@@ -37,6 +39,7 @@ test('get user feedback from ced route', (done) => {
 });
 
 
+// 2. check limit
 // check api limit to be equal to 5
 test('get user feedback from ced route', (done) => {
     request(app)
@@ -50,32 +53,69 @@ test('get user feedback from ced route', (done) => {
     });
 });
 
-
-
-
-// Happy cases
-
-// Request test cases
-// 1. check count
-// 2. check limit
 // 3. check next page
+// check api next page
+test('get user feedback from ced route', (done) => {
+    request(app)
+    .get(api_path.user_feedback)
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+        var jsonResponse = JSON.parse(response.text);
+        console.log("testing for--------------------- " + jsonResponse.next);
+        expect(jsonResponse.next).not.toBeNull();
+        done();
+    });
+});
+
+
+
 // 4. check previous page
-// Feedback test cases
+// check api previous page
+test('get user feedback from ced route', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?page=2/')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+        var jsonResponse = JSON.parse(response.text);
+        console.log("testing for--------------------- " + jsonResponse.previous);
+        expect(jsonResponse.previous).not.toBeNull();
+        done();
+    });
+});
+
+
+
+
+
 // 5. check attributes datatypes
 
 // Sad cases
 
-// 1. wrong authorization
-// 2. wrong url paths
-// 3. wrong page numbers
 
-// this test case gets list of cities and
-// passes the test if the total count of 
-// cities is greater than 10
-// test('It should response the GET city', (done) => {
-//     request(app).get('/city/').then((response) => {
-//      console.log("response-----------",JSON.parse(response.text).count);
-//         expect(JSON.parse(response.text).count).toBeGreaterThan(10);
-//         done();
-//     });
-// });
+
+// check the response code to be 401
+// 1. wrong authorization
+test('get user feedback from ced route', (done) => {
+    request(app)
+    .get(api_path.user_feedback)
+    .set('Authorization', '4142134awpi113135knuoa')
+    .then((response) => {
+        expect(response.statusCode).toBe(401);
+        done();
+    });
+});
+
+
+// check the response code to be 400
+// 2. without auth headers
+test('get user feedback from ced route', (done) => {
+    request(app)
+    .get(api_path.user_feedback)
+    .then((response) => {
+        expect(response.statusCode).toBe(400);
+        done();
+    });
+});
+
+
+// 3. wrong url paths
