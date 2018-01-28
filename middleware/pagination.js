@@ -58,10 +58,7 @@ var pagination = {
 	},
 
 	validate(rowValue, value) {
-		// console.log("ROW Value", rowValue[1]);
-		// console.log("Value", value);
-		// var value123 = Object.values(value);
-		//var user_id_id = '1213'
+		
 		switch (rowValue) {
 			case 'boolean':
 				// var patt = new RegExp(/^(true|false)$/);
@@ -75,6 +72,10 @@ var pagination = {
 				// console.log("test Result for integer :  ", patt.test(value))
 				// return patt.test(value);
 				return validator.isInt(value);
+				break;
+			case 'string':
+				
+				return true;
 				break;
 
 			default:
@@ -90,64 +91,20 @@ var pagination = {
 		var keys = Object.keys(urlQuery);
 		var value = Object.values(urlQuery);
 		var validate = false;
-		console.log("urlQuery___", urlQuery);
-		console.log("Values_____", value);
-		console.log("Keys___", keys);
-		console.log("FILTERLIST___", filterList[0]);
-
-
-
-
 		for (var i = 0; i < keys.length; i++) {
-			// var board=JSON.stringify(keys[i]);
-			// board = JSON.parse(board);
-			// console.log("keeyy",board);
-			//var filtervalue = [];
-			//var datatype = [];
-			// var filterDatatype = filterList.map(value => {
-			// 	//console.log("Value123_______", value);
-			// 	let valueDivide = value.split(".");
-			// 	datatype.push(valueDivide[1]);
-			// 	filtervalue.push(valueDivide[0]);
-			// 	return value.split(".")
-			// });
-
-			// console.log("Filter data", filterDatatype);
-			// console.log("VALUES TYPE", value[i]);
-			// console.log("KEYS........", keys[i].toString());
-			//console.log("whereQuery[keys[i]] = urlQuery[keys[i]]",whereQuery[keys[i]],urlQuery[keys[i]])
+			
 			var isValidate = false;
 			if (filterList) {
-				console.log('row', filterList)
+				// This getIndex checks the availability of key from query string url and 
+				//if true then return object otherwise return -1 if key is not available in filterlist 
 				var getIndex = filterList.map(function (item) {
 					return item[0];
 				}).indexOf(keys[i])
-				console.log('index', filterList[getIndex], getIndex, value[i]);
+				//console.log('index', filterList[getIndex], getIndex, value[i]);
 
 				isValidate = getIndex === -1?false: this.validate(filterList[getIndex][1], value[i]);
-				// for (var j = 0; j < filterDatatype.length; j++) {
-				// 	var row = filterDatatype[j];
-				// 	if (row[0] === keys[i]) {
-				// 		console.log("Came in true", row);
-				// 		validate = this.validate(row,urlQuery)
-				// 		console.log("isValidate",validate);
-				// 		break;
-				// 	}
-				// }
+			
 			}
-
-
-			// if (!validate) {
-			// 	return;
-			// }
-			// if(_.contains(filterList,keys[i])){
-			// 	whereQuery[keys[i]] = urlQuery[keys[i]];
-			// }
-
-			// var even = _.find(filterList, function(value2233){
-			// 	 return _.contains(value2233) 
-			// 	});
-			// console.log("EVEN",even);
 			if (isValidate) {
 				whereQuery[keys[i]] = urlQuery[keys[i]];
 			}
