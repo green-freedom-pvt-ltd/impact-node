@@ -22,6 +22,7 @@ var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passwor
   host: dbConfig.host,
   dialect: sequilizeConfig.dialect,
   pool: sequilizeConfig.pool,
+  //logging: false
 });
 
 
