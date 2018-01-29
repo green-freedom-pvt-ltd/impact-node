@@ -2,3 +2,4 @@
 **/log
 package-lock.json
 newrelic_agent.log
+/vscode

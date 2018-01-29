@@ -3,6 +3,8 @@ const { URL, URLSearchParams } = require('url');
 const logger = require('../logger');
 var Sequelize = require("sequelize");
 const filterOptionsList = ['gt', 'gte', 'lt', 'lte', 'like'];
+var validator = require('validator');
+var _ = require('underscore');
 
 const Op = Sequelize.Op
 
@@ -55,14 +57,55 @@ var pagination = {
 		}
 	},
 
+	validate(rowValue, value) {
+		
+		switch (rowValue) {
+			case 'boolean':
+				// var patt = new RegExp(/^(true|false)$/);
+				// console.log("test Result for bool :  ", patt.test(value))
+
+				//return patt.test(value.is_chat);
+				return validator.isBoolean(value);
+
+			case 'integer':
+				// var patt = new RegExp(/^\d*$/);
+				// console.log("test Result for integer :  ", patt.test(value))
+				// return patt.test(value);
+				return validator.isInt(value);
+				break;
+			case 'string':
+				
+				return true;
+				break;
+
+			default:
+				break;
+		}
+	},
+
 	// this function takes the url query from the client 
 	// and converts it into a sequalize query for fetching
 	// the models.
 	createQuery(urlQuery, filterList) {
 		var whereQuery = {};
 		var keys = Object.keys(urlQuery);
+		var value = Object.values(urlQuery);
+		var validate = false;
 		for (var i = 0; i < keys.length; i++) {
-			if (filterList.includes(keys[i])) {
+			
+			var isValidate = false;
+			if (filterList) {
+				// This getIndex checks the availability of key from query string url and 
+				//if true then return object otherwise return -1 if key is not available in filterlist 
+				var getIndex = filterList.map(function (item) {
+					return item[0];
+				}).indexOf(keys[i])
+				//console.log('index', filterList[getIndex], getIndex, value[i]);
+
+				isValidate = getIndex === -1?false: this.validate(filterList[getIndex][1], value[i]);
+			
+			}
+			if (isValidate) {
 				whereQuery[keys[i]] = urlQuery[keys[i]];
 			}
 			// this code if for adding more filter options in the query
@@ -78,6 +121,7 @@ var pagination = {
 				}
 			}
 		}
+		console.log("WHERe", whereQuery);
 		return whereQuery;
 	},
 

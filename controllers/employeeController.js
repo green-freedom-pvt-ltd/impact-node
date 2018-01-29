@@ -6,7 +6,7 @@ const pagin = require('../middleware/pagination');
 const db = require('../db/index');
 const env = require('../config/settings');
 const paginconfig = env.pagination;
-const filterList = ['id'];
+const filterList = ['id','integer'];
 
 
 var Employee = {

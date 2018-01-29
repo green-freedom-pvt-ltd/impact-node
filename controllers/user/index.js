@@ -8,7 +8,12 @@ const db = require('../../db/index');
 const pagin = require('../../middleware/pagination');
 const env = require('../../config/settings');
 const paginconfig = env.pagination;
-const filterList = ['user_id', 'first_name', 'last_name','email'];
+const filterList = [
+  ['user_id', 'integer'],
+  ['first_name','string'],
+  ['last_name','string'],
+  ['email','string']
+];
 
 
 
@@ -26,7 +31,7 @@ var userModel = {
       offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * paginconfig.SMALL)
     })
       .then(user => {
-           res.json(pagin.getPagination(user, req, paginconfig.SMALL));
+        res.json(pagin.getPagination(user, req, paginconfig.SMALL));
       })
 
   },

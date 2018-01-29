@@ -6,8 +6,12 @@ const db = require('../../db/index');
 const env = require('../../config/settings');
 const paginconfig = env.pagination;
 
-const filterList = ['user_id_id', 'run_id', 'is_flag'];
 
+const filterList = [
+    ['user_id_id', 'integer'],
+    ['run_id', 'integer'],
+    ['is_flag', 'boolean']
+];
 
 
 var runModel = {
