@@ -20,7 +20,15 @@ var feedback = {
     getFeedback(req, res) {
 
         var urlQuery = req.query;
-        var whereQuery = pagin.createQuery(urlQuery, filterList);
+        try {
+            var whereQuery = pagin.createQuery(urlQuery, filterList);
+        } catch (err) {
+           // console.log("ERROR...",err);
+          
+            res.status(400).send(err);
+            throw new Error(err);
+        }
+        
         return db.feedback.findAndCountAll({
             where: whereQuery,
             limit: paginconfig.SMALL,
