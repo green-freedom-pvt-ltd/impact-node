@@ -105,9 +105,18 @@ var pagination = {
 				isValidate = getIndex === -1?false: this.validate(filterList[getIndex][1], value[i]);
 			
 			}
-			if (isValidate) {
-				whereQuery[keys[i]] = urlQuery[keys[i]];
-			}
+			
+				if (isValidate) {
+					whereQuery[keys[i]] = urlQuery[keys[i]];
+				}
+				else{
+					var error = "Please send correct information of "+ keys[i];
+					throw error;
+				}
+			
+				
+			
+			
 			// this code if for adding more filter options in the query
 			// it identifies if there is any identifier and automatically adds
 			// it to the sequalize where query object
