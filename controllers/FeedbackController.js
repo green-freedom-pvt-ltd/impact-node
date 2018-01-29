@@ -23,9 +23,7 @@ var feedback = {
         try {
             var whereQuery = pagin.createQuery(urlQuery, filterList);
         } catch (err) {
-           // console.log("ERROR...",err);
-          
-            res.status(400).send(err);
+            res.send({Error:err},400);
             throw new Error(err);
         }
         
