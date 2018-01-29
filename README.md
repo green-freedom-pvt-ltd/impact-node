@@ -38,28 +38,28 @@ Base url
 
     http://localhost:3000/
 
-API Versions
-
-
-    http://localhost:3000/v0/
-
 Platform
 
 
-    http://localhost:3000/v0/app/
+    http://localhost:3000/app/
+
+API Versions
+
+
+    http://localhost:3000/app/v0/
 
 
 Model
 
 
-    http://localhost:3000/v0/app/runs/
+    http://localhost:3000/app/v0/runs/
 
 ### Authentication
 The authentication is handled inside a middleware. 
 There can are separate authentication for every platform based on its usage.
 The authorization is provided in the headers 
 
-    GET /v0/app/runs/ HTTP/1.1
+    GET /app/v0/runs/ HTTP/1.1
     Host: localhost:3000
     Content-Type: application/x-www-form-urlencoded
     Authorization: Bearer 6719a46895a4s26d24f27e38d9d1e8633125454e
@@ -71,21 +71,21 @@ The authorization is provided in the headers
 For getting a run 
 
 
-    http://localhost:3000/v0/ced/runs/
+    http://localhost:3000/ced/v0/runs/
 
 For getting a run of a particular user 
 
 
-    http://localhost:3000/v0/ced/runs/?user_id_id=79
+    http://localhost:3000/ced/v0/runs/?user_id_id=79
 
 
 For getting flagged run of a particular user 
 
 
-    http://localhost:3000/v0/ced/runs/?user_id_id=79&is_flag=true
+    http://localhost:3000/ced/v0/runs/?user_id_id=79&is_flag=true
 
 
 For getting flagged run of first 100 users
 
 
-    http://localhost:3000/v0/ced/runs/?user_id_id.lte=100&is_flag=true
+    http://localhost:3000/ced/v0/runs/?user_id_id.lte=100&is_flag=true
