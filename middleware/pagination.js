@@ -83,60 +83,6 @@ var pagination = {
 		}
 	},
 
-	validateURL(urlQuery, filterList , parameterTypes) {
-
-		var validate = false;
-		var whereQuery = {};
-		var keys = Object.keys(urlQuery);
-		for (var i = 0; i < keys.length; i++) {
-			// this code if for adding more filter options in the query
-			// it identifies if there is any identifier and automatically adds
-			// it to the sequalize where query object
-			var filterParameter = keys[i];
-			var filterOptions = filterParameter.split(".");
-			if (filterOptions.length > 1) {
-				if (filterList.includes(filterOptions[0]) && filterOptionsList.includes(filterOptions[1])) {
-					// This part checks if the value for the filter parameter given in the url 
-					// is of the datatype provided in the database 
-					// console.log('parameterTypes-----------',parameterTypes[filterOptions[0]],urlQuery[keys[i]]);
-					validate = this.validate(parameterTypes[filterOptions[0]],urlQuery[keys[i]]);
-					if(validate){
-						// whereQuery[filterOptions[0]] = urlQuery[keys[i]];
-						whereQuery[filterOptions[0]] = {
-							[Op[filterOptions[1]]]: urlQuery[keys[i]]
-						};
-					} else {
-						// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
-						throw "Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[filterOptions[0]];
-					}
-				} else {
-				// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
-					throw "Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]];
-				}
-			} else {
-				// This part checks if the given filter parameter exists in filter list of the model
-				// If it is not included then it throws an exception
-				if (filterList.includes(keys[i])) {
-					// This part checks if the value for the filter parameter given in the url 
-					// is of the datatype provided in the database 
-					// console.log('parameterTypes-----------',parameterTypes[keys[i]],urlQuery[keys[i]]);
-					validate = this.validate(parameterTypes[keys[i]],urlQuery[keys[i]]);
-					if(validate){
-						whereQuery[keys[i]] = urlQuery[keys[i]];
-					} else {
-						// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
-						throw "Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]];
-					}
-				} else {
-					// console.log("Please check Filter Parameters");
-					if (keys[i] == 'page') { continue;}
-	                throw "Filter Parameter " + keys[i] +" does not exist";
-				}
-			}
-		}
-		return whereQuery;
-	},
-
 	// this function takes the url query from the client 
 	// and converts it into a sequalize query for fetching
 	// the models.
@@ -163,11 +109,11 @@ var pagination = {
 						};
 					} else {
 						// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
-						throw "Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[filterOptions[0]];
+						throw "Value of the atrribute " + filterOptions[0] +" is supposed to be " + parameterTypes[filterOptions[0]];
 					}
 				} else {
 				// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
-					throw "Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]];
+					throw "Filter Parameter " + filterOptions[0]  + " along with filter option " + filterOptions[1] +" does not exist";
 				}
 			} else {
 				// This part checks if the given filter parameter exists in filter list of the model
