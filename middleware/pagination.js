@@ -141,57 +141,56 @@ var pagination = {
 	// and converts it into a sequalize query for fetching
 	// the models.
 	createQuery(urlQuery, filterList, parameterTypes) {
-		var newWhereQuery = this.validateURL(urlQuery, filterList, parameterTypes);
-		// console.log('newWhereQuery--------------',newWhereQuery);
-		// var whereQuery = {};
-		// var keys = Object.keys(urlQuery);
-		// var value = Object.values(urlQuery);
-		// // console.log('keys-----------', urlQuery, keys, value);
-		// var validate = false;
-
-		// for (var i = 0; i < keys.length; i++) {
-			
-
-		// 	var isValidate = false;
-		// 	if (filterList) {
-		// 		// This getIndex checks the availability of key from query string url and 
-		// 		//if true then return object otherwise return -1 if key is not available in filterlist 
-		// 		var getIndex = filterList.map(function (item) {
-		// 			return item[0];
-		// 		}).indexOf(keys[i])
-		// 		//console.log('index', filterList[getIndex], getIndex, value[i]);
-
-		// 		isValidate = getIndex === -1?false: this.validate(filterList[getIndex][1], value[i]);
-			
-		// 	}
-			
-		// 	if (isValidate) {
-		// 		whereQuery[keys[i]] = urlQuery[keys[i]];
-		// 	}
-
-		// 	else{
-		// 		var error = "Please send correct information of "+ keys[i];
-		// 		throw error;
-		// 	}
-		
-				
-			
-			
-		// 	// this code if for adding more filter options in the query
-		// 	// it identifies if there is any identifier and automatically adds
-		// 	// it to the sequalize where query object
-		// 	var filterParameter = keys[i];
-		// 	var filterOptions = filterParameter.split(".");
-		// 	if (filterOptions.length > 1) {
-		// 		if (filterList.includes(filterOptions[0]) && filterOptionsList.includes(filterOptions[1])) {
-		// 			whereQuery[filterOptions[0]] = {
-		// 				[Op[filterOptions[1]]]: urlQuery[keys[i]]
-		// 			};
-		// 		}
-		// 	}
-		// }
-		// console.log("WHERe", whereQuery);
-		return newWhereQuery;
+		var validate = false;
+		var whereQuery = {};
+		var keys = Object.keys(urlQuery);
+		for (var i = 0; i < keys.length; i++) {
+			// this code if for adding more filter options in the query
+			// it identifies if there is any identifier and automatically adds
+			// it to the sequalize where query object
+			var filterParameter = keys[i];
+			var filterOptions = filterParameter.split(".");
+			if (filterOptions.length > 1) {
+				if (filterList.includes(filterOptions[0]) && filterOptionsList.includes(filterOptions[1])) {
+					// This part checks if the value for the filter parameter given in the url 
+					// is of the datatype provided in the database 
+					// console.log('parameterTypes-----------',parameterTypes[filterOptions[0]],urlQuery[keys[i]]);
+					validate = this.validate(parameterTypes[filterOptions[0]],urlQuery[keys[i]]);
+					if(validate){
+						// whereQuery[filterOptions[0]] = urlQuery[keys[i]];
+						whereQuery[filterOptions[0]] = {
+							[Op[filterOptions[1]]]: urlQuery[keys[i]]
+						};
+					} else {
+						// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
+						throw "Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[filterOptions[0]];
+					}
+				} else {
+				// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
+					throw "Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]];
+				}
+			} else {
+				// This part checks if the given filter parameter exists in filter list of the model
+				// If it is not included then it throws an exception
+				if (filterList.includes(keys[i])) {
+					// This part checks if the value for the filter parameter given in the url 
+					// is of the datatype provided in the database 
+					// console.log('parameterTypes-----------',parameterTypes[keys[i]],urlQuery[keys[i]]);
+					validate = this.validate(parameterTypes[keys[i]],urlQuery[keys[i]]);
+					if(validate){
+						whereQuery[keys[i]] = urlQuery[keys[i]];
+					} else {
+						// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
+						throw "Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]];
+					}
+				} else {
+					// console.log("Please check Filter Parameters");
+					if (keys[i] == 'page') { continue;}
+	                throw "Filter Parameter " + keys[i] +" does not exist";
+				}
+			}
+		}
+		return whereQuery;
 	},
 
 
