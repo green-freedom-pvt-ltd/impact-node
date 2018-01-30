@@ -25,7 +25,6 @@ const parameterTypes = {
 var feedback = {
     //get all feedback for particular users and filters
     getFeedback(req, res) {
-
         var urlQuery = req.query;
         try {
             var whereQuery = pagin.createQuery(urlQuery, filterList, parameterTypes);
@@ -34,7 +33,6 @@ var feedback = {
             res.status(400).send({error:err})
             throw err;
         }
-        
         return db.feedback.findAndCountAll({
             where: whereQuery,
             limit: paginconfig.SMALL,

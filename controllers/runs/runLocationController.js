@@ -25,25 +25,18 @@ var runLocationModel = {
         var urlQuery = req.query;
         try {
             var whereQuery = pagin.createQuery(urlQuery, filterList, parameterTypes);
-            // var whereQuery = pagin.createQuery(urlQuery, filterList, parameterTypes);
         } catch (err) {
-            // res.send({Error:err},400);
             res.status(400).send({error:err})
             throw err;
         }
-        
-
-        // console.log('whereQuery-----------------', whereQuery);
         return db.runLocation.findAndCountAll({
             where: whereQuery,
             limit: paginconfig.SMALL,
             offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * paginconfig.SMALL)
         })
         .then(runlocation => {
-            // res.json(runlocation);
-            // console.log('runlocation-----------------', JSON.parse(runlocation.rows[0].location_array));
+            // This code parses the runlocation array list from string to array object 
             var parsedLocations = _.map(runlocation.rows, function(row){ 
-                // console.log('row--------------',row.location_array);
                 row.location_array = JSON.parse(row.location_array);
                 return row; 
             });

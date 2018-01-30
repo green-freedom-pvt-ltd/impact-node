@@ -61,23 +61,13 @@ var pagination = {
 		
 		switch (dataType) {
 			case 'boolean':
-				// var patt = new RegExp(/^(true|false)$/);
-				// console.log("test Result for bool :  ", patt.test(value))
-
-				//return patt.test(value.is_chat);
 				return validator.isBoolean(value);
-
 			case 'integer':
-				// var patt = new RegExp(/^\d*$/);
-				// console.log("test Result for integer :  ", patt.test(value))
-				// return patt.test(value);
 				return validator.isInt(value);
 				break;
 			case 'string':
-				
 				return true;
 				break;
-
 			default:
 				break;
 		}
