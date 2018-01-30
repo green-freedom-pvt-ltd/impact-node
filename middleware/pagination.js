@@ -87,7 +87,7 @@ var pagination = {
 	// and converts it into a sequalize query for fetching
 	// the models.
 	createQuery(urlQuery, filterList, parameterTypes) {
-		var validate = false;
+		var isValidated = false;
 		var whereQuery = {};
 		var keys = Object.keys(urlQuery);
 		for (var i = 0; i < keys.length; i++) {
@@ -101,8 +101,8 @@ var pagination = {
 					// This part checks if the value for the filter parameter given in the url 
 					// is of the datatype provided in the database 
 					// console.log('parameterTypes-----------',parameterTypes[filterOptions[0]],urlQuery[keys[i]]);
-					validate = this.validate(parameterTypes[filterOptions[0]],urlQuery[keys[i]]);
-					if(validate){
+					isValidated = this.validate(parameterTypes[filterOptions[0]],urlQuery[keys[i]]);
+					if(isValidated){
 						// whereQuery[filterOptions[0]] = urlQuery[keys[i]];
 						whereQuery[filterOptions[0]] = {
 							[Op[filterOptions[1]]]: urlQuery[keys[i]]
@@ -122,8 +122,8 @@ var pagination = {
 					// This part checks if the value for the filter parameter given in the url 
 					// is of the datatype provided in the database 
 					// console.log('parameterTypes-----------',parameterTypes[keys[i]],urlQuery[keys[i]]);
-					validate = this.validate(parameterTypes[keys[i]],urlQuery[keys[i]]);
-					if(validate){
+					isValidated = this.validate(parameterTypes[keys[i]],urlQuery[keys[i]]);
+					if(isValidated){
 						whereQuery[keys[i]] = urlQuery[keys[i]];
 					} else {
 						// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
