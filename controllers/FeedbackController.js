@@ -7,13 +7,20 @@ const paginconfig = env.pagination;
 var Sequelize = require("sequelize");
 
 const filterList = [
-    ['user_id_id', 'integer'],
-    ['is_chat', 'boolean'],
-    ['tag', 'string'],
-    ['sub_tag', 'string'],
-    ['is_ios', 'string']
+    'user_id_id',
+    'is_chat',
+    'tag',
+    'sub_tag',
+    'is_ios'
 ];
 
+const parameterTypes = {
+    user_id_id: 'integer',
+    is_chat: 'boolean',
+    tag: 'string',
+    sub_tag: 'string',
+    is_ios: 'string'
+};
 
 var feedback = {
     //get all feedback for particular users and filters
@@ -21,10 +28,11 @@ var feedback = {
 
         var urlQuery = req.query;
         try {
-            var whereQuery = pagin.createQuery(urlQuery, filterList);
+            var whereQuery = pagin.createQuery(urlQuery, filterList, parameterTypes);
         } catch (err) {
-            res.send({Error:err},400);
-            throw new Error(err);
+            // res.send({Error:err},400);
+            res.status(400).send({Error:err})
+            throw err;
         }
         
         return db.feedback.findAndCountAll({
