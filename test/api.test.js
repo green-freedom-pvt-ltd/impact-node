@@ -3,8 +3,8 @@
 const request = require('supertest');
 const app = require('../server')
 var api_path={
-    user_feedback : '/v0/ced/userFeedback/',
-    runs : '/v0/ced/runs/',
+    user_feedback : '/ced/v0/userFeedback/',
+    runs : '/ced/v0/runs/',
 }
 
 // this test case tests if the response code for
@@ -84,10 +84,40 @@ test('get user feedback from ced route', (done) => {
 });
 
 
+// 5. check api response on valid fields and valid values
+
+test('check api response on valid field e.g. user_id_id', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?user_id_id=1213')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+         console.log("Testing...",response.statusCode);
+         expect(response.statusCode).toBe(200);
+        done();
+    });
+});
+
+// 6. check api response on valid fields
+
+test('check api response on two valid field e.g. user_id and is_chat', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?user_id_id=1213&is_chat=true')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+         console.log("Testing for multiple fields...",response.statusCode);
+
+         var jsonResponse = JSON.parse(response.text);
+         console.log("Viewing Json response--------------------- " + jsonResponse.results);
+         expect(response.statusCode).toBe(200);
+        done();
+    });
+});
 
 
 
-// 5. check attributes datatypes
+
+
+
 
 // Sad cases
 
@@ -118,4 +148,18 @@ test('get user feedback from ced route', (done) => {
 });
 
 
-// 3. wrong url paths
+// 3. check api response on valid fields and invalid values 
+
+test('check api response with invalid data e.g. user_id_id=abcd', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?user_id_id=abcd')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+         console.log("Testing with invalid data...",response.statusCode);
+         expect(response.statusCode).toBe(400);
+        done();
+    });
+});
+
+
+

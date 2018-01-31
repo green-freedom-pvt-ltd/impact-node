@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 // this middleware is for checking authentication for all requests
-app.use('/v0/ced', cedAuth());
+app.use('/ced/v0', cedAuth());
 app.use('/v0/app', appAuth());
 app.use('/', routes);
 
@@ -28,7 +28,7 @@ app.get('/causespromise', (req, res, next) => res.send(db.getImportantData()));
 
 
 const port = process.env.PORT || 8000;
-app.listen(port, () => console.log('listening on port ' + port));
+app.listen((port), () => console.log('listening on port ' + port));
 
 
 module.exports = app
