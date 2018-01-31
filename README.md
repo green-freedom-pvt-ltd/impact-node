@@ -17,6 +17,10 @@ This project consists a Proof of Concept for a scalable backend node application
 
     npm test
 
+####  For starting the server 
+
+    node server.js
+
  
 ### **Tech Stack**
 - Node
