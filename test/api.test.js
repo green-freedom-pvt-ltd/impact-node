@@ -11,6 +11,10 @@ var api_path={
 // get request is 200
 
 
+
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++     REQUEST 
 // check the response code to be 200
 test('check the response code to be 200', (done) => {
     request(app)
@@ -22,9 +26,9 @@ test('check the response code to be 200', (done) => {
     });
 });
 
-// Happy cases
+// ================================================ HAPPY CASES ================================================
 
-// 1. check count
+// --------------------------------------------------------------------------------- check count
 // check api count greater than 200
 test('check api count greater than 200', (done) => {
     request(app)
@@ -38,8 +42,7 @@ test('check api count greater than 200', (done) => {
     });
 });
 
-
-// 2. check limit
+// --------------------------------------------------------------------------------- check limit
 // check api limit to be equal to 5
 test('check api limit to be equal to 5', (done) => {
     request(app)
@@ -53,7 +56,7 @@ test('check api limit to be equal to 5', (done) => {
     });
 });
 
-// 3. check next page
+// --------------------------------------------------------------------------------- check next page
 // check api next page
 test('check api next page', (done) => {
     request(app)
@@ -68,8 +71,7 @@ test('check api next page', (done) => {
 });
 
 
-
-// 4. check previous page
+// --------------------------------------------------------------------------------- check previous page
 // check api previous page
 test('check api previous page', (done) => {
     request(app)
@@ -83,9 +85,43 @@ test('check api previous page', (done) => {
     });
 });
 
+// ================================================ SAD CASES ================================================
 
+
+// --------------------------------------------------------------------------------- check wrong auth
+// check the response code to be 401
+test('check the response code to be 401', (done) => {
+    request(app)
+    .get(api_path.user_feedback)
+    .set('Authorization', '4142134awpi113135knuoa')
+    .then((response) => {
+        expect(response.statusCode).toBe(401);
+        done();
+    });
+});
+
+// --------------------------------------------------------------------------------- check without auth headers
+// check the response code to be 400
+test('check the response code to be 400', (done) => {
+    request(app)
+    .get(api_path.user_feedback)
+    .then((response) => {
+        expect(response.statusCode).toBe(400);
+        done();
+    });
+});
+
+
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++     USER FEEDBACK  
+
+
+// ================================================ HAPPY CASES ================================================
+
+
+// --------------------------------------------------------------------------------- check filter parameters
 // 5. check api response on valid fields and valid values
-
 test('check api response on valid field e.g. user_id_id', (done) => {
     request(app)
     .get(api_path.user_feedback+'?user_id_id=1213')
@@ -97,8 +133,9 @@ test('check api response on valid field e.g. user_id_id', (done) => {
     });
 });
 
-// 6. check api response on valid fields
 
+// --------------------------------------------------------------------------------- check filter parameters
+// 6. check api response on valid fields
 test('check api response on two valid field e.g. user_id and is_chat', (done) => {
     request(app)
     .get(api_path.user_feedback+'?user_id_id=1213&is_chat=true')
@@ -113,42 +150,11 @@ test('check api response on two valid field e.g. user_id and is_chat', (done) =>
 });
 
 
+// ================================================ SAD CASES ================================================
 
 
-
-
-
-// Sad cases
-
-
-
-// check the response code to be 401
-// 1. wrong authorization
-test('check the response code to be 401', (done) => {
-    request(app)
-    .get(api_path.user_feedback)
-    .set('Authorization', '4142134awpi113135knuoa')
-    .then((response) => {
-        expect(response.statusCode).toBe(401);
-        done();
-    });
-});
-
-
-// check the response code to be 400
-// 2. without auth headers
-test('check the response code to be 400', (done) => {
-    request(app)
-    .get(api_path.user_feedback)
-    .then((response) => {
-        expect(response.statusCode).toBe(400);
-        done();
-    });
-});
-
-
+// --------------------------------------------------------------------------------- check wrong filter values
 // 3. check api response on valid fields and invalid values 
-
 test('check api response with invalid data e.g. user_id_id=abcd', (done) => {
     request(app)
     .get(api_path.user_feedback+'?user_id_id=abcd')
@@ -160,8 +166,9 @@ test('check api response with invalid data e.g. user_id_id=abcd', (done) => {
     });
 });
 
-// 4. check api response on valid fields and invalid values 
 
+// --------------------------------------------------------------------------------- check wrong filter values
+// 4. check api response on valid fields and invalid values 
 test('check api response with invalid data e.g. user_id_id=abcd&is_chat=true', (done) => {
     request(app)
     .get(api_path.user_feedback+'?user_id_id=abcd&is_chat=true')
