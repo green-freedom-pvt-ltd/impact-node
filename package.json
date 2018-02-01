@@ -7,6 +7,9 @@
     "test": "jest",
     "start:dev": "nodemon server.js"
   },
+  "jest": {
+    "verbose": true
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

@@ -12,9 +12,9 @@ var api_path={
 
 
 // check the response code to be 200
-test('get user feedback from ced route', (done) => {
+test('check the response code to be 200', (done) => {
     request(app)
-    .get(api_path.user_feedback)
+    .get(api_path.runs)
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
         expect(response.statusCode).toBe(200);
@@ -26,7 +26,7 @@ test('get user feedback from ced route', (done) => {
 
 // 1. check count
 // check api count greater than 200
-test('get user feedback from ced route', (done) => {
+test('check api count greater than 200', (done) => {
     request(app)
     .get(api_path.user_feedback)
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
@@ -41,13 +41,13 @@ test('get user feedback from ced route', (done) => {
 
 // 2. check limit
 // check api limit to be equal to 5
-test('get user feedback from ced route', (done) => {
+test('check api limit to be equal to 5', (done) => {
     request(app)
     .get(api_path.user_feedback)
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
         var jsonResponse = JSON.parse(response.text);
-        console.log("testing for--------------------- " + jsonResponse.limit);
+        // console.log("testing for--------------------- " + jsonResponse.limit);
         expect(jsonResponse.limit).toEqual(5);
         done();
     });
@@ -55,13 +55,13 @@ test('get user feedback from ced route', (done) => {
 
 // 3. check next page
 // check api next page
-test('get user feedback from ced route', (done) => {
+test('check api next page', (done) => {
     request(app)
     .get(api_path.user_feedback)
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
         var jsonResponse = JSON.parse(response.text);
-        console.log("testing for--------------------- " + jsonResponse.next);
+        // console.log("testing for--------------------- " + jsonResponse.next);
         expect(jsonResponse.next).not.toBeNull();
         done();
     });
@@ -71,13 +71,13 @@ test('get user feedback from ced route', (done) => {
 
 // 4. check previous page
 // check api previous page
-test('get user feedback from ced route', (done) => {
+test('check api previous page', (done) => {
     request(app)
     .get(api_path.user_feedback+'?page=2/')
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
         var jsonResponse = JSON.parse(response.text);
-        console.log("testing for--------------------- " + jsonResponse.previous);
+        // console.log("testing for--------------------- " + jsonResponse.previous);
         expect(jsonResponse.previous).not.toBeNull();
         done();
     });
@@ -91,7 +91,7 @@ test('check api response on valid field e.g. user_id_id', (done) => {
     .get(api_path.user_feedback+'?user_id_id=1213')
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
-         console.log("Testing...",response.statusCode);
+         // console.log("Testing...",response.statusCode);
          expect(response.statusCode).toBe(200);
         done();
     });
@@ -104,10 +104,9 @@ test('check api response on two valid field e.g. user_id and is_chat', (done) =>
     .get(api_path.user_feedback+'?user_id_id=1213&is_chat=true')
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
-         console.log("Testing for multiple fields...",response.statusCode);
-
+         // console.log("Testing for multiple fields...",response.statusCode);
          var jsonResponse = JSON.parse(response.text);
-         console.log("Viewing Json response--------------------- " + jsonResponse.results);
+         // // console.log("Viewing Json response--------------------- " + jsonResponse.results);
          expect(response.statusCode).toBe(200);
         done();
     });
@@ -125,7 +124,7 @@ test('check api response on two valid field e.g. user_id and is_chat', (done) =>
 
 // check the response code to be 401
 // 1. wrong authorization
-test('get user feedback from ced route', (done) => {
+test('check the response code to be 401', (done) => {
     request(app)
     .get(api_path.user_feedback)
     .set('Authorization', '4142134awpi113135knuoa')
@@ -138,7 +137,7 @@ test('get user feedback from ced route', (done) => {
 
 // check the response code to be 400
 // 2. without auth headers
-test('get user feedback from ced route', (done) => {
+test('check the response code to be 400', (done) => {
     request(app)
     .get(api_path.user_feedback)
     .then((response) => {
@@ -155,7 +154,7 @@ test('check api response with invalid data e.g. user_id_id=abcd', (done) => {
     .get(api_path.user_feedback+'?user_id_id=abcd')
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
-         console.log("Testing with invalid data...",response.statusCode);
+         // // console.log("Testing with invalid data...",response.statusCode);
          expect(response.statusCode).toBe(400);
         done();
     });
@@ -168,7 +167,7 @@ test('check api response with invalid data e.g. user_id_id=abcd&is_chat=true', (
     .get(api_path.user_feedback+'?user_id_id=abcd&is_chat=true')
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
-         console.log("Testing with invalid data...",response.error.text);
+         // console.log("Testing with invalid data...",response.error.text);
        
          expect(JSON.parse(response.error.text)).toEqual({"error":"Value of the atrribute user_id_id is supposed to be integer"});
         done();
