@@ -161,5 +161,19 @@ test('check api response with invalid data e.g. user_id_id=abcd', (done) => {
     });
 });
 
+// 4. check api response on valid fields and invalid values 
+
+test('check api response with invalid data e.g. user_id_id=abcd&is_chat=true', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?user_id_id=abcd&is_chat=true')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+         console.log("Testing with invalid data...",response.error.text);
+       
+         expect(JSON.parse(response.error.text)).toEqual({"error":"Value of the atrribute user_id_id is supposed to be integer"});
+        done();
+    });
+});
+
 
 
