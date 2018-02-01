@@ -28,7 +28,7 @@ app.get('/causespromise', (req, res, next) => res.send(db.getImportantData()));
 
 
 const port = process.env.PORT || 8000;
-app.listen((port), () => console.log('listening on port ' + port));
+app.listen(port, () => console.log('listening on port ' + port));
 
 
 module.exports = app
