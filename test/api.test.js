@@ -6,25 +6,38 @@ var api_path={
     user_feedback : '/ced/v0/userFeedback/',
     runs : '/ced/v0/runs/',
 }
-
-// this test case tests if the response code for
-// get request is 200
-
-
-
+var _ = require('underscore');
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++     REQUEST 
 // check the response code to be 200
-test('check the response code to be 200', (done) => {
-    request(app)
-    .get(api_path.runs)
-    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
-    .then((response) => {
-        expect(response.statusCode).toBe(200);
-        done();
+
+var api_keys = _.keys(api_path);
+
+for (var i = api_keys.length - 1; i >= 0; i--) {
+    console.log('api_path----------',api_path[api_keys[i]]);
+    var api_path_location = api_path[api_keys[i]];
+    test('check the response code to be 200 for ' + api_keys[i], (done) => {
+        request(app)
+        .get(api_path_location)
+        .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+        .then((response) => {
+            expect(response.statusCode).toBe(200);
+            done();
+        });
     });
-});
+}
+
+
+// test('check the response code to be 200', (done) => {
+//     request(app)
+//     .get(api_path.runs)
+//     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+//     .then((response) => {
+//         expect(response.statusCode).toBe(200);
+//         done();
+//     });
+// });
 
 // ================================================ HAPPY CASES ================================================
 
@@ -36,7 +49,7 @@ test('check api count greater than 200', (done) => {
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
         var jsonResponse = JSON.parse(response.text);
-        console.log("testing for--------------------- " + jsonResponse.count);
+        // console.log("testing for--------------------- " + jsonResponse.count);
         expect(jsonResponse.count).toBeGreaterThan(200);
         done();
     });
@@ -112,13 +125,15 @@ test('check the response code to be 400', (done) => {
 });
 
 
+// X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X
+
+
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++     USER FEEDBACK  
 
 
 // ================================================ HAPPY CASES ================================================
-
 
 // --------------------------------------------------------------------------------- check filter parameters
 // 5. check api response on valid fields and valid values
@@ -133,7 +148,6 @@ test('check api response on valid field e.g. user_id_id', (done) => {
     });
 });
 
-
 // --------------------------------------------------------------------------------- check filter parameters
 // 6. check api response on valid fields
 test('check api response on two valid field e.g. user_id and is_chat', (done) => {
@@ -143,7 +157,7 @@ test('check api response on two valid field e.g. user_id and is_chat', (done) =>
     .then((response) => {
          // console.log("Testing for multiple fields...",response.statusCode);
          var jsonResponse = JSON.parse(response.text);
-         // // console.log("Viewing Json response--------------------- " + jsonResponse.results);
+         // console.log("Viewing Json response--------------------- " + jsonResponse.results);
          expect(response.statusCode).toBe(200);
         done();
     });
@@ -160,7 +174,7 @@ test('check api response with invalid data e.g. user_id_id=abcd', (done) => {
     .get(api_path.user_feedback+'?user_id_id=abcd')
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
-         // // console.log("Testing with invalid data...",response.statusCode);
+         // console.log("Testing with invalid data...",response.statusCode);
          expect(response.statusCode).toBe(400);
         done();
     });
@@ -175,11 +189,15 @@ test('check api response with invalid data e.g. user_id_id=abcd&is_chat=true', (
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
          // console.log("Testing with invalid data...",response.error.text);
-       
          expect(JSON.parse(response.error.text)).toEqual({"error":"Value of the atrribute user_id_id is supposed to be integer"});
         done();
     });
 });
+
+
+
+// X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X
+
 
 
 
