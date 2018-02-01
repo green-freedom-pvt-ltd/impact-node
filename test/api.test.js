@@ -3,99 +3,107 @@
 const request = require('supertest');
 const app = require('../server')
 var api_path={
-    user_feedback : '/v0/ced/userFeedback/',
-    runs : '/v0/ced/runs/',
+    user_feedback : '/ced/v0/userFeedback/',
+    runs : '/ced/v0/runs/',
+}
+var _ = require('underscore');
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++     REQUEST 
+// check the response code to be 200
+
+var api_keys = _.keys(api_path);
+
+for (var i = api_keys.length - 1; i >= 0; i--) {
+    console.log('api_path----------',api_path[api_keys[i]]);
+    var api_path_location = api_path[api_keys[i]];
+    test('check the response code to be 200 for ' + api_keys[i], (done) => {
+        request(app)
+        .get(api_path_location)
+        .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+        .then((response) => {
+            expect(response.statusCode).toBe(200);
+            done();
+        });
+    });
 }
 
-// this test case tests if the response code for
-// get request is 200
 
+// test('check the response code to be 200', (done) => {
+//     request(app)
+//     .get(api_path.runs)
+//     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+//     .then((response) => {
+//         expect(response.statusCode).toBe(200);
+//         done();
+//     });
+// });
 
-// check the response code to be 200
-test('get user feedback from ced route', (done) => {
-    request(app)
-    .get(api_path.user_feedback)
-    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
-    .then((response) => {
-        expect(response.statusCode).toBe(200);
-        done();
-    });
-});
+// ================================================ HAPPY CASES ================================================
 
-// Happy cases
-
-// 1. check count
+// --------------------------------------------------------------------------------- check count
 // check api count greater than 200
-test('get user feedback from ced route', (done) => {
+test('check api count greater than 200', (done) => {
     request(app)
     .get(api_path.user_feedback)
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
         var jsonResponse = JSON.parse(response.text);
-        console.log("testing for--------------------- " + jsonResponse.count);
+        // console.log("testing for--------------------- " + jsonResponse.count);
         expect(jsonResponse.count).toBeGreaterThan(200);
         done();
     });
 });
 
-
-// 2. check limit
+// --------------------------------------------------------------------------------- check limit
 // check api limit to be equal to 5
-test('get user feedback from ced route', (done) => {
+test('check api limit to be equal to 5', (done) => {
     request(app)
     .get(api_path.user_feedback)
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
         var jsonResponse = JSON.parse(response.text);
-        console.log("testing for--------------------- " + jsonResponse.limit);
+        // console.log("testing for--------------------- " + jsonResponse.limit);
         expect(jsonResponse.limit).toEqual(5);
         done();
     });
 });
 
-// 3. check next page
+// --------------------------------------------------------------------------------- check next page
 // check api next page
-test('get user feedback from ced route', (done) => {
+test('check api next page', (done) => {
     request(app)
     .get(api_path.user_feedback)
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
         var jsonResponse = JSON.parse(response.text);
-        console.log("testing for--------------------- " + jsonResponse.next);
+        // console.log("testing for--------------------- " + jsonResponse.next);
         expect(jsonResponse.next).not.toBeNull();
         done();
     });
 });
 
 
-
-// 4. check previous page
+// --------------------------------------------------------------------------------- check previous page
 // check api previous page
-test('get user feedback from ced route', (done) => {
+test('check api previous page', (done) => {
     request(app)
     .get(api_path.user_feedback+'?page=2/')
     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
     .then((response) => {
         var jsonResponse = JSON.parse(response.text);
-        console.log("testing for--------------------- " + jsonResponse.previous);
+        // console.log("testing for--------------------- " + jsonResponse.previous);
         expect(jsonResponse.previous).not.toBeNull();
         done();
     });
 });
 
+// ================================================ SAD CASES ================================================
 
 
-
-
-// 5. check attributes datatypes
-
-// Sad cases
-
-
-
+// --------------------------------------------------------------------------------- check wrong auth
 // check the response code to be 401
-// 1. wrong authorization
-test('get user feedback from ced route', (done) => {
+test('check the response code to be 401', (done) => {
     request(app)
     .get(api_path.user_feedback)
     .set('Authorization', '4142134awpi113135knuoa')
@@ -105,10 +113,9 @@ test('get user feedback from ced route', (done) => {
     });
 });
 
-
+// --------------------------------------------------------------------------------- check without auth headers
 // check the response code to be 400
-// 2. without auth headers
-test('get user feedback from ced route', (done) => {
+test('check the response code to be 400', (done) => {
     request(app)
     .get(api_path.user_feedback)
     .then((response) => {
@@ -118,4 +125,79 @@ test('get user feedback from ced route', (done) => {
 });
 
 
-// 3. wrong url paths
+// X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X
+
+
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++     USER FEEDBACK  
+
+
+// ================================================ HAPPY CASES ================================================
+
+// --------------------------------------------------------------------------------- check filter parameters
+// 5. check api response on valid fields and valid values
+test('check api response on valid field e.g. user_id_id', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?user_id_id=1213')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+         // console.log("Testing...",response.statusCode);
+         expect(response.statusCode).toBe(200);
+        done();
+    });
+});
+
+// --------------------------------------------------------------------------------- check filter parameters
+// 6. check api response on valid fields
+test('check api response on two valid field e.g. user_id and is_chat', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?user_id_id=1213&is_chat=true')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+         // console.log("Testing for multiple fields...",response.statusCode);
+         var jsonResponse = JSON.parse(response.text);
+         // console.log("Viewing Json response--------------------- " + jsonResponse.results);
+         expect(response.statusCode).toBe(200);
+        done();
+    });
+});
+
+
+// ================================================ SAD CASES ================================================
+
+
+// --------------------------------------------------------------------------------- check wrong filter values
+// 3. check api response on valid fields and invalid values 
+test('check api response with invalid data e.g. user_id_id=abcd', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?user_id_id=abcd')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+         // console.log("Testing with invalid data...",response.statusCode);
+         expect(response.statusCode).toBe(400);
+        done();
+    });
+});
+
+
+// --------------------------------------------------------------------------------- check wrong filter values
+// 4. check api response on valid fields and invalid values 
+test('check api response with invalid data e.g. user_id_id=abcd&is_chat=true', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?user_id_id=abcd&is_chat=true')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+         // console.log("Testing with invalid data...",response.error.text);
+         expect(JSON.parse(response.error.text)).toEqual({"error":"Value of the atrribute user_id_id is supposed to be integer"});
+        done();
+    });
+});
+
+
+
+// X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X-O-X
+
+
+
+

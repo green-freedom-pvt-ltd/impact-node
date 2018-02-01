@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 // this middleware is for checking authentication for all requests
-app.use('/v0/ced', cedAuth());
+app.use('/ced/v0', cedAuth());
 app.use('/v0/app', appAuth());
 app.use('/', routes);
 
