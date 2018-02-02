@@ -4,7 +4,7 @@ const request = require('supertest');
 const app = require('../server')
 var api_path={
     runs : '/ced/v0/runs/',
-    runs : '/ced/v0/runLocation/',
+    runsLocation : '/ced/v0/runLocation/',
     user_feedback : '/ced/v0/userFeedback/',
     leagues : '/ced/v0/leagues/',
     teams : '/ced/v0/teams/',
@@ -21,7 +21,7 @@ var api_keys = _.keys(api_path);
 for (var i = api_keys.length - 1; i >= 0; i--) {
     console.log('api_path----------',api_path[api_keys[i]]);
     var api_path_location = api_path[api_keys[i]];
-    test('check the response code to be 200 for ' + api_keys[i], (done) => {
+    test('check the response code to be 200 for ' + api_keys[i] +" with endpoint " +api_path_location, (done) => {
         request(app)
         .get(api_path_location)
         .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
@@ -33,15 +33,6 @@ for (var i = api_keys.length - 1; i >= 0; i--) {
 }
 
 
-// test('check the response code to be 200', (done) => {
-//     request(app)
-//     .get(api_path.runs)
-//     .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
-//     .then((response) => {
-//         expect(response.statusCode).toBe(200);
-//         done();
-//     });
-// });
 
 // ================================================ HAPPY CASES ================================================
 
@@ -151,6 +142,57 @@ test('check api response on valid field e.g. user_id_id', (done) => {
         done();
     });
 });
+
+
+// --------------------------------------------------------------------------------- check filter options
+// check api response on valid fields and valid values with filter options
+test('test filter options "lt" less than ', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?user_id_id.lt=79')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+         // console.log("Testing...",response.statusCode);
+         expect(response.statusCode).toBe(200);
+        done();
+    });
+});
+
+test('test filter options "lte" less than equal to ', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?user_id_id.lte=79')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+         // console.log("Testing...",response.statusCode);
+         expect(response.statusCode).toBe(200);
+        done();
+    });
+});
+
+test('test filter options "gt" greater than ', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?user_id_id.gt=79')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+         // console.log("Testing...",response.statusCode);
+         expect(response.statusCode).toBe(200);
+        done();
+    });
+});
+
+
+test('test filter options "gte" greater than equal to ', (done) => {
+    request(app)
+    .get(api_path.user_feedback+'?user_id_id.gte=79')
+    .set('Authorization', '4142134awfdsfaef2q3q234dfzSdfAiocvnhvpi113135knuoa')
+    .then((response) => {
+         // console.log("Testing...",response.statusCode);
+         expect(response.statusCode).toBe(200);
+        done();
+    });
+});
+
+
+
 
 // --------------------------------------------------------------------------------- check filter parameters
 // 6. check api response on valid fields
