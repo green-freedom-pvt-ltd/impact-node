@@ -7,19 +7,27 @@ const db = require('../db/index');
 const env = require('../config/settings');
 const paginconfig = env.pagination;
 
-const filterList = [];
+const filterList = ['impactleague_id']; 
 
+const parameterTypes = {
+    impactleague_id: 'integer'
+};
+
+var fields= ["id",["impactleague_id","impactleague"], "team_name", "team_captain", "team_captain_email_id", "team_code", "team_captain_phone"];
 
 var Team = {
     getTeams(req, res) {
-        var team = req.params.id;
-        team = parseInt(team);
-    
         var urlQuery = req.query;
-        var whereQuery = pagin.createQuery(urlQuery, filterList);
-      
+        try {
+            var whereQuery = pagin.createQuery(urlQuery, filterList, parameterTypes);
+        } catch (err) {
+            // res.send({Error:err},400);
+            res.status(400).send({error:err})
+            throw err;
+        }
         return db.team.findAndCountAll({
             where: whereQuery,
+            attributes:fields,
             limit: paginconfig.SMALL,
             offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * paginconfig.SMALL)
 

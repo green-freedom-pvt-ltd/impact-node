@@ -10,9 +10,9 @@ const User =require('../../controllers/user/index');
 
 routes.get('/userFeedback',Feedback.getFeedback);
 routes.get('/runs',Runs.getRuns);
-routes.get('/leagues', League.getLeague);
+routes.get('/impactleague', League.getLeague);
 routes.get('/teams', Team.getTeams);
-routes.get('/employee', Employee.getEmployeeList);
+routes.get('/employeelist', Employee.getEmployeeList);
 routes.get('/runLocation', Locations.getRunLocations);
 routes.get('/users', User.getUsers);
 
