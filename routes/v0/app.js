@@ -6,6 +6,7 @@ const Feedback = require('../../controllers/FeedbackController');
 const League = require('../../controllers/leagueController');
 const Team = require('../../controllers/teamController');
 const Employee = require('../../controllers/employeeController');
+const Leaderboard = require('../../controllers/leaderboard');
 
 
 routes.get('/userFeedback',Feedback.getFeedback);
@@ -14,7 +15,7 @@ routes.get('/leagues', League.getLeague);
 routes.get('/teams', Team.getTeams);
 routes.get('/employee', Employee.getEmployeeList);
 routes.get('/runLocation', Locations.getRunLocations);
-
+routes.get('/leaderboard',Leaderboard.getOverallLeaderboard);
 
 
 module.exports = routes;
