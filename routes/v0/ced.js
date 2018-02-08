@@ -15,7 +15,7 @@ routes.get('/impactleague', League.getLeague);
 routes.get('/teams', Team.getTeams);
 routes.get('/employeelist', Employee.getEmployeeList);
 routes.get('/runLocation', Locations.getRunLocations);
-routes.get('/users', User.getUsers);
+routes.get('/users', User.getActualUserData);
 
 
 
