@@ -90,19 +90,15 @@ var pagination = {
 				if (filterList.includes(filterOptions[0]) && filterOptionsList.includes(filterOptions[1])) {
 					// This part checks if the value for the filter parameter given in the url 
 					// is of the datatype provided in the database 
-					// console.log('parameterTypes-----------',parameterTypes[filterOptions[0]],urlQuery[keys[i]]);
 					isValidated = this.validate(parameterTypes[filterOptions[0]],urlQuery[keys[i]]);
 					if(isValidated){
-						// whereQuery[filterOptions[0]] = urlQuery[keys[i]];
 						whereQuery[filterOptions[0]] = {
 							[Op[filterOptions[1]]]: urlQuery[keys[i]]
 						};
 					} else {
-						// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
 						throw "Value of the atrribute " + filterOptions[0] +" is supposed to be " + parameterTypes[filterOptions[0]];
 					}
 				} else {
-				// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
 					throw "Filter Parameter " + filterOptions[0]  + " along with filter option " + filterOptions[1] +" does not exist";
 				}
 			} else {
@@ -111,16 +107,13 @@ var pagination = {
 				if (filterList.includes(keys[i])) {
 					// This part checks if the value for the filter parameter given in the url 
 					// is of the datatype provided in the database 
-					// console.log('parameterTypes-----------',parameterTypes[keys[i]],urlQuery[keys[i]]);
 					isValidated = this.validate(parameterTypes[keys[i]],urlQuery[keys[i]]);
 					if(isValidated){
 						whereQuery[keys[i]] = urlQuery[keys[i]];
 					} else {
-						// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
 						throw "Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]];
 					}
 				} else {
-					// console.log("Please check Filter Parameters");
 					if (keys[i] == 'page') { continue;}
 	                throw "Filter Parameter " + keys[i] +" does not exist";
 				}

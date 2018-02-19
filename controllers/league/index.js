@@ -30,17 +30,19 @@ const parameterTypes = {};
 const team_filterList = [
     'impactleague_id',
     'team_name',
-    'team_code'
+    'team_code',
+    'invisible'
 ];
 
 const team_parameterTypes = {
     impactleague_id: 'integer',
     team_name: 'string',
-    team_code: 'string'
+    team_code: 'string',
+    invisible: 'boolean'
 };
 
 var league_fields = ["id", "impactleague_name","impactleague_banner", "duration", "start_date","end_date", "is_active","team_size","impactleague_banner_site","impactleague_description_site","email_type","module", ["company_id","company"]]
-var team_fields= ["id","impactleague_id", "team_name", "team_captain", "team_captain_email_id", "team_code", "team_captain_phone"];
+var team_fields= ["id","impactleague_id", "team_name", "team_captain", "team_captain_email_id", "team_code", "team_captain_phone", "invisible"];
 
 var League = {
 
@@ -87,7 +89,6 @@ var League = {
             attributes:team_fields, 
             limit: paginconfig.SMALL,
             offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * paginconfig.SMALL)
-
         })
         .then(league => {
             res.json(pagin.getPagination(league, req, paginconfig.SMALL));
@@ -97,6 +98,42 @@ var League = {
             throw new Error(err);
         })
 
+    },
+
+    createTeams(req, res) {
+        var req_body = req.body;
+        var validation = false;
+        var keys = Object.keys(req_body);
+        for (let i = 0; i < keys.length; i++) {
+            const element = keys[i];
+            var filterParameter = keys[i];
+            if (team_fields.includes(keys[i])) {
+                // This part checks if the value for the filter parameter given in the url 
+                // is of the datatype provided in the database 
+                isValidated = pagin.validate(team_parameterTypes[keys[i]],req_body[keys[i]]);
+                if(isValidated){
+                    // whereQuery[keys[i]] = urlQuery[keys[i]];
+                    validation = true;
+                } else {
+                    throw "Value of the atrribute " + keys[i] +" is supposed to be " + team_parameterTypes[keys[i]];
+                }
+            } else {
+                if (keys[i] == 'page') { continue;}
+                throw "Filter Parameter " + keys[i] +" does not exist";
+            }
+        }
+
+        if (validation){
+            console.log("now its safe to create a team",req_body);
+            return db.team.create(req_body)
+            .then(league => {
+                res.json(pagin.getPagination(league, req, paginconfig.SMALL));
+            })
+            .catch(err =>{
+                res.status(500).send({ error: 'Something failed! Contact the admin.' })
+                throw new Error(err);
+            })
+        }
     }
 }
 
