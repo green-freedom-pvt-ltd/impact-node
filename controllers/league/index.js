@@ -117,6 +117,26 @@ var League = {
         } else {
             res.status(500).send({ error: 'Something failed! Contact the admin.' })
         }
+    },
+
+    joinTeam(req, res) {
+        var req_body = req.body;
+        // add validation for checking the code in team table
+        // if team code exists create a new employee for that user
+        if (validation) {
+            console.log("now its safe to join a team", req_body);
+            // return db.team.create(req_body)
+            //     .then(league => {
+            //         res.json(pagin.getPagination(league, req, paginconfig.SMALL));
+            //     })
+            //     .catch(err => {
+            //         res.status(500).send(err)
+            //         throw new Error(err);
+            //     })
+            res.send("everything is fine");
+        } else {
+            res.status(500).send({ error: 'Something failed! Contact the admin.' })
+        }
     }
 }
 
