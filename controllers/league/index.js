@@ -68,7 +68,7 @@ var League = {
                 res.json(pagin.getPagination(league, req, paginconfig.SMALL));
             })
             .catch(err => {
-                res.status(500).send({ error: 'Something failed! Contact the admin.' })
+                res.status(400).send({ error: 'Something failed! Contact the admin.' })
                 throw new Error(err);
             })
 
@@ -94,7 +94,7 @@ var League = {
                 res.json(pagin.getPagination(league, req, paginconfig.SMALL));
             })
             .catch(err => {
-                res.status(500).send({ error: 'Something failed! Contact the admin.' })
+                res.status(400).send({ error: 'Something failed! Contact the admin.' })
                 throw new Error(err);
             })
 
@@ -111,11 +111,11 @@ var League = {
                     res.json(pagin.getPagination(league, req, paginconfig.SMALL));
                 })
                 .catch(err => {
-                    res.status(500).send(err)
+                    res.status(400).send(err)
                     throw new Error(err);
                 })
         } else {
-            res.status(500).send({ error: 'Something failed! Contact the admin.' })
+            res.status(400).send({ error: 'please check all parameters again' });
         }
     },
 
@@ -130,17 +130,26 @@ var League = {
             where: { team_code: req_body["team_code"] }
         })
             .then(team => {
-                console.log('team----',team.rows[0].id);
+                if (team.rows[0].id) {
+                    const team_id = team.rows[0].id;
+                    console.log('team----', team.rows[0].id);
+
+
+                    // return db.employee.create(req_body)
+                    //     .then(league => {
+                    //         res.json(pagin.getPagination(league, req, paginconfig.SMALL));
+                    //     })
+                    //     .catch(err => {
+                    //         res.status(500).send(err)
+                    //         throw new Error(err);
+                    //     })
+
+                    
+                } else {
+                    res.status(400).send("this code does not exist");
+                }
             });
 
-        // return db.employee.create(req_body)
-        //     .then(league => {
-        //         res.json(pagin.getPagination(league, req, paginconfig.SMALL));
-        //     })
-        //     .catch(err => {
-        //         res.status(500).send(err)
-        //         throw new Error(err);
-        //     })
         res.send("everything is fine");
         // } else {
         // res.status(500).send({ error: 'Something failed! Contact the admin.' })
