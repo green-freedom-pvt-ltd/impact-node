@@ -4,7 +4,7 @@
     "dbConfig": {
       "user": "nishant",
       "host": "localhost",
-      "database": "share_backend_dev_api",
+      "database": "nishant",
       "password": "Impact123",
       "port": 5432
     },
@@ -14,7 +14,7 @@
       "initialDays": 1
     },
     "sequilize": {
-      "database_name": "share_backend_dev_api",
+      "database_name": "nishant",
       "user": "nishant",
       "password": "Impact123",
       "host": "localhost",
