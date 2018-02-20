@@ -58,7 +58,7 @@ var pagination = {
 	},
 
 	validate(dataType, value) {
-		
+
 		switch (dataType) {
 			case 'boolean':
 				return validator.isBoolean(value);
@@ -90,20 +90,16 @@ var pagination = {
 				if (filterList.includes(filterOptions[0]) && filterOptionsList.includes(filterOptions[1])) {
 					// This part checks if the value for the filter parameter given in the url 
 					// is of the datatype provided in the database 
-					// console.log('parameterTypes-----------',parameterTypes[filterOptions[0]],urlQuery[keys[i]]);
-					isValidated = this.validate(parameterTypes[filterOptions[0]],urlQuery[keys[i]]);
-					if(isValidated){
-						// whereQuery[filterOptions[0]] = urlQuery[keys[i]];
+					isValidated = this.validate(parameterTypes[filterOptions[0]], urlQuery[keys[i]]);
+					if (isValidated) {
 						whereQuery[filterOptions[0]] = {
 							[Op[filterOptions[1]]]: urlQuery[keys[i]]
 						};
 					} else {
-						// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
-						throw "Value of the atrribute " + filterOptions[0] +" is supposed to be " + parameterTypes[filterOptions[0]];
+						throw "Value of the atrribute " + filterOptions[0] + " is supposed to be " + parameterTypes[filterOptions[0]];
 					}
 				} else {
-				// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
-					throw "Filter Parameter " + filterOptions[0]  + " along with filter option " + filterOptions[1] +" does not exist";
+					throw "Filter Parameter " + filterOptions[0] + " along with filter option " + filterOptions[1] + " does not exist";
 				}
 			} else {
 				// This part checks if the given filter parameter exists in filter list of the model
@@ -111,23 +107,45 @@ var pagination = {
 				if (filterList.includes(keys[i])) {
 					// This part checks if the value for the filter parameter given in the url 
 					// is of the datatype provided in the database 
-					// console.log('parameterTypes-----------',parameterTypes[keys[i]],urlQuery[keys[i]]);
-					isValidated = this.validate(parameterTypes[keys[i]],urlQuery[keys[i]]);
-					if(isValidated){
+					isValidated = this.validate(parameterTypes[keys[i]], urlQuery[keys[i]]);
+					if (isValidated) {
 						whereQuery[keys[i]] = urlQuery[keys[i]];
 					} else {
-						// throw new Error("Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]]);
-						throw "Value of the atrribute " + keys[i] +" is supposed to be " + parameterTypes[keys[i]];
+						throw "Value of the atrribute " + keys[i] + " is supposed to be " + parameterTypes[keys[i]];
 					}
 				} else {
-					// console.log("Please check Filter Parameters");
-					if (keys[i] == 'page') { continue;}
-	                throw "Filter Parameter " + keys[i] +" does not exist";
+					if (keys[i] == 'page') { continue; }
+					throw "Filter Parameter " + keys[i] + " does not exist";
 				}
 			}
 		}
 		return whereQuery;
 	},
+
+	validateReqBody(body, parameterTypes,fields) {
+		var validation = false;
+		var keys = Object.keys(body);
+		for (let i = 0; i < keys.length; i++) {
+		    const element = keys[i];
+		    var filterParameter = keys[i];
+		    if (fields.includes(keys[i])) {
+		        // This part checks if the value for the filter parameter given in the url 
+		        // is of the datatype provided in the database 
+		        isValidated = this.validate(parameterTypes[keys[i]], body[keys[i]]);
+		        if (isValidated) {
+		            // whereQuery[keys[i]] = urlQuery[keys[i]];
+		            validation = true;
+		        } else {
+		            throw "Value of the atrribute " + keys[i] + " is supposed to be " + parameterTypes[keys[i]];
+		        }
+		    } else {
+		        if (keys[i] == 'page') { continue; }
+		        throw "Filter Parameter " + keys[i] + " does not exist";
+		    }
+		}
+		return validation;
+	},
+
 
 
 
