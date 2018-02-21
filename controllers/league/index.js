@@ -9,7 +9,7 @@ Existing APIs
 5. View Team leaderboard
 
 6. Get causes specific to a league
-
+7. allow captain to remove his team members
 
 New APIs
 1. Create
