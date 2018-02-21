@@ -26,7 +26,7 @@ app.use('/v0/app', appAuth());
 app.use('/', routes);
 
 // this is a test API
-app.get('/causespromise', (req, res, next) => res.send(db.getImportantData()));
+// app.get('/causespromise', (req, res, next) => res.send(db.getImportantData()));
 
 
 
