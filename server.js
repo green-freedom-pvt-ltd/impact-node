@@ -26,7 +26,7 @@ app.use('/v0/app', appAuth());
 app.use('/', routes);
 
 // this is a test API
-app.get('/causespromise', (req, res, next) => res.send(db.getImportantData()));
+// app.get('/causespromise', (req, res, next) => res.send(db.getImportantData()));
 
 
 
@@ -41,12 +41,13 @@ if (cluster.isMaster) {
         cluster.fork();
     }
     cluster.on('exit', function (worker, code, signal) {
+        // handle server crashes
         console.log('worker ' + worker.process.pid + ' died');
     });
 } else {
     console.log(cluster.worker.id);
     const port = process.env.PORT || 8000;
-    app.listen(port, () => console.log('listening on port ' + port));
+    app.listen(8000);
 }
 
 
