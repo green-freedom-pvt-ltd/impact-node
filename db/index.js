@@ -11,15 +11,14 @@ This file is responsible for managing all db connections
 const { Pool, Client } = require('pg');
 var environment = process.env.ENV;
 var config = require('config');
-var dbConfig = config.get('Customer.dbConfig');
-const pool = new Pool(dbConfig);
 var Sequelize = require("sequelize");
 var sequilizeConfig = config.get('Customer.sequilize');
+const pool = new Pool(sequilizeConfig);
 
 
 
-var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
-  host: dbConfig.host,
+var sequelize = new Sequelize(sequilizeConfig.database, sequilizeConfig.user, sequilizeConfig.password, {
+  host: sequilizeConfig.host,
   dialect: sequilizeConfig.dialect,
   pool: sequilizeConfig.pool,
   //logging: false
