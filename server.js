@@ -47,7 +47,7 @@ if (cluster.isMaster) {
 } else {
     console.log(cluster.worker.id);
     const port = process.env.PORT || 8000;
-    app.listen(port, () => console.log('listening on port ' + port));
+    app.listen(8000);
 }
 
 
