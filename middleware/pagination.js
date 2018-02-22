@@ -6,7 +6,7 @@ const filterOptionsList = ['gt', 'gte', 'lt', 'lte', 'like'];
 var validator = require('validator');
 var _ = require('underscore');
 
-const Op = Sequelize.Op
+const Op = Sequelize.Op;
 
 var pagination = {
 	// This function takes the respons object and
@@ -68,6 +68,9 @@ var pagination = {
 			case 'string':
 				return true;
 				break;
+			case 'float':
+				return validator.isFloat(value);
+				break;
 			default:
 				break;
 		}
@@ -122,26 +125,26 @@ var pagination = {
 		return whereQuery;
 	},
 
-	validateReqBody(body, parameterTypes,fields) {
+	validateReqBody(body, parameterTypes, fields) {
 		var validation = false;
 		var keys = Object.keys(body);
 		for (let i = 0; i < keys.length; i++) {
-		    const element = keys[i];
-		    var filterParameter = keys[i];
-		    if (fields.includes(keys[i])) {
-		        // This part checks if the value for the filter parameter given in the url 
-		        // is of the datatype provided in the database 
-		        isValidated = this.validate(parameterTypes[keys[i]], body[keys[i]]);
-		        if (isValidated) {
-		            // whereQuery[keys[i]] = urlQuery[keys[i]];
-		            validation = true;
-		        } else {
-		            throw "Value of the atrribute " + keys[i] + " is supposed to be " + parameterTypes[keys[i]];
-		        }
-		    } else {
-		        if (keys[i] == 'page') { continue; }
-		        throw "Filter Parameter " + keys[i] + " does not exist";
-		    }
+			const element = keys[i];
+			var filterParameter = keys[i];
+			if (fields.includes(keys[i])) {
+				// This part checks if the value for the filter parameter given in the url 
+				// is of the datatype provided in the database 
+				isValidated = this.validate(parameterTypes[keys[i]], body[keys[i]]);
+				if (isValidated) {
+					// whereQuery[keys[i]] = urlQuery[keys[i]];
+					validation = true;
+				} else {
+					throw "Value of the atrribute " + keys[i] + " is supposed to be " + parameterTypes[keys[i]];
+				}
+			} else {
+				if (keys[i] == 'page') { continue; }
+				throw "Filter Parameter " + keys[i] + " does not exist";
+			}
 		}
 		return validation;
 	},

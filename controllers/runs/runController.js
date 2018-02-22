@@ -5,7 +5,7 @@ const pagin = require('../../middleware/pagination');
 const db = require('../../db/index');
 const env = require('../../config/settings');
 const paginconfig = env.pagination;
-
+var _ = require('underscore');
 
 
 
@@ -13,12 +13,16 @@ const filterList = [
     'user_id_id',
     'run_id',
     'is_flag',
+    'distance',
+    'client_run_id'
 ];
 
 const parameterTypes = {
     user_id_id: 'integer',
     run_id: 'integer',
-    is_flag: 'boolean'
+    is_flag: 'boolean',
+    distance: 'float',
+    client_run_id: 'string'
 };
 
 var runModel = {
@@ -49,16 +53,14 @@ var runModel = {
 
     updateRun(req, res) {
         const workout = req.body;
-        console.log("req...........", req.body);
-        const workoutId = req.body;
+        var validation = pagin.validateReqBody(workout, parameterTypes, filterList);
+        console.log("req...........", validation);
+        //const workout = req.body;
+
+
         db.runs.update(
-            { 
-                distance: req.body.distance
-            },
-            {
-                where:
-                    { run_id: workoutId.run_id }
-            }
+            { distance: workout.distance },
+            { where: workout.run_id }
         )
             .then(run => {
                 db.runs.findAndCount({
@@ -72,6 +74,9 @@ var runModel = {
     }
 
 }
+
+
+
 
 
 
