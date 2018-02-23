@@ -15,7 +15,7 @@ routes.get('/impactleague', League.getLeague);
 routes.get('/teams', League.getTeams);
 routes.get('/employeelist', Employee.getEmployeeList);
 routes.get('/runLocation', Locations.getRunLocations);
-routes.get('/users', User.getActualUserData);
+// routes.get('/users', User.getActualUserData);
 // routes.post('/teams',League.createTeams);
 
 
