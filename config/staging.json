@@ -9,7 +9,7 @@
         "sequilize": {
             "user": "stageadmin",
             "host": "localhost",
-            "database": "share_backend_dev_api",
+            "database": "share_backend_stage_api",
             "password": "welcome@1",
             "port": 5432,
             "dialect": "postgres",
