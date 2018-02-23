@@ -2,11 +2,11 @@
 
 
 const request = require('supertest');
-const app = require('../../server')
+const app = require('../../server');
 var api_path={
     user_feedback : '/ced/v0/userFeedback/',
     runs : '/ced/v0/runs/',
-}
+};
 
 
 // check the response code to be 401

@@ -9,7 +9,7 @@
         "sequilize": {
             "user": "abhijeet",
             "host": "localhost",
-            "database": "share_backend_dev_api",
+            "database": "share_local",
             "password": "welcome@1",
             "port": 5432,
             "dialect": "postgres",
