@@ -39,6 +39,7 @@ db.feedback = require  ('../models/share_api_userfeedback.js')(sequelize, Sequel
 db.impactLeague =require ('../models/share_api_impactleague')(sequelize, Sequelize);
 db.team = require ('../models/share_api_team')(sequelize, Sequelize);
 db.employee =require ('../models/share_api_employee')(sequelize, Sequelize);
+db.leaderboard =require ('../models/leaderboard_activity')(sequelize, Sequelize);
 
 
 // this connects the application to the database
