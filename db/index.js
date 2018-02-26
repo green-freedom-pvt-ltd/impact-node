@@ -11,15 +11,14 @@ This file is responsible for managing all db connections
 const { Pool, Client } = require('pg');
 var environment = process.env.ENV;
 var config = require('config');
-var dbConfig = config.get('Customer.dbConfig');
-const pool = new Pool(dbConfig);
 var Sequelize = require("sequelize");
 var sequilizeConfig = config.get('Customer.sequilize');
+const pool = new Pool(sequilizeConfig);
 
 
 
-var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
-  host: dbConfig.host,
+var sequelize = new Sequelize(sequilizeConfig.database, sequilizeConfig.user, sequilizeConfig.password, {
+  host: sequilizeConfig.host,
   dialect: sequilizeConfig.dialect,
   pool: sequilizeConfig.pool,
   //logging: false
@@ -40,6 +39,7 @@ db.feedback = require  ('../models/share_api_userfeedback.js')(sequelize, Sequel
 db.impactLeague =require ('../models/share_api_impactleague')(sequelize, Sequelize);
 db.team = require ('../models/share_api_team')(sequelize, Sequelize);
 db.employee =require ('../models/share_api_employee')(sequelize, Sequelize);
+db.leaderboard =require ('../models/leaderboard_activity')(sequelize, Sequelize);
 
 
 // this connects the application to the database

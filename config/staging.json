@@ -7,9 +7,9 @@
             "initialDays": 1
         },
         "sequilize": {
-            "user": "abhijeet",
+            "user": "stageadmin",
             "host": "localhost",
-            "database": "share_local",
+            "database": "share_backend_stage_api",
             "password": "welcome@1",
             "port": 5432,
             "dialect": "postgres",

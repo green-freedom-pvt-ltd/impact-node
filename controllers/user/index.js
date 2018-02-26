@@ -64,6 +64,23 @@ var userModel = {
     
 
   },
+  
+
+  getLeaderboard(req, res) {
+
+    var urlQuery = req.query;
+    var whereQuery = pagin.createQuery(urlQuery, filterList);
+    console.log("paginconfig------------------", paginconfig.SMALL);
+    return db.leaderboard.findAndCountAll({
+      where: whereQuery,
+      limit: paginconfig.SMALL,
+      offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * paginconfig.SMALL)
+    })
+      .then(user => {
+        res.json(pagin.getPagination(user, req, paginconfig.SMALL));
+      })
+
+  },
 
 }
 

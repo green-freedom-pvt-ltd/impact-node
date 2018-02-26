@@ -27,7 +27,11 @@
     "swig": "^1.4.2",
     "underscore": "^1.8.3",
     "validator": "^9.2.0",
-    "winston": "^2.4.0"
+    "winston": "^2.4.0",
+    "https-proxy-agent": "~2.1.1",
+    "json-stringify-safe": "~5.0.1",
+    "semver": "~5.5.0",
+    "async": "~2.6.0"
   },
   "devDependencies": {
     "grunt": "^1.0.1",

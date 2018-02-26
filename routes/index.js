@@ -4,7 +4,6 @@ const causedb = require('../db/cause');
 // const City = require('../controllers/cityController');
 
 // include all routes for city
-routes.use('/user', require('./user'))
 routes.use('/ced/v0', require('./v0/ced'));
 routes.use('/app/v0', require('./v0/app'));
 

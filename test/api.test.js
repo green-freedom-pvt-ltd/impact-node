@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 
 const request = require('supertest');
-const app = require('../server')
+const app = require('../server');
 var api_path={
     runs : '/ced/v0/runs/',
     runsLocation : '/ced/v0/runLocation/',
@@ -9,7 +9,7 @@ var api_path={
     leagues : '/ced/v0/leagues/',
     teams : '/ced/v0/teams/',
     employee : '/ced/v0/employee/',
-}
+};
 var _ = require('underscore');
 
 
