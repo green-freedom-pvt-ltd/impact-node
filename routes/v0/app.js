@@ -8,6 +8,7 @@ const Team = require('../../controllers/teamController');
 const Employee = require('../../controllers/employeeController');
 const Leaderboard = require('../../controllers/leaderboard');
 const User =require('../../controllers/user/index');
+const NewLeaderboard =require('../../controllers/leaderboard/index');
 
 
 routes.get('/userFeedback',Feedback.getFeedback);
@@ -21,6 +22,9 @@ routes.post('/teams',League.createTeams);
 routes.post('/jointeam',League.joinTeam);
 routes.get('/users', User.getActualUserData);
 routes.get('/userleaderboard', User.getLeaderboard);
+routes.get('/newleaderboard', NewLeaderboard.getLeaderboard);
+routes.get('/weekleaderboard', NewLeaderboard.getWeekLeaderboard);
+routes.get('/monthleaderboard', NewLeaderboard.getMonthLeaderboard);
 
 
 module.exports = routes;
