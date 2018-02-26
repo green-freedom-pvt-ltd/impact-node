@@ -1,51 +1,51 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('share_api_team', {
+  return sequelize.define('oauth2_provider_application', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    team_name: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    team_code: {
+    client_id: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true
     },
-    team_captain: {
-      type: DataTypes.STRING,
-      allowNull: true
+    redirect_uris: {
+      type: DataTypes.TEXT,
+      allowNull: false
     },
-    team_captain_email_id: {
+    client_type: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false
     },
-    impactleague_id: {
+    authorization_grant_type: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    client_secret: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'share_api_impactleague',
-        key: 'id'
+        model: 'share_api_users',
+        key: 'user_id'
       }
     },
-    invisible: {
+    skip_authorization: {
       type: DataTypes.BOOLEAN,
       allowNull: false
-    },
-    team_captain_phone: {
-      type: DataTypes.BIGINT,
-      allowNull: true
-    },
-    team_logo: {
-      type: DataTypes.STRING,
-      allowNull: true
     }
   }, {
-    tableName: 'share_api_team'
+    tableName: 'oauth2_provider_application'
   });
 };

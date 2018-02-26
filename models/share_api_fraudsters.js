@@ -1,42 +1,54 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('oauth2_provider_accesstoken', {
+  return sequelize.define('share_api_fraudsters', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    token: {
+    client_run_id: {
       type: DataTypes.STRING,
+      allowNull: true
+    },
+    usain_bolt_count: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
-    expires: {
-      type: DataTypes.DATE,
+    mock_location_used: {
+      type: DataTypes.BOOLEAN,
       allowNull: false
     },
-    scope: {
-      type: DataTypes.TEXT,
+    timestamp: {
+      type: DataTypes.BIGINT,
       allowNull: false
     },
-    application_id: {
+    cause_id_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'oauth2_provider_application',
+        model: 'share_api_causes',
+        key: 'cause_id'
+      }
+    },
+    team_id_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'share_api_team',
         key: 'id'
       }
     },
-    user_id: {
+    user_id_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'share_api_users',
         key: 'user_id'
       }
     }
   }, {
-    tableName: 'oauth2_provider_accesstoken'
+    tableName: 'share_api_fraudsters'
   });
 };

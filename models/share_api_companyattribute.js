@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('share_api_employee', {
+  return sequelize.define('share_api_companyattribute', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -31,33 +31,8 @@ module.exports = function(sequelize, DataTypes) {
         model: 'share_api_department',
         key: 'id'
       }
-    },
-    team_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'share_api_team',
-        key: 'id'
-      }
-    },
-    user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'share_api_users',
-        key: 'user_id'
-      },
-      unique: true
-    },
-    is_logout: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false
-    },
-    date_registered: {
-      type: DataTypes.DATEONLY,
-      allowNull: true
     }
   }, {
-    tableName: 'share_api_employee'
+    tableName: 'share_api_companyattribute'
   });
 };

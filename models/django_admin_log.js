@@ -1,42 +1,50 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('oauth2_provider_accesstoken', {
+  return sequelize.define('django_admin_log', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    token: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    expires: {
+    action_time: {
       type: DataTypes.DATE,
       allowNull: false
     },
-    scope: {
+    object_id: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    object_repr: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    action_flag: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    change_message: {
       type: DataTypes.TEXT,
       allowNull: false
     },
-    application_id: {
+    content_type_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
-        model: 'oauth2_provider_application',
+        model: 'django_content_type',
         key: 'id'
       }
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'share_api_users',
         key: 'user_id'
       }
     }
   }, {
-    tableName: 'oauth2_provider_accesstoken'
+    tableName: 'django_admin_log'
   });
 };

@@ -1,42 +1,42 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('oauth2_provider_accesstoken', {
+  return sequelize.define('share_api_teammateregistration', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    token: {
+    team_mate_name: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    expires: {
-      type: DataTypes.DATE,
+    team_mate_email_id: {
+      type: DataTypes.STRING,
       allowNull: false
     },
-    scope: {
-      type: DataTypes.TEXT,
-      allowNull: false
+    team_mate_phone: {
+      type: DataTypes.BIGINT,
+      allowNull: true
     },
-    application_id: {
+    impactleague_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'oauth2_provider_application',
+        model: 'share_api_impactleague',
         key: 'id'
       }
     },
-    user_id: {
+    team_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
-        model: 'share_api_users',
-        key: 'user_id'
+        model: 'share_api_team',
+        key: 'id'
       }
     }
   }, {
-    tableName: 'oauth2_provider_accesstoken'
+    tableName: 'share_api_teammateregistration'
   });
 };

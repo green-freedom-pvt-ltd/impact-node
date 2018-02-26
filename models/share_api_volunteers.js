@@ -1,42 +1,42 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('oauth2_provider_accesstoken', {
+  return sequelize.define('share_api_volunteers', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    token: {
-      type: DataTypes.STRING,
+    is_registered: {
+      type: DataTypes.BOOLEAN,
       allowNull: false
     },
-    expires: {
-      type: DataTypes.DATE,
+    has_attended: {
+      type: DataTypes.BOOLEAN,
       allowNull: false
     },
-    scope: {
-      type: DataTypes.TEXT,
+    impact_score: {
+      type: DataTypes.BIGINT,
       allowNull: false
     },
-    application_id: {
+    events_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'oauth2_provider_application',
-        key: 'id'
+        model: 'share_api_events',
+        key: 'events_id'
       }
     },
-    user_id: {
+    users_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'share_api_users',
         key: 'user_id'
       }
     }
   }, {
-    tableName: 'oauth2_provider_accesstoken'
+    tableName: 'share_api_volunteers'
   });
 };

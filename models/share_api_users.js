@@ -129,12 +129,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DOUBLE,
       allowNull: true
     }
-  }, 
-    {
-      freezeTableName: true, // Model tableName will be the same as the model name
-      timestamps:false     
-    },
-    {
+  }, {
     tableName: 'share_api_users'
   });
 };

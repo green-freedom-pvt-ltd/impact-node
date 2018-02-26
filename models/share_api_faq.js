@@ -1,42 +1,38 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('oauth2_provider_accesstoken', {
+  return sequelize.define('share_api_faq', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    token: {
+    question: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    expires: {
-      type: DataTypes.DATE,
+    answer: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    is_active: {
+      type: DataTypes.BOOLEAN,
       allowNull: false
     },
-    scope: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
-    application_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'oauth2_provider_application',
-        key: 'id'
-      }
-    },
-    user_id: {
+    user_id_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
         model: 'share_api_users',
         key: 'user_id'
       }
+    },
+    user_email: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {
-    tableName: 'oauth2_provider_accesstoken'
+    tableName: 'share_api_faq'
   });
 };
