@@ -47,6 +47,14 @@ module.exports = function(sequelize, DataTypes) {
           key: 'user_id'
         },
         unique: true
+      },
+      is_logout: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+      },
+      date_registered: {
+        type: DataTypes.DATEONLY,
+        allowNull: true
       }
     },{
         freezeTableName: true, // Model tableName will be the same as the model name
