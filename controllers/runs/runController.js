@@ -7,8 +7,6 @@ const env = require('../../config/settings');
 const paginconfig = env.pagination;
 
 
-
-
 const filterList = [
     'user_id_id',
     'run_id',
@@ -62,7 +60,7 @@ var runModel = {
                 res.status(400).send(error);
             }
 
-            );
+        );
     },
 }
 
