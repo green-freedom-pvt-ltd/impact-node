@@ -1,4 +1,4 @@
-module.exports = function(sequelize, DataTypes) {
+  module.exports = function(sequelize, DataTypes) {
     return sequelize.define('share_api_runs', {
       run_id: {
         type: DataTypes.INTEGER,
@@ -141,13 +141,41 @@ module.exports = function(sequelize, DataTypes) {
           model: 'share_api_causes',
           key: 'cause_id'
         }
+      },
+      estimated_calories: {
+        type: DataTypes.DOUBLE,
+        allowNull: true
+      },
+      estimated_distance: {
+        type: DataTypes.DOUBLE,
+        allowNull: true
+      },
+      estimated_steps: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      google_fit_distance: {
+        type: DataTypes.DOUBLE,
+        allowNull: true
+      },
+      google_fit_steps: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      step_counter: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      usain_bolt_count: {
+        type: DataTypes.INTEGER,
+        allowNull: true
       }
-    },
-    {
-        freezeTableName: true, // Model tableName will be the same as the model name
-        timestamps: false
     }, 
+    
     {
+      freezeTableName: true, // Model tableName will be the same as the model name
+      timestamps: false
+  }, {
       tableName: 'share_api_runs'
     });
   };

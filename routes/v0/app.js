@@ -13,6 +13,7 @@ const NewLeaderboard =require('../../controllers/leaderboard/index');
 
 routes.get('/userFeedback',Feedback.getFeedback);
 routes.get('/runs',Runs.getRuns);
+routes.post('/runs',Runs.postRun);
 // routes.get('/impactleague', League.getLeague);
 routes.get('/teams', League.getTeams);
 // routes.get('/employee', Employee.getEmployeeList);
