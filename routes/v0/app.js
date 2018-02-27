@@ -20,6 +20,8 @@ routes.get('/runLocation', Locations.getRunLocations);
 routes.get('/leaderboard',Leaderboard.getOverallLeaderboard);
 routes.post('/teams',League.createTeams);
 routes.post('/jointeam',League.joinTeam);
+routes.post('/exitteam',League.exitTeams);
+
 routes.get('/users', User.getActualUserData);
 routes.get('/userleaderboard', User.getLeaderboard);
 routes.get('/newleaderboard', NewLeaderboard.getAggregateLeaderboard);
