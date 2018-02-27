@@ -10,11 +10,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.BIGINT,
             allowNull: false
         },
-        user_id: {
-            type: DataTypes.BIGINT,
-            allowNull: false
-        },
-        user_id: {
+        team_id: {
             type: DataTypes.BIGINT,
             allowNull: false
         },

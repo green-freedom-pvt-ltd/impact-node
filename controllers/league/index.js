@@ -130,9 +130,9 @@ var League = {
             where: { team_code: req_body["team_code"] }
         })
             .then(team => {
-                if (team.rows[0].id) {
-                    const team_id = team.rows[0].id;
+                if (team.rows[0] && team.rows[0].id) {
                     console.log('team----', team.rows[0].id);
+                    const team_id = team.rows[0].id;
 
 
                     // return db.employee.create(req_body)
@@ -144,13 +144,13 @@ var League = {
                     //         throw new Error(err);
                     //     })
 
+                    res.send("everything is fine");
                     
                 } else {
                     res.status(400).send("this code does not exist");
                 }
             });
 
-        res.send("everything is fine");
         // } else {
         // res.status(500).send({ error: 'Something failed! Contact the admin.' })
         // }

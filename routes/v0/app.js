@@ -22,7 +22,7 @@ routes.post('/teams',League.createTeams);
 routes.post('/jointeam',League.joinTeam);
 routes.get('/users', User.getActualUserData);
 routes.get('/userleaderboard', User.getLeaderboard);
-routes.get('/newleaderboard', NewLeaderboard.getLeaderboard);
+routes.get('/newleaderboard', NewLeaderboard.getAggregateLeaderboard);
 routes.get('/weekleaderboard', NewLeaderboard.getWeekLeaderboard);
 routes.get('/monthleaderboard', NewLeaderboard.getMonthLeaderboard);
 
