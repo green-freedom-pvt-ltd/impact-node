@@ -16,6 +16,8 @@ module.exports = function (options) {
       })
         .then(userstoken => {
           if (userstoken.rows.length == 1) {
+            req.user_id=userstoken.rows[0].user_id;
+            // console.log('userstoken----',req.user_id);
             next()
           } else {
             res.status(404).send('Please contact customer care');

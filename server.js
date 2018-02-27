@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 
 // this middleware is for checking authentication for all requests
 app.use('/ced/v0', cedAuth());
-app.use('/v0/app', appAuth());
+app.use('/app/v0', appAuth());
 app.use('/', routes);
 
 // this is a test API
@@ -50,5 +50,6 @@ if (cluster.isMaster) {
     app.listen(8000);
 }
 
+// app.listen(8000);
 
 module.exports = app
