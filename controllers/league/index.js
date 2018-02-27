@@ -226,24 +226,6 @@ var League = {
             res.status(500).send({ error: 'Something failed! Contact the admin.' })
             throw new Error(err);
         })
-        // db.employee.update(
-        //     { is_logout: true },
-        //     {
-        //         where: { user_id: user_id, is_logout: false }
-        //     }
-        // ).then(
-        //     // see if the user has already joined the league
-        //     db.employee.findAndCountAll({
-        //         where: { user_id: user_id, team_id: team_id }
-        //     }).then(employee => {
-        //         console.log('employee----', employee.rows.length);
-        //     }).catch(err => {
-        //         res.status(500).send({ error: 'Something failed! Contact the admin.' })
-        //         throw new Error(err);
-        //     })
-        // )
-
-
     }
 }
 
