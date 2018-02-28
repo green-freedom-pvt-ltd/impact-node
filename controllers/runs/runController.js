@@ -81,7 +81,7 @@ var runModel = {
         //console.log("USER", post_run_values);
 
 
-        // Checking duplicate workout by user id and start time combination
+// Checking duplicate workout by user id and start time combination
         db.runs.count({
             where: {
                 start_time: run_start_time,
@@ -112,8 +112,8 @@ var runModel = {
                                     var end_league_date = new Date(league_data[0].end_date).toLocaleDateString();
                                     var end_run_date = new Date(post_run_values.end_time).toLocaleDateString();
                                     // var end_run_date = date.toLocaleDateString();
-                                    logger.info("workout_end_time", end_run_date, "league_end_date", end_league_date);
-
+                                    console.log("workout_end_time", end_run_date, "league_end_date", end_league_date);
+                                    console.log(end_run_date - end_league_date);
                                     if (end_run_date > end_league_date) {
                                         console.log("come in if condition");
                                         //If league has been over then logging out the user
@@ -124,14 +124,12 @@ var runModel = {
                                             }
                                         ).then(employee => {
                                             db.employee.findAndCount({
-                                                where: { user_id: user, team_id: post_run_values.team_id_id }
-                                            }).then(updatedEmployee => {
-                                                // res.json(city);
-                                                logger.info("updated values of employee", updatedEmployee)
-                                            });
+                                                where: { user_id: user, team_id:post_run_values.team_id_id}
+                                            })
+                                        }).then(updatedEmployee=>{
+                                            return;
                                         })
-                                            .catch(error => res.status(400).send(error));
-
+                                        
                                     }
                                     else {
                                         return db.runs.create(
@@ -160,6 +158,9 @@ var runModel = {
                                 res.status(400).send(error);
                             })
                     }
+
+
+
                 }
                 else {
                     res.status(401).send("Workout already exists");
@@ -167,7 +168,7 @@ var runModel = {
             }
 
             )
-
+        
     },
 }
 
