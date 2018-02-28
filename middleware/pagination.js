@@ -65,8 +65,16 @@ var pagination = {
 			case 'integer':
 				return validator.isInt(value);
 				break;
+			case 'float':
+				return validator.isFloat(value);
 			case 'string':
 				return true;
+				break;
+			case 'hexa-decimal':
+				return validator.isHexadecimal;
+				break;
+			case 'alfa-numeric':
+				return validator.isAlphanumeric;
 				break;
 			default:
 				break;
