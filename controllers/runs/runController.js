@@ -1,8 +1,10 @@
 var config = require('config');
 const logger = require('../../logger');
 const pagin = require('../../middleware/pagination');
-
+var Sequelize = require("sequelize");
 const db = require('../../db/index');
+var sequelize = db.sequelize;
+const Op = Sequelize.Op;
 const env = require('../../config/settings');
 const paginconfig = env.pagination;
 
@@ -75,100 +77,136 @@ var runModel = {
         post_run_values.start_time_epoch = Math.round(new Date(post_run_values.start_time).getTime() / 1000);
         post_run_values.end_time_epoch = Math.round(new Date(post_run_values.end_time).getTime() / 1000);
 
-        console.log("START TIME", run_start_time);
-        console.log("USER", user);
+        // If workout distance > 50 then flagging that workout
+        if(post_run_values.distance>50){
+            if(!post_run_values.is_flag){
+                post_run_values.is_flag = true;
+            }
+        }
+
+        // console.log("START TIME", run_start_time);
+        // console.log("USER", user);
         // post_run_values = JSON.stringify(post_run_values);
         //console.log("USER", post_run_values);
 
 
-// Checking duplicate workout by user id and start time combination
+        // Checking duplicate workout by user id and start time combination
         db.runs.count({
             where: {
                 start_time: run_start_time,
-                user_id_id: user
+                user_id_id: user,
+
             }
         })
             .then(run_count => {
                 if (run_count === 0) {
-                    // var isValidBody = pagin.validateReqBody(req.body,parameterTypes,fields);
-                    // logger.info("Validate body",isValidBody);
+                    db.runs.all({
+                        attributes: [[sequelize.fn('max', sequelize.col('end_time')), 'max_end_time']],
+                        where: {
+                            user_id_id: user,
+                        }
+                    }).then(max_end_date => {
 
-                    //if team id present then will check here that league has been ended or not
-                    if (post_run_values.team_id_id) {
-                        db.team.all({
-                            where: { id: post_run_values.team_id_id },
-                        })
-                            .then(teams => {
-                                var team_data = JSON.parse(JSON.stringify(teams));
-                                var league_id = team_data[0].impactleague_id
 
-                                db.impactLeague.all({
-                                    where: {
-                                        id: league_id
-                                    },
-                                }).then(league => {
-                                    var league_data = JSON.parse(JSON.stringify(league));;
-                                    var start_date = league_data[0].start_date;
-                                    var end_league_date = new Date(league_data[0].end_date).toLocaleDateString();
-                                    var end_run_date = new Date(post_run_values.end_time).toLocaleDateString();
-                                    // var end_run_date = date.toLocaleDateString();
-                                    console.log("workout_end_time", end_run_date, "league_end_date", end_league_date);
-                                    console.log(end_run_date - end_league_date);
-                                    if (end_run_date > end_league_date) {
-                                        console.log("come in if condition");
-                                        //If league has been over then logging out the user
-                                        db.employee.update(
-                                            { is_logout: true },
-                                            {
-                                                where: { user_id: user, team_id: post_run_values.team_id_id }
-                                            }
-                                        ).then(employee => {
-                                            db.employee.findAndCount({
-                                                where: { user_id: user, team_id:post_run_values.team_id_id}
-                                            })
-                                        }).then(updatedEmployee=>{
-                                            return;
-                                        })
-                                        
-                                    }
-                                    else {
-                                        return db.runs.create(
-                                            post_run_values
-                                        )
-                                            .then(postRun => {
-                                                res.status(201).send(postRun);
-                                            })
-                                            .catch(error => {
-                                                res.status(400).send(error);
-                                            })
-                                    }
+                        var latest_workout_end_date = JSON.parse(JSON.stringify(max_end_date));
+                        latest_workout_end_date = new Date(latest_workout_end_date[0].max_end_time);
+                        var current_workout_end_time = new Date(post_run_values.end_time);
+                        console.log("MAXimum end workout", latest_workout_end_date);
+                        console.log("latest_workout_end_date", latest_workout_end_date, "end_time", current_workout_end_time);
+                        if (current_workout_end_time > latest_workout_end_date) {
+                            // console.log("max End date",latest_workout_end_date);
+                            // var isValidBody = pagin.validateReqBody(req.body,parameterTypes,fields);
+                            // logger.info("Validate body",isValidBody);
+
+                            //if team id present then will check here that league has been ended or not
+                            if (post_run_values.team_id_id) {
+                                db.team.all({
+                                    where: { id: post_run_values.team_id_id },
                                 })
+                                    .then(teams => {
+                                        var team_data = JSON.parse(JSON.stringify(teams));
+                                        var league_id = team_data[0].impactleague_id
+
+                                        db.impactLeague.all({
+                                            where: {
+                                                id: league_id
+                                            },
+                                        }).then(league => {
+                                            var league_data = JSON.parse(JSON.stringify(league));
+                                            var start_date = league_data[0].start_date;
+                                            var end_league_date = new Date(league_data[0].end_date).toLocaleDateString();
+                                            var end_run_date = new Date(post_run_values.end_time).toLocaleDateString();
+                                            // var end_run_date = date.toLocaleDateString();
+                                            console.log("workout_end_time", end_run_date, "league_end_date", end_league_date);
+                                            console.log(end_run_date - end_league_date);
+                                            if (end_run_date > end_league_date) {
+                                                console.log("come in if condition");
+                                                //If league has been over then logging out the user
+                                                db.employee.update(
+                                                    { is_logout: true },
+                                                    {
+                                                        where: { user_id: user, team_id: post_run_values.team_id_id }
+                                                    }
+                                                ).then(employee => {
+
+                                                    logger.info("post run after logging out from the league")
+                                                    return db.runs.create(
+                                                        post_run_values
+                                                    )
+                                                        .then(postRun => {
+                                                            res.status(201).send(postRun);
+                                                        })
+                                                        .catch(error => {
+                                                            res.status(400).send(error);
+                                                        })
+
+                                                })
+
+                                            }
+                                            else {
+                                                return db.runs.create(
+                                                    post_run_values
+                                                )
+                                                    .then(postRun => {
+                                                        res.status(201).send(postRun);
+                                                    })
+                                                    .catch(error => {
+                                                        res.status(400).send(error);
+                                                    })
+                                            }
+                                        })
+                                    }
+                                    )
                             }
-                            )
-                    }
-                    else {
-                        console.log("post_run_values");
-                        return db.runs.create(
-                            post_run_values
-                        )
-                            .then(postRun => {
-                                res.status(201).send(postRun);
-                            })
-                            .catch(error => {
-                                res.status(400).send(error);
-                            })
-                    }
-
-
+                            else {
+                                //console.log("post_run_values");
+                                logger.info("Post run if team id not present");
+                                return db.runs.create(
+                                    post_run_values
+                                )
+                                    .then(postRun => {
+                                        res.status(201).send(postRun);
+                                    })
+                                    .catch(error => {
+                                        res.status(400).send(error);
+                                    })
+                            }
+                        }
+                        else {
+                            console.log("Workout can't added at the same time");
+                      
+                            res.status(401).send({Error:"Workout can't added at the same time"});
+                        }
+                    })
 
                 }
                 else {
-                    res.status(401).send("Workout already exists");
+                    res.status(401).send({Error:"Workout already exists"});
                 }
             }
 
             )
-        
+
     },
 }
 
