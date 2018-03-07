@@ -93,3 +93,23 @@ For getting flagged run of first 100 users
 
 
     http://localhost:3000/ced/v0/runs/?user_id_id.lte=100&is_flag=true
+
+
+
+### Naming convention
+
+variables : small case , undersore , mostly nouns defined in const or let
+
+    
+    const impact_leagues;
+    
+functions : camel case , starts with a verb , returns a 
+    promise
+    
+    
+    async function getMyTeam(){
+        ...
+        return something_important;
+    };
+
+
