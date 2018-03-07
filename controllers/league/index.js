@@ -45,53 +45,69 @@ var league_fields = ["id", "impactleague_name", "impactleague_banner", "duration
 var team_fields = ["id", "impactleague_id", "team_name", "team_captain", "team_captain_email_id", "team_code", "team_captain_phone", "invisible"];
 
 
-var checkTeamCode = function (team_code) {
-    return new Promise(
-        function (resolve, reject) {
-            console.log('inside check team code--------', team_code);
-            db.team.findAndCountAll({
-                where: { team_code: team_code }
-            })
-                .then(team => {
-                    if (team.rows[0] && team.rows[0].id) {
-                        console.log('team----', team.rows.length);
-                        const team_id = team.rows[0].id;
-                        resolve(team_id); // fulfilled
-                    } else {
-                        var err = 'Please enter the correct team code';
-                        reject(err); // reject
-                    }
-                });
-        }
-    )
+// var checkTeamCode = function (team_code) {
+//     return new Promise(
+//         function (resolve, reject) {
+//             console.log('inside check team code--------', team_code);
+//             db.team.findAndCountAll({
+//                 where: { team_code: team_code }
+//             })
+//                 .then(team => {
+//                     if (team.rows[0] && team.rows[0].id) {
+//                         console.log('team----', team.rows.length);
+//                         const team_id = team.rows[0].id;
+//                         resolve(team_id); // fulfilled
+//                     } else {
+//                         var err = 'Please enter the correct team code';
+//                         reject(err); // reject
+//                     }
+//                 });
+//         }
+//     )
+// };
+
+
+async function checkTeamCode(team_code) {
+    const team = await db.team.findAndCountAll({
+        where: { team_code: team_code }
+    })
+    if (team.rows[0] && team.rows[0].id) {
+        console.log('team----', team.rows.length, team.rows[0].id);
+        const team_id = team.rows[0].id;
+        return team.rows[0];
+    } else {
+        return false;
+    }
 };
 
-
-
-var exitOtherLeagues = function (user_id) {
-    return new Promise(
-        function (resolve, reject) {
-            console.log('inside check team code--------', user_id);
-            db.employee.update(
-                { is_logout: true },
-                {
-                    where: { user_id: user_id, is_logout: false }
-                }
-            )
-                .then(updatedemployee => {
-                    if (true) {
-                        console.log('updatedemployee----', updatedemployee);
-                        resolve(updatedemployee); // fulfilled
-                    } else {
-                        var err = 'Please enter the correct team code';
-                        reject(err); // reject
-                    }
-                });
+async function exitOtherLeagues(user_id) {
+    const updatedemployee = await db.employee.update(
+        { is_logout: true },
+        {
+            where: { user_id: user_id, is_logout: false }
         }
     )
+    return true;
 };
 
+async function getImpactLeague(impactleague_id) {
+    const impact_league = await db.impactLeague.findAndCountAll({
+        where: { id: impactleague_id }
+    });
+    // console.log("implactleagues------", impact_league.rows[0]);
+    return impact_league.rows[0];
+};
 
+async function getTeamMemberCount(team_id) {
+    const team_members = await db.employee.findAndCountAll({
+        where: { is_logout: false, team_id: team_id }
+    })
+    return team_members.rows.length;
+}
+
+async function addeEmployeeToTeam (team_id, user_id){
+
+}
 
 // var exitOtherLeagues = function (user_id) {
 //     console.log("inside exit other leagues---------");
@@ -196,119 +212,131 @@ var league = {
     // So before we add users to any team we logout the user from all other teams
     // and then create his entry in a new team or
     // if the user is simply joining the same team, we update is_logout=false
-    joinTeam(req, res) {
-        var req_body = req.body;
+    // steps 
+    // 1. check if the team code exists else throw error
+    // 2. fetch impact league for the team
+    // 3. check if team is empty else throw error
+    // 4. logout user from all other leagues
+    // 5. update if employee already exists for the user else create new
+    async joinTeam(req, res) {
+        const req_body = req.body;
         const user_id = req.user_id;
         const team_code = req_body.team_code;
-        // var team_valid = league.checkTeamCode(team_code);
-        // checkTeamCode(team_code)
-        //     .then((team_id) => {
-        //         console.log("inside validate promise", team_id);
-        //         res.status(200).send("valid team code " + team_id);
-        //     })
-        //     .then(exitOtherLeagues(user_id))
-        //     .catch(err => {
-        //         res.status(406).send(err);
-        //         // throw new Error(err);
-        //     });
+        let impact_league;
+        let team_limit;
+        let time_size;
+        const valid_team = await checkTeamCode(team_code);
+        if (valid_team) {
+            await exitOtherLeagues(user_id);
+            impact_league = await getImpactLeague(valid_team.impactleague_id);
+            team_limit = impact_league.team_size;
+            team_size = await getTeamMemberCount(valid_team.id);
+            if (team_size < team_limit) {
+                res.status(200).send("in progress");
+            } else {
+                res.status(400).send("Sorry, the team is full. Please join some other team");
+            }
+        } else {
+            res.status(400).send("this code does not exist");
+        }
+        console.log("now its safe to join a team---------", team_size, team_limit, user_id);
         // add validation for checking the code in team table
         // if team code exists create a new employee for that user
         // if (validation) {
-        console.log("now its safe to join a team---------", req_body, user_id);
         // check if the team code exists for any team
-        db.team.findAndCountAll({
-            where: { team_code: req_body["team_code"] }
-        })
-            .then(team => {
-                if (team.rows[0] && team.rows[0].id) {
-                    console.log('team----', team.rows.length);
-                    const team_id = team.rows[0].id;
-                    db.impactLeague.findAndCountAll({
-                        where: { id: team.rows[0].impactleague_id }
-                    }).then(implactleagues => {
-                        // check if actual team size is less than mentioned size
-                        console.log("implactleagues------", implactleagues.rows[0].team_size);
-                        // logout users from all other team
-                        db.employee.update(
-                            { is_logout: true },
-                            {
-                                where: { user_id: user_id, is_logout: false }
-                            }
-                        ).then(
-                            db.employee.findAndCountAll({
-                                where: { is_logout: false, team_id: team_id }
-                            }).then(employees => {
-                                console.log('employeesssss----', employees.rows.length, implactleagues.rows[0].team_size);
-                                if (employees.rows) {
-                                    if (employees.rows.length < implactleagues.rows[0].team_size) {
-                                        db.employee.findAndCountAll({
-                                            where: { user_id: user_id, team_id: team_id }
-                                        })
-                                            .then(employee => {
-                                                console.log('employee----', employee.rows.length);
-                                                // add a new entry in employee for new user
-                                                // required fields
-                                                // company_id, team_id, user_id, is_logout
-                                                // also add a check for team size
-                                                if (employee.rows) {
-                                                    if (employee.rows.length === 0) {
-                                                        console.log("inside create employee");
-                                                        var employee_data = {
-                                                            company_id: implactleagues.rows[0].company_id,
-                                                            team_id: team_id,
-                                                            user_id: user_id,
-                                                            is_logout: false
-                                                        }
-                                                        return db.employee.create(employee_data)
-                                                            .then(employee => {
-                                                                res.json(pagin.getPagination(employee, req, paginconfig.SMALL));
-                                                            })
-                                                            .catch(err => {
-                                                                throw new Error(err);
-                                                                res.status(406).send(err)
-                                                            })
-                                                    } else {
-                                                        db.employee.update(
-                                                            { is_logout: false },
-                                                            {
-                                                                where: { user_id: user_id, team_id: team_id }
-                                                            }
-                                                        ).then(
-                                                            db.employee.findAndCountAll({
-                                                                where: { user_id: user_id, team_id: team_id }
-                                                            }).then(employee => {
-                                                                res.json(pagin.getPagination(employee, req, paginconfig.SMALL));
-                                                            })
-                                                        );
-                                                        console.log("user already logged in");
-                                                        // res.send("everything is fine");
-                                                    }
-                                                } else {
-                                                    console.log("create employee");
-                                                    res.send("everything is fine");
-                                                }
-                                            })
-                                            .catch(err => {
-                                                res.status(406).send({ error: 'Something failed! Contact the admin.' })
-                                                throw new Error(err);
-                                            });
-                                    } else {
-                                        const teamfull_error = 'Team size is full, please join some other team';
-                                        res.status(406).send({ teamfull_error });
-                                        // throw new Error(teamfull_error);
-                                    }
-                                }
-                            })
-                                .catch(err => {
-                                    res.status(406).send({ error: 'Something failed! Contact the admin.' })
-                                    throw new Error(err);
-                                })
-                        )
-                    });
-                } else {
-                    res.status(400).send("this code does not exist");
-                }
-            });
+        // db.team.findAndCountAll({
+        //     where: { team_code: req_body["team_code"] }
+        // })
+        //     .then(team => {
+        //         if (team.rows[0] && team.rows[0].id) {
+        //             console.log('team----', team.rows.length);
+        //             const team_id = team.rows[0].id;
+        //             db.impactLeague.findAndCountAll({
+        //                 where: { id: team.rows[0].impactleague_id }
+        //             }).then(implactleagues => {
+        //                 // check if actual team size is less than mentioned size
+        //                 console.log("implactleagues------", implactleagues.rows[0].team_size);
+        //                 // logout users from all other team
+        //                 db.employee.update(
+        //                     { is_logout: true },
+        //                     {
+        //                         where: { user_id: user_id, is_logout: false }
+        //                     }
+        //                 ).then(
+        //                     db.employee.findAndCountAll({
+        //                         where: { is_logout: false, team_id: team_id }
+        //                     }).then(employees => {
+        //                         console.log('employeesssss----', employees.rows.length, implactleagues.rows[0].team_size);
+        //                         if (employees.rows) {
+        //                             if (employees.rows.length < implactleagues.rows[0].team_size) {
+        //                                 db.employee.findAndCountAll({
+        //                                     where: { user_id: user_id, team_id: team_id }
+        //                                 })
+        //                                     .then(employee => {
+        //                                         console.log('employee----', employee.rows.length);
+        //                                         // add a new entry in employee for new user
+        //                                         // required fields
+        //                                         // company_id, team_id, user_id, is_logout
+        //                                         // also add a check for team size
+        //                                         if (employee.rows) {
+        //                                             if (employee.rows.length === 0) {
+        //                                                 console.log("inside create employee");
+        //                                                 var employee_data = {
+        //                                                     company_id: implactleagues.rows[0].company_id,
+        //                                                     team_id: team_id,
+        //                                                     user_id: user_id,
+        //                                                     is_logout: false
+        //                                                 }
+        //                                                 return db.employee.create(employee_data)
+        //                                                     .then(employee => {
+        //                                                         res.json(pagin.getPagination(employee, req, paginconfig.SMALL));
+        //                                                     })
+        //                                                     .catch(err => {
+        //                                                         throw new Error(err);
+        //                                                         res.status(406).send(err)
+        //                                                     })
+        //                                             } else {
+        //                                                 db.employee.update(
+        //                                                     { is_logout: false },
+        //                                                     {
+        //                                                         where: { user_id: user_id, team_id: team_id }
+        //                                                     }
+        //                                                 ).then(
+        //                                                     db.employee.findAndCountAll({
+        //                                                         where: { user_id: user_id, team_id: team_id }
+        //                                                     }).then(employee => {
+        //                                                         res.json(pagin.getPagination(employee, req, paginconfig.SMALL));
+        //                                                     })
+        //                                                 );
+        //                                                 console.log("user already logged in");
+        //                                                 // res.send("everything is fine");
+        //                                             }
+        //                                         } else {
+        //                                             console.log("create employee");
+        //                                             res.send("everything is fine");
+        //                                         }
+        //                                     })
+        //                                     .catch(err => {
+        //                                         res.status(406).send({ error: 'Something failed! Contact the admin.' })
+        //                                         throw new Error(err);
+        //                                     });
+        //                             } else {
+        //                                 const teamfull_error = 'Team size is full, please join some other team';
+        //                                 res.status(406).send({ teamfull_error });
+        //                                 // throw new Error(teamfull_error);
+        //                             }
+        //                         }
+        //                     })
+        //                         .catch(err => {
+        //                             res.status(406).send({ error: 'Something failed! Contact the admin.' })
+        //                             throw new Error(err);
+        //                         })
+        //                 )
+        //             });
+        //         } else {
+        // res.status(400).send("this code does not exist");
+        //         }
+        //     });
     },
 
     exitTeams(req, res) {
