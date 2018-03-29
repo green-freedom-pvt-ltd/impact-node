@@ -1,4 +1,5 @@
 module.exports = function (sequelize, DataTypes) {
+   
     return sequelize.define('leaderboard_activity', {
         leaderboard_activity_id: {
             type: DataTypes.INTEGER,
@@ -8,7 +9,11 @@ module.exports = function (sequelize, DataTypes) {
         },
         user_id: {
             type: DataTypes.BIGINT,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: 'share_api_users',
+                key: 'user_id'
+              }
         },
         team_id: {
             type: DataTypes.BIGINT,
@@ -113,9 +118,12 @@ module.exports = function (sequelize, DataTypes) {
     },
         {
             freezeTableName: true, // Model tableName will be the same as the model name
-            timestamps: false
+            timestamps: false,
+            // underscored: true 
         },
         {
-            tableName: 'leaderboard_activity'
+            tableName: 'leaderboard_activity',
+           
         });
 };
+

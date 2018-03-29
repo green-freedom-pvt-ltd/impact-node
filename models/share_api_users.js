@@ -135,6 +135,7 @@ module.exports = function(sequelize, DataTypes) {
       timestamps:false     
     },
     {
-    tableName: 'share_api_users'
+    tableName: 'share_api_users',
+    //underscored: true
   });
 };

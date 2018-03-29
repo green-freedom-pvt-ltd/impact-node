@@ -132,7 +132,7 @@ function overlap(dateRanges) {
 // };
 
 async function checkDuplicateWorkout(req_body) {
-    console.log("Req body", req_body);
+    //console.log("Req body", req_body);
     let current_date = new Date("Mar 19, 2018").setHours(5, 30);
 
     console.log("current date", current_date);
@@ -145,7 +145,6 @@ async function checkDuplicateWorkout(req_body) {
                 $gte: current_date
             }
         }
-
     })
 
     let time_stamp = await JSON.parse(JSON.stringify(getTimestamp, null, 2));
@@ -205,11 +204,40 @@ function syncRun(post_run_data) {
     )
         .then(postRun => {
             return postRun;
-            res.status(201).send(postRun);
+            //res.status(201).send(postRun);
         })
         .catch(error => {
             throw error;
             res.status(400).send(error);
+        })
+}
+
+function leagueLeaderboard(data) {
+    db.leagueleaderboard.all({
+        where:{
+            user_id:data.user_id_id,
+            team_id:data.team_id_id
+        }
+    })
+        .then((res) => {
+            let response = JSON.parse(JSON.stringify(res));
+            console.log("Response", response[0].id);
+            let league_amount = response[0].total_amount + data.run_amount;
+            let count = response[0].run_count + 1;
+            db.leagueleaderboard.update({
+                total_amount: league_amount,
+                run_count: count
+            },
+                {
+                    where: {
+                        team_id: response[0].team_id,
+                        user_id: response[0].user_id
+                    }
+                }
+            ).then((resp) => {
+                console.log("resp..........", resp);
+            })
+
         })
 }
 
@@ -243,11 +271,18 @@ var runModel = {
         const start_time = post_req_body.start_time;
         const end_time = post_req_body.end_time;
         const user = post_req_body.user_id_id;
-        const team = post_req_body.team_id_id;
+        const team = post_req_body.team_id_id; 
+        
+        var version = new Date();
+        post_req_body.version = version.getTime();
+        post_req_body.start_time_epoch = Math.round(new Date(post_req_body.start_time).getTime() / 1000);
+        post_req_body.end_time_epoch = Math.round(new Date(post_req_body.end_time).getTime() / 1000);
+
+
 
         //checking duplicate workout by time duration is already exist or not
         let get_data = await checkDuplicateWorkout(post_req_body);
-      
+
         // If workout distance > 50 then flagging that workout
         if (post_req_body.distance > 50) {
             post_req_body.is_flag = true;
@@ -259,14 +294,24 @@ var runModel = {
                 let check_league_is_over = await checkLegue(end_time, user, team);
                 console.log("check_league_is_over", check_league_is_over);
                 //Checking if league is going on or not
+                
                 if (check_league_is_over) {
-                    post_req_body.team_id_id = null;
+                    
+                   post_req_body.team_id_id = null;
                 }
-                var post_data = await syncRun(post_req_body);
-                if (post_data) {
-                    res.status(201).send(post_data);
+                try {
+                    var post_data = await syncRun(post_req_body);
+                    if (post_data) {
+                       // await leagueLeaderboard(post_data);
+                        if(post_req_body.team_id_id){
+                            await leagueLeaderboard(post_data);
+                        }
+                        res.status(201).send(post_data);
+                    }
                 }
-
+                catch (err) {
+                    res.status(401).send(err);
+                }
             }
             else {
                 var post_data = await syncRun(post_req_body);
@@ -274,16 +319,13 @@ var runModel = {
                     res.status(201).send(post_data);
                 }
             }
-
         }
         else {
             let error = {};
             error.Error = "duplicate workouts present";
             error.workout_overlap = get_data.ranges
             res.status(401).send(error)
-
         }
-
     },
 
     postRun1(req, res) {
@@ -311,119 +353,119 @@ var runModel = {
 
 
         // Checking duplicate workout by user id and start time combination
-        db.runs.count({
-            where: {
-                start_time: run_start_time,
-                user_id_id: user,
+        // db.runs.count({
+        //     where: {
+        //         start_time: run_start_time,
+        //         user_id_id: user,
 
-            }
-        })
-            .then(run_count => {
-                if (run_count === 0) {
-                    db.runs.all({
-                        attributes: [[sequelize.fn('max', sequelize.col('end_time')), 'max_end_time']],
-                        where: {
-                            user_id_id: user,
-                        }
-                    }).then(max_end_date => {
-                        var latest_workout_end_date = JSON.parse(JSON.stringify(max_end_date));
-                        latest_workout_end_date = new Date(latest_workout_end_date[0].max_end_time);
-                        var current_workout_end_time = new Date(post_run_values.end_time);
-                        console.log("MAXimum end workout", latest_workout_end_date);
-                        console.log("latest_workout_end_date", latest_workout_end_date, "end_time", current_workout_end_time);
-                        if (current_workout_end_time > latest_workout_end_date) {
-                            // console.log("max End date",latest_workout_end_date);
-                            // var isValidBody = pagin.validateReqBody(req.body,parameterTypes,fields);
-                            // logger.info("Validate body",isValidBody);
+        //     }
+        // })
+        //     .then(run_count => {
+        //         if (run_count === 0) {
+        //             db.runs.all({
+        //                 attributes: [[sequelize.fn('max', sequelize.col('end_time')), 'max_end_time']],
+        //                 where: {
+        //                     user_id_id: user,
+        //                 }
+        //             }).then(max_end_date => {
+        //                 var latest_workout_end_date = JSON.parse(JSON.stringify(max_end_date));
+        //                 latest_workout_end_date = new Date(latest_workout_end_date[0].max_end_time);
+        //                 var current_workout_end_time = new Date(post_run_values.end_time);
+        //                 console.log("MAXimum end workout", latest_workout_end_date);
+        //                 console.log("latest_workout_end_date", latest_workout_end_date, "end_time", current_workout_end_time);
+        //                 if (current_workout_end_time > latest_workout_end_date) {
+        //                     // console.log("max End date",latest_workout_end_date);
+        //                     // var isValidBody = pagin.validateReqBody(req.body,parameterTypes,fields);
+        //                     // logger.info("Validate body",isValidBody);
 
-                            //if team id present then will check here that league has been ended or not
-                            if (post_run_values.team_id_id) {
-                                db.team.all({
-                                    where: { id: post_run_values.team_id_id },
-                                })
-                                    .then(teams => {
-                                        var team_data = JSON.parse(JSON.stringify(teams));
-                                        var league_id = team_data[0].impactleague_id
+        //                     //if team id present then will check here that league has been ended or not
+        //                     if (post_run_values.team_id_id) {
+        //                         db.team.all({
+        //                             where: { id: post_run_values.team_id_id },
+        //                         })
+        //                             .then(teams => {
+        //                                 var team_data = JSON.parse(JSON.stringify(teams));
+        //                                 var league_id = team_data[0].impactleague_id
 
-                                        db.impactLeague.all({
-                                            where: {
-                                                id: league_id
-                                            },
-                                        }).then(league => {
-                                            var league_data = JSON.parse(JSON.stringify(league));
-                                            var start_date = league_data[0].start_date;
-                                            var end_league_date = new Date(league_data[0].end_date).toLocaleDateString();
-                                            var end_run_date = new Date(post_run_values.end_time).toLocaleDateString();
-                                            // var end_run_date = date.toLocaleDateString();
-                                            console.log("workout_end_time", end_run_date, "league_end_date", end_league_date);
-                                            console.log(end_run_date - end_league_date);
-                                            if (end_run_date > end_league_date) {
-                                                console.log("come in if condition");
-                                                //If league has been over then logging out the user
-                                                db.employee.update(
-                                                    { is_logout: true },
-                                                    {
-                                                        where: { user_id: user, team_id: post_run_values.team_id_id }
-                                                    }
-                                                ).then(employee => {
+        //                                 db.impactLeague.all({
+        //                                     where: {
+        //                                         id: league_id
+        //                                     },
+        //                                 }).then(league => {
+        //                                     var league_data = JSON.parse(JSON.stringify(league));
+        //                                     var start_date = league_data[0].start_date;
+        //                                     var end_league_date = new Date(league_data[0].end_date).toLocaleDateString();
+        //                                     var end_run_date = new Date(post_run_values.end_time).toLocaleDateString();
+        //                                     // var end_run_date = date.toLocaleDateString();
+        //                                     console.log("workout_end_time", end_run_date, "league_end_date", end_league_date);
+        //                                     console.log(end_run_date - end_league_date);
+        //                                     if (end_run_date > end_league_date) {
+        //                                         console.log("come in if condition");
+        //                                         //If league has been over then logging out the user
+        //                                         db.employee.update(
+        //                                             { is_logout: true },
+        //                                             {
+        //                                                 where: { user_id: user, team_id: post_run_values.team_id_id }
+        //                                             }
+        //                                         ).then(employee => {
 
-                                                    logger.info("post run after logging out from the league")
-                                                    return db.runs.create(
-                                                        post_run_values
-                                                    )
-                                                        .then(postRun => {
-                                                            res.status(201).send(postRun);
-                                                        })
-                                                        .catch(error => {
-                                                            res.status(400).send(error);
-                                                        })
+        //                                             logger.info("post run after logging out from the league")
+        //                                             return db.runs.create(
+        //                                                 post_run_values
+        //                                             )
+        //                                                 .then(postRun => {
+        //                                                     res.status(201).send(postRun);
+        //                                                 })
+        //                                                 .catch(error => {
+        //                                                     res.status(400).send(error);
+        //                                                 })
 
-                                                })
+        //                                         })
 
-                                            }
-                                            else {
-                                                return db.runs.create(
-                                                    post_run_values
-                                                )
-                                                    .then(postRun => {
-                                                        res.status(201).send(postRun);
-                                                    })
-                                                    .catch(error => {
-                                                        res.status(400).send(error);
-                                                    })
-                                            }
-                                        })
-                                    }
-                                    )
-                            }
-                            else {
-                                //console.log("post_run_values");
-                                logger.info("Post run if team id not present");
-                                return db.runs.create(
-                                    post_run_values
-                                )
-                                    .then(postRun => {
-                                        res.status(201).send(postRun);
-                                    })
-                                    .catch(error => {
-                                        res.status(400).send(error);
-                                    })
-                            }
-                        }
-                        else {
-                            console.log("Workout can't added at the same time");
+        //                                     }
+        //                                     else {
+        //                                         return db.runs.create(
+        //                                             post_run_values
+        //                                         )
+        //                                             .then(postRun => {
+        //                                                 res.status(201).send(postRun);
+        //                                             })
+        //                                             .catch(error => {
+        //                                                 res.status(400).send(error);
+        //                                             })
+        //                                     }
+        //                                 })
+        //                             }
+        //                             )
+        //                     }
+        //                     else {
+        //                         //console.log("post_run_values");
+        //                         logger.info("Post run if team id not present");
+        //                         return db.runs.create(
+        //                             post_run_values
+        //                         )
+        //                             .then(postRun => {
+        //                                 res.status(201).send(postRun);
+        //                             })
+        //                             .catch(error => {
+        //                                 res.status(400).send(error);
+        //                             })
+        //                     }
+        //                 }
+        //                 else {
+        //                     console.log("Workout can't added at the same time");
 
-                            res.status(401).send({ Error: "Workout can't added at the same time" });
-                        }
-                    })
+        //                     res.status(401).send({ Error: "Workout can't added at the same time" });
+        //                 }
+        //             })
 
-                }
-                else {
-                    res.status(401).send({ Error: "Workout already exists" });
-                }
-            }
+        //         }
+        //         else {
+        //             res.status(401).send({ Error: "Workout already exists" });
+        //         }
+        //     }
 
-            )
+        //     )
 
     },
 }
