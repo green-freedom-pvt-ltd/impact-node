@@ -161,12 +161,22 @@ async function checkDuplicateWorkout(req_body) {
 };
 
 async function checkLegue(end_time, user, team) {
+try {
+    console.log("Came in checkLegue",);
     let check_league = await db.team.all({
         where: { id: team },
     })
         .then(teams => {
+            console.log("Came in team length is zero",teams.length ,teams.length?"yes":"no");
+            //Checking if team id is available/valid or not
+            if (teams.length === 0) {
+                console.log("Came in team length is zero");
+                return "Team Id not available";
+            }
             var team_data = JSON.parse(JSON.stringify(teams));
             var league_id = team_data[0].impactleague_id
+            
+            //Checking league is in-progress or not
             let check_league_end = db.impactLeague.all({
                 where: {
                     id: league_id
@@ -191,9 +201,15 @@ async function checkLegue(end_time, user, team) {
             })
             return check_league_end;
 
-        })
-    return check_league;
+        }).catch((error) => {
+            return error;
 
+        })
+} catch (error) {
+    console.log("error",error);
+}
+   
+    return check_league;
 }
 
 function syncRun(post_run_data) {
@@ -214,18 +230,18 @@ function syncRun(post_run_data) {
 
 function leagueLeaderboard(data) {
     db.leagueleaderboard.all({
-        where:{
-            user_id:data.user_id_id,
-            team_id:data.team_id_id
+        where: {
+            user_id: data.user_id_id,
+            team_id: data.team_id_id
         }
     })
         .then((res) => {
             let response = JSON.parse(JSON.stringify(res));
             console.log("Response", response[0].id);
-            let league_amount = response[0].total_amount + data.run_amount;
+            let workout_amount = response[0].total_amount + data.run_amount;
             let count = response[0].run_count + 1;
             db.leagueleaderboard.update({
-                total_amount: league_amount,
+                total_amount: workout_amount,
                 run_count: count
             },
                 {
@@ -271,14 +287,11 @@ var runModel = {
         const start_time = post_req_body.start_time;
         const end_time = post_req_body.end_time;
         const user = post_req_body.user_id_id;
-        const team = post_req_body.team_id_id; 
-        
+        const team = post_req_body.team_id_id;
+
+        //Adding current time in the version field
         var version = new Date();
         post_req_body.version = version.getTime();
-        post_req_body.start_time_epoch = Math.round(new Date(post_req_body.start_time).getTime() / 1000);
-        post_req_body.end_time_epoch = Math.round(new Date(post_req_body.end_time).getTime() / 1000);
-
-
 
         //checking duplicate workout by time duration is already exist or not
         let get_data = await checkDuplicateWorkout(post_req_body);
@@ -290,21 +303,27 @@ var runModel = {
         get_data = JSON.parse(get_data);
         if (!get_data.overlap) {
             if (team) {
-
-                let check_league_is_over = await checkLegue(end_time, user, team);
-                console.log("check_league_is_over", check_league_is_over);
+               
+                    let check_league_is_over = await checkLegue(end_time, user, team);
+                             
+                //console.log("check_league_is_over", check_league_is_over);
                 //Checking if league is going on or not
-                
+
                 if (check_league_is_over) {
-                    
-                   post_req_body.team_id_id = null;
+
+                    post_req_body.team_id_id = null;
                 }
                 try {
                     var post_data = await syncRun(post_req_body);
                     if (post_data) {
-                       // await leagueLeaderboard(post_data);
-                        if(post_req_body.team_id_id){
-                            await leagueLeaderboard(post_data);
+                        // await leagueLeaderboard(post_data);
+
+                        /*Checking team id, if not null means league is in-progress 
+                        then adding amount with team id*/
+                        
+                        if (post_req_body.team_id_id && !post_req_body.is_flag) {   
+
+                            await leagueLeaderboard(post_data);   //Adding data into league leaderboard table 
                         }
                         res.status(201).send(post_data);
                     }
@@ -322,8 +341,9 @@ var runModel = {
         }
         else {
             let error = {};
-            error.Error = "duplicate workouts present";
-            error.workout_overlap = get_data.ranges
+            let workout_overlap = get_data.ranges
+            error.error = "duplicate workouts present";
+            errot.result=workout_overlap
             res.status(401).send(error)
         }
     },

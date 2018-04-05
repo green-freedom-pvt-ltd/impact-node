@@ -10,7 +10,7 @@
             "name": "Launch Program",
             "program": "${workspaceFolder}/server.js",
             "env": {
-               "NODE_ENV": "dhope"
+               "NODE_ENV": "nishant"
            }
         }
     ]

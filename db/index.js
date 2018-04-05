@@ -41,11 +41,12 @@ db.team = require ('../models/share_api_team')(sequelize, Sequelize);
 db.employee =require ('../models/share_api_employee')(sequelize, Sequelize);
 db.leaderboard =require ('../models/leaderboard_activity')(sequelize, Sequelize);
 db.leagueleaderboard =require ('../models/share_api_leagueleaderboard')(sequelize, Sequelize);
+db.teamleaderboard =require ('../models/share_api_teamleaderboard')(sequelize, Sequelize);
 
 //Relation 
 
 db.leaderboard.belongsTo(db.users,{foreignKey: 'user_id'}); 
-
+db.teamleaderboard.belongsTo(db.users,{foreignKey: 'user_id'}); 
 
 // this connects the application to the database
 // and all transactions happen after that

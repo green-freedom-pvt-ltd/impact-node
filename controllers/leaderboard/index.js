@@ -41,6 +41,33 @@ const attributes = [
     [sequelize.fn('sum', sequelize.col('super_amt_30')), 'super_amt_30'],
 ];
 
+let get_aggregate_leaderboard_query = ` SELECT "leaderboard_activity"."user_id",
+"leaderboard_activity"."amt_agg" AS "amount", "leaderboard_activity"."dist_agg" AS "distance", 
+ "share_api_user"."first_name" AS "first_name", "share_api_user"."last_name" AS "last_name", 
+row_number() OVER (ORDER BY (dist_agg) DESC) AS ranking,"share_api_user"."email" AS "email", 
+"share_api_user"."gender_user" AS "gender_user", "share_api_user"."phone_number" AS "phone_number",
+ "share_api_user"."social_thumb" AS "social_thumb", 
+ "share_api_user"."birthday" AS "birthday"
+  FROM "leaderboard_activity" AS "leaderboard_activity" 
+  LEFT OUTER JOIN "share_api_users" AS "share_api_user" 
+  ON "leaderboard_activity"."user_id" = "share_api_user"."user_id"
+   ORDER BY "dist_agg" DESC LIMIT 50;`;
+
+let get_user_query = `SELECT "leaderboard_activity"."user_id", 
+"leaderboard_activity"."amt_agg" AS "amount", "leaderboard_activity"."dist_agg" AS "distance",
+"share_api_user"."first_name" AS "first_name",  "share_api_user"."last_name" AS "last_name",
+row_number() OVER (ORDER BY (dist_agg) DESC) AS ranking,  "share_api_user"."email" AS "email",
+  "share_api_user"."gender_user" AS "gender_user", "share_api_user"."phone_number" AS "phone_number", 
+  "share_api_user"."social_thumb" AS "social_thumb", "share_api_user"."birthday" AS "birthday",
+  (
+SELECT  COUNT(*)
+FROM    leaderboard_activity l
+WHERE   l."dist_agg" >= leaderboard_activity."dist_agg"
+
+) AS ranking
+  FROM "leaderboard_activity" AS "leaderboard_activity" LEFT OUTER JOIN 
+  "share_api_users" AS "share_api_user" ON "leaderboard_activity"."user_id" = "share_api_user"."user_id" 
+WHERE "leaderboard_activity"."user_id" = 290 AND "leaderboard_activity"."team_id" = 196;`;
 
 var leaderboardModel = {
     getLeaderboard(req, res) {
@@ -80,7 +107,7 @@ var leaderboardModel = {
 
     },
 
-    getWeekLeaderboard(req, res) {
+    getWeekLeaderboard1(req, res) {
         var urlQuery = req.query;
         var whereQuery = pagin.createQuery(urlQuery, filterList);
         console.log("paginconfig------------------", paginconfig.NORMAL);
@@ -104,6 +131,9 @@ var leaderboardModel = {
 
 
     getMonthLeaderboard(req, res) {
+
+
+
         var urlQuery = req.query;
         var whereQuery = pagin.createQuery(urlQuery, filterList);
         console.log("paginconfig------------------", paginconfig.NORMAL);
@@ -125,74 +155,90 @@ var leaderboardModel = {
 
     },
 
-    getLeaderboard(req, res) {
-        //row_number() OVER (ORDER BY (sum(r.distance)) DESC) AS ranking
-       
-        const user = req.user_id;
-        return db.leaderboard.findAll({
-            attributes: ['user_id', ['amt_agg', 'amount'], ['dist_agg', 'distance']],
-           // ['row_number() OVER (ORDER BY (dist_agg) DESC)','ranking' ]],
-            include: [
-                {
-                    model: db.users,
-                    attributes:
-                        ['first_name', 'last_name', 'email', 'gender_user',
-                            'phone_number', 'social_thumb', 'birthday']
 
-                }
-            ],
-            order:[[sequelize.col('dist_agg'), 'DESC']],
-            
-            limit: 50
-        })
-            .then((result) => {
+
+
+    getWeekLeaderboard(req, res) {
+        //row_number() OVER (ORDER BY (sum(r.distance)) DESC) AS ranking
+
+        const user = req.user_id;
+        // return db.leaderboard.findAll({
+        //     attributes: ['user_id', ['amt_agg', 'amount'], ['dist_agg', 'distance']],
+        //     // ['row_number() OVER (ORDER BY (dist_agg) DESC)','ranking' ]],
+        //     include: [
+        //         {
+        //             model: db.users,
+        //             attributes:
+        //                 ['first_name', 'last_name', 'email', 'gender_user',
+        //                     'phone_number', 'social_thumb', 'birthday']
+
+        //         }
+        //     ],
+        //     order: [[sequelize.col('dist_agg'), 'DESC']],
+
+        //     limit: 50
+        // })
+
+
+        //    return sequelize.query(get_aggregate_leaderboard_query,
+        //         { replacements: { user_id: 290,team_id:196 }, type: sequelize.QueryTypes.SELECT }
+        //     )
+        return sequelize.query(get_aggregate_leaderboard_query, { type: sequelize.QueryTypes.SELECT })
+        .then((result) => {
+            //console.log("user DATA",result.length);
                 let arr = [];
                 let data = JSON.parse(JSON.stringify(result));
-                console.log('DATA.......', data);
-                var check_user_id =_.contains(data,user);
-                console.log("Checking existince of user id",check_user_id, user);
-                if(!check_user_id){
-                   let user_data = db.leaderboard.findAll({
-                        attributes: ['user_id', ['amt_agg', 'amount'], ['dist_agg', 'distance']],
-                        include: [
-                            {
-                                model: db.users,
-                                attributes:
-                                    ['first_name', 'last_name', 'email', 'gender_user',
-                                        'phone_number', 'social_thumb', 'birthday']
-            
-                            }
-                        ],
-                        where:{
-                            user_id:user,
-                            team_id: 196
-                        }
-                    })
-                    .then((user_data)=>{
-                        data = data.concat(JSON.parse(JSON.stringify(user_data)));
-                        let new_value = data.map((current, index) => {
+                var check_user_id = _.contains(data, user);
+                console.log("Checking existince of user id", check_user_id, user);
+                if (!check_user_id) {
+
+                    return sequelize.query(get_user_query, { type: sequelize.QueryTypes.SELECT })
+                        // let user_data = db.leaderboard.findAll({
+                        //     attributes: ['user_id', ['amt_agg', 'amount'], ['dist_agg', 'distance']],
+                        //     include: [
+                        //         {
+                        //             model: db.users,
+                        //             attributes:
+                        //                 ['first_name', 'last_name', 'email', 'gender_user',
+                        //                     'phone_number', 'social_thumb', 'birthday']
+
+                        //         }
+                        //     ],
+                        //     where: {
+                        //         user_id: user,
+                        //         team_id: 196
+                        //     }
+                        // })
+                        .then((user_data) => {
+                            data = data.concat(user_data);
+                            console.log('DATA.......', data.length);
                             let leaderboard_data = {};
-                            leaderboard_data.user_id = current.user_id;
-                            leaderboard_data.ranking = index + 1;
-                            leaderboard_data.amount = current.amount;
-                            leaderboard_data.distance = current.distance;
-                            leaderboard_data.first_name = current.share_api_user.first_name;
-                            leaderboard_data.last_name = current.share_api_user.last_name;
-                            leaderboard_data.email = current.share_api_user.email;
-                            leaderboard_data.gender_user = current.share_api_user.gender_user;
-                            leaderboard_data.phone_number = current.share_api_user.phone_number;
-                            leaderboard_data.social_thumb = current.share_api_user.social_thumb;
-                            leaderboard_data.birthday = current.share_api_user.birthday;
-                            arr.push(leaderboard_data);
+                            leaderboard_data.count =data.length;
+                            leaderboard_data.results=data
+                            res.json(leaderboard_data);
+                            // let new_value = data.map((current, index) => {
+                            //     let leaderboard_data = {};
+                            //     leaderboard_data.user_id = current.user_id;
+                            //     leaderboard_data.ranking = index + 1;
+                            //     leaderboard_data.amount = current.amount;
+                            //     leaderboard_data.distance = current.distance;
+                            //     leaderboard_data.first_name = current.share_api_user.first_name;
+                            //     leaderboard_data.last_name = current.share_api_user.last_name;
+                            //     leaderboard_data.email = current.share_api_user.email;
+                            //     leaderboard_data.gender_user = current.share_api_user.gender_user;
+                            //     leaderboard_data.phone_number = current.share_api_user.phone_number;
+                            //     leaderboard_data.social_thumb = current.share_api_user.social_thumb;
+                            //     leaderboard_data.birthday = current.share_api_user.birthday;
+                            //     arr.push(leaderboard_data);
+                            // })
+                            // res.json(arr);
+                            //return data;
+                            //console.log("DATA.......",data);
                         })
-                        res.json(arr);
-                        //return data;
-                        //console.log("DATA.......",data);
-                    })
-                   
-                    
+
+
                 }
-                else{
+                else {
                     let new_value = data.map((current, index) => {
                         let leaderboard_data = {};
                         leaderboard_data.user_id = current.user_id;
@@ -212,8 +258,8 @@ var leaderboardModel = {
 
                 }
                 //console.log("User data",user_data);
-             
-             
+
+
             })
     }
 
