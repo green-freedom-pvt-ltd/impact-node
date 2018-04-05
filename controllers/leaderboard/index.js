@@ -107,7 +107,7 @@ var leaderboardModel = {
 
     },
 
-    getWeekLeaderboard1(req, res) {
+    getWeekLeaderboard(req, res) {
         var urlQuery = req.query;
         var whereQuery = pagin.createQuery(urlQuery, filterList);
         console.log("paginconfig------------------", paginconfig.NORMAL);
@@ -158,7 +158,7 @@ var leaderboardModel = {
 
 
 
-    getWeekLeaderboard(req, res) {
+    getLeaderboard(req, res) {
         //row_number() OVER (ORDER BY (sum(r.distance)) DESC) AS ranking
 
         const user = req.user_id;
