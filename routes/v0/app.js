@@ -20,7 +20,7 @@ routes.post('/runs',Runs.postRun);
 routes.get('/teams', League.getTeams);
 // routes.get('/employee', Employee.getEmployeeList);
 routes.get('/runLocation', Locations.getRunLocations);
-routes.get('/leaderboard',Leaderboard.getOverallLeaderboard);
+routes.get('/leaderboard',NewLeaderboard.getLeaderboard);
 routes.post('/teams',League.createTeams);
 routes.post('/jointeam',League.joinTeam);
 routes.post('/exitteam',League.exitTeams);
@@ -28,9 +28,6 @@ routes.post('/exitteam',League.exitTeams);
 
 routes.get('/users', User.getActualUserData);
 routes.get('/userleaderboard', User.getLeaderboard);
-routes.get('/newleaderboard', NewLeaderboard.getAggregateLeaderboard);
-routes.get('/weekleaderboard', NewLeaderboard.getWeekLeaderboard);
-routes.get('/monthleaderboard', NewLeaderboard.getMonthLeaderboard);
 routes.get('/teamleaderboard', League.getTeamLeaderboard);
 routes.get('/teamboard', League.getLeagueLeaderboard);
 
