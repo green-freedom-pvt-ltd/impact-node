@@ -10,7 +10,6 @@ const parameterTypes = {};
 
 var fraudster = {
     postFraudster(req, res) {
-        console.log("Fraudster");
         let data = req.body;
         let Fraudster = {};
         let user = req.user_id;
@@ -21,8 +20,6 @@ var fraudster = {
         Fraudster.mock_location_used = data.mock_location_used;
         Fraudster.timestamp = data.timestamp;
         Fraudster.team_id_id = data.team_id;
-
-        console.log("Fraudster", Fraudster);
 
         return db.fraudster.create(Fraudster)
             .then(result => {
