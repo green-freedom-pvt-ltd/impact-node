@@ -99,3 +99,4 @@ module.exports = function (sequelize, DataTypes) {
       tableName: 'share_api_causes'
     });
 };
+

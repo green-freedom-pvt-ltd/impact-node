@@ -18,6 +18,7 @@ var pagination = {
 
 
 	getPagination(objectResponse, req, limit) {
+
 		var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
 		const totalPage = Math.ceil(parseInt(objectResponse.count) / limit);
 		objectResponse.results = objectResponse.rows;
@@ -34,7 +35,7 @@ var pagination = {
 		var prevUrl = prev;
 		prevUrl.searchParams.set('page', currPage - 1);
 		objectResponse.next = currPage >= totalPage ? null : nextUrl.href;
-		objectResponse.previous = currPage - 1 <= 0 || currPage >= totalPage ? null : prevUrl.href;
+		objectResponse.previous = currPage - 1 <= 0 || currPage - 1 >= totalPage ? null : prevUrl.href;
 
 		return objectResponse;
 	},
@@ -122,7 +123,14 @@ var pagination = {
 						throw "Value of the atrribute " + keys[i] + " is supposed to be " + parameterTypes[keys[i]];
 					}
 				} else {
-					if (keys[i] == 'page') { continue; }
+					if (keys[i] == 'page') { 
+						if(parseInt(urlQuery.page) && parseInt(urlQuery.page) > 0){
+							continue; 
+						}
+						else{
+							throw "please enter valid parameter in url query string"
+						}
+					}
 					throw "Filter Parameter " + keys[i] + " does not exist";
 				}
 			}
@@ -130,26 +138,29 @@ var pagination = {
 		return whereQuery;
 	},
 
-	validateReqBody(body, parameterTypes,fields) {
+	validateReqBody(body, parameterTypes, fields) {
 		var validation = false;
 		var keys = Object.keys(body);
 		for (let i = 0; i < keys.length; i++) {
-		    const element = keys[i];
-		    var filterParameter = keys[i];
-		    if (fields.includes(keys[i])) {
-		        // This part checks if the value for the filter parameter given in the url 
-		        // is of the datatype provided in the database 
-		        isValidated = this.validate(parameterTypes[keys[i]], body[keys[i]]);
-		        if (isValidated) {
-		            // whereQuery[keys[i]] = urlQuery[keys[i]];
-		            validation = true;
-		        } else {
-		            throw "Value of the atrribute " + keys[i] + " is supposed to be " + parameterTypes[keys[i]];
-		        }
-		    } else {
-		        if (keys[i] == 'page') { continue; }
-		        throw "Filter Parameter " + keys[i] + " does not exist";
-		    }
+			const element = keys[i];
+			var filterParameter = keys[i];
+			if (fields.includes(keys[i])) {
+				// This part checks if the value for the filter parameter given in the url 
+				// is of the datatype provided in the database 
+				isValidated = this.validate(parameterTypes[keys[i]], body[keys[i]]);
+				if (isValidated) {
+					// whereQuery[keys[i]] = urlQuery[keys[i]];
+					validation = true;
+				} else {
+					throw "Value of the atrribute " + keys[i] + " is supposed to be " + parameterTypes[keys[i]];
+				}
+			} else {
+				if (keys[i] == 'page') { 
+					
+					continue;
+				 }
+				throw "Filter Parameter " + keys[i] + " does not exist";
+			}
 		}
 		return validation;
 	},

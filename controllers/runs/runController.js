@@ -161,54 +161,54 @@ async function checkDuplicateWorkout(req_body) {
 };
 
 async function checkLegue(end_time, user, team) {
-try {
-    console.log("Came in checkLegue",);
-    let check_league = await db.team.all({
-        where: { id: team },
-    })
-        .then(teams => {
-            console.log("Came in team length is zero",teams.length ,teams.length?"yes":"no");
-            //Checking if team id is available/valid or not
-            if (teams.length === 0) {
-                console.log("Came in team length is zero");
-                return "Team Id not available";
-            }
-            var team_data = JSON.parse(JSON.stringify(teams));
-            var league_id = team_data[0].impactleague_id
-            
-            //Checking league is in-progress or not
-            let check_league_end = db.impactLeague.all({
-                where: {
-                    id: league_id
-                },
-            }).then(league => {
-                var league_data = JSON.parse(JSON.stringify(league));
-                var start_date = league_data[0].start_date;
-                var end_league_date = new Date(league_data[0].end_date).toLocaleDateString();
-                var end_run_date = new Date(end_time).toLocaleDateString();
-                // var end_run_date = date.toLocaleDateString();
-                console.log("workout_end_time", end_run_date, "league_end_date", end_league_date);
-                console.log(end_run_date - end_league_date);
-                // checking if workout is a part of league
-                if (end_run_date >= end_league_date) {
-                    console.log("come in if condition");
-                    //If league has been over then logging out the user
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            })
-            return check_league_end;
-
-        }).catch((error) => {
-            return error;
-
+    try {
+        console.log("Came in checkLegue", );
+        let check_league = await db.team.all({
+            where: { id: team },
         })
-} catch (error) {
-    console.log("error",error);
-}
-   
+            .then(teams => {
+                console.log("Came in team length is zero", teams.length, teams.length ? "yes" : "no");
+                //Checking if team id is available/valid or not
+                if (teams.length === 0) {
+                    console.log("Came in team length is zero");
+                    return "Team Id not available";
+                }
+                var team_data = JSON.parse(JSON.stringify(teams));
+                var league_id = team_data[0].impactleague_id
+
+                //Checking league is in-progress or not
+                let check_league_end = db.impactLeague.all({
+                    where: {
+                        id: league_id
+                    },
+                }).then(league => {
+                    var league_data = JSON.parse(JSON.stringify(league));
+                    var start_date = league_data[0].start_date;
+                    var end_league_date = new Date(league_data[0].end_date).toLocaleDateString();
+                    var end_run_date = new Date(end_time).toLocaleDateString();
+                    // var end_run_date = date.toLocaleDateString();
+                    console.log("workout_end_time", end_run_date, "league_end_date", end_league_date);
+                    console.log(end_run_date - end_league_date);
+                    // checking if workout is a part of league
+                    if (end_run_date >= end_league_date) {
+                        console.log("come in if condition");
+                        //If league has been over then logging out the user
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                })
+                return check_league_end;
+
+            }).catch((error) => {
+                return error;
+
+            })
+    } catch (error) {
+        console.error("error", error);
+    }
+
     return check_league;
 }
 
@@ -258,8 +258,84 @@ function leagueLeaderboard(data) {
 }
 
 var runModel = {
-    getRuns(req, res) {
+    async getRuns(req, res) {
         var urlQuery = req.query;
+        let user = req.user_id;
+        let LIMIT = paginconfig.NORMAL
+        console.log(urlQuery.is_flag)
+        if (urlQuery.is_flag || urlQuery.client_version) {
+            if (urlQuery.is_flag == "true") {
+
+                if (parseInt(urlQuery.page) && parseInt(urlQuery.page) > 0 || urlQuery.is_flag == "true") {
+                    return db.runs.findAndCountAll({
+                        where: {
+                            is_flag: true,
+                            user_id_id: user
+                        },
+                        order: [[sequelize.col("start_time"), "DESC"]],
+                        limit: LIMIT,
+                        offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * LIMIT)
+                    })
+                        .then((result) => {
+                            let paginate = pagin.getPagination(result, req, LIMIT);
+                            res.status(200).send(paginate);
+                        })
+                }
+                else {
+                    res.status(400).send({
+                        "error": "please enter valid parameter in url query string"
+                    });
+                }
+            }
+            else if (urlQuery.is_flag == "all") {
+                if (parseInt(urlQuery.page) && parseInt(urlQuery.page) > 0 || urlQuery.is_flag == "all") {
+                    return db.runs.findAndCountAll({
+                        where: { user_id_id: user },
+                        order: [[sequelize.col("start_time"), "DESC"]],
+                        limit: LIMIT,
+                        offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * LIMIT)
+                    })
+                        .then((result) => {
+                            let paginate = pagin.getPagination(result, req, LIMIT);
+                            res.status(200).send(paginate);
+                        })
+
+                }
+                else {
+                    res.status(400).send({
+                        "error": "please enter valid parameter in url query string"
+                    });
+                }
+            }
+
+            else {
+                if (parseInt(urlQuery.page) && parseInt(urlQuery.page) > 0) {
+                    return db.runs.findAndCountAll({
+                        where: {
+                            user_id_id: user,
+                            version: {
+                                [Op.gt]: urlQuery.client_version
+                            }
+                        },
+                        order: [[sequelize.col('version'), 'desc']],
+                        limit: LIMIT,
+                        offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * LIMIT)
+
+                    })
+                        .then((result) => {
+                            let paginate = pagin.getPagination(result, req, LIMIT);
+                            res.status(200).send(paginate);
+                        })
+                }
+                else {
+                    res.status(400).send({
+                        "error": "please enter valid parameter in url query string"
+                    });
+                }
+            }
+        }
+
+
         try {
             var whereQuery = pagin.createQuery(urlQuery, filterList, parameterTypes);
         } catch (err) {
@@ -303,9 +379,9 @@ var runModel = {
         get_data = JSON.parse(get_data);
         if (!get_data.overlap) {
             if (team) {
-               
-                    let check_league_is_over = await checkLegue(end_time, user, team);
-                             
+
+                let check_league_is_over = await checkLegue(end_time, user, team);
+
                 //console.log("check_league_is_over", check_league_is_over);
                 //Checking if league is going on or not
 
@@ -320,8 +396,8 @@ var runModel = {
 
                         /*Checking team id, if not null means league is in-progress 
                         then adding amount with team id*/
-                        
-                        if (post_req_body.team_id_id && !post_req_body.is_flag) {   
+
+                        if (post_req_body.team_id_id && !post_req_body.is_flag) {
 
                             await leagueLeaderboard(post_data);   //Adding data into league leaderboard table 
                         }
@@ -343,7 +419,7 @@ var runModel = {
             let error = {};
             let workout_overlap = get_data.ranges
             error.error = "duplicate workouts present";
-            errot.result=workout_overlap
+            errot.result = workout_overlap
             res.status(401).send(error)
         }
     },

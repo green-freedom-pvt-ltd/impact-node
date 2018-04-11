@@ -33,32 +33,39 @@ db.sequelize = sequelize;
 db.users = require('../models/share_api_users.js')(sequelize, Sequelize);
 db.usersToken = require('../models/oauth2_provider_accesstoken.js')(sequelize, Sequelize);
 db.city = require('../models/share_api_city.js')(sequelize, Sequelize);
-db.runLocation = require  ('../models/share_api_runlocations.js')(sequelize, Sequelize);
-db.runs = require  ('../models/share_api_runs.js')(sequelize, Sequelize);
-db.feedback = require  ('../models/share_api_userfeedback.js')(sequelize, Sequelize);
-db.impactLeague =require ('../models/share_api_impactleague')(sequelize, Sequelize);
-db.team = require ('../models/share_api_team')(sequelize, Sequelize);
-db.employee =require ('../models/share_api_employee')(sequelize, Sequelize);
-db.leaderboard =require ('../models/share_api_leaderboard')(sequelize, Sequelize);
-db.leagueleaderboard =require ('../models/share_api_leagueleaderboard')(sequelize, Sequelize);
-db.teamleaderboard =require ('../models/share_api_teamleaderboard')(sequelize, Sequelize);
+db.runLocation = require('../models/share_api_runlocations.js')(sequelize, Sequelize);
+db.runs = require('../models/share_api_runs.js')(sequelize, Sequelize);
+db.feedback = require('../models/share_api_userfeedback.js')(sequelize, Sequelize);
+db.impactLeague = require('../models/share_api_impactleague')(sequelize, Sequelize);
+db.team = require('../models/share_api_team')(sequelize, Sequelize);
+db.employee = require('../models/share_api_employee')(sequelize, Sequelize);
+db.leaderboard = require('../models/share_api_leaderboard')(sequelize, Sequelize);
+db.leagueleaderboard = require('../models/share_api_leagueleaderboard')(sequelize, Sequelize);
+db.teamleaderboard = require('../models/share_api_teamleaderboard')(sequelize, Sequelize);
+db.causes = require('../models/share_api_causes')(sequelize, Sequelize);
+db.sponsors = require('../models/share_api_causes')(sequelize, Sequelize);
+db.feeds = require('../models/share_api_messagecenter')(sequelize, Sequelize);
 
 //Relation 
 
-db.leaderboard.belongsTo(db.users,{foreignKey: 'user_id'}); 
-db.teamleaderboard.belongsTo(db.users,{foreignKey: 'user_id'}); 
+db.leaderboard.belongsTo(db.users, { foreignKey: 'user_id' });
+db.teamleaderboard.belongsTo(db.users, { foreignKey: 'user_id' });
+
+
+
+
 
 // this connects the application to the database
 // and all transactions happen after that
 // in the end the connection is closed
 const connect = () => {
-	console.log("this is " + environment + " environments");
+  console.log("this is " + environment + " environments");
   pool.query('', (err, result) => {
   });
 };
 
 const query = (text, params, callback) => {
-    return pool.query(text, params, callback);
+  return pool.query(text, params, callback);
 }
 
 module.exports = db;
