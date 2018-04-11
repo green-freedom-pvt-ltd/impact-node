@@ -46,6 +46,8 @@ db.causes = require('../models/share_api_causes')(sequelize, Sequelize);
 db.sponsors = require('../models/share_api_causes')(sequelize, Sequelize);
 db.feeds = require('../models/share_api_messagecenter')(sequelize, Sequelize);
 db.faqs = require('../models/share_api_faq')(sequelize, Sequelize);
+db.fraudster = require('../models/share_api_fraudsters')(sequelize, Sequelize);
+db.runConfig = require('../models/share_api_runconfigurationparams')(sequelize, Sequelize);
 
 //Relation 
 

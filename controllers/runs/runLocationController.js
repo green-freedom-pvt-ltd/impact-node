@@ -21,7 +21,7 @@ const parameterTypes = {
 };
 
 var runLocationModel = {
-    //GET single runs
+
     getRunLocations(req, res) {
         let urlQuery = req.query;
         let LIMIT = paginconfig.SMALL;
@@ -53,6 +53,29 @@ var runLocationModel = {
             })
             .catch(err => {
                 res.status(500).send({ error: 'Something failed! Contact the admin.' })
+                throw new Error(err);
+            })
+    },
+    postRunLocation(req, res) {
+
+
+        let data = req.body;
+        let user = req.user_id;
+        let run_location = {};
+        run_location.run_id_id = data.run_id;
+        run_location.location_array = JSON.stringify(data.location_array);;
+        run_location.client_run_id = data.client_run_id;
+        run_location.batch_num = data.batch_num;
+        run_location.start_time_epoch = data.start_time_epoch;
+        run_location.end_time_epoch = data.end_time_epoch;
+
+        return db.runLocation.create(run_location)
+            .then(result => {
+                res.status(200).send(result);
+            })
+            .catch(err => {
+                logger.error(err);
+                res.status(400).send(err)
                 throw new Error(err);
             })
     }
