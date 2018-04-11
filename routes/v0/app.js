@@ -17,6 +17,8 @@ const OtherAPI = require('../../controllers/otherApi/index');
 
 
 routes.get('/userFeedback',Feedback.getFeedback);
+routes.post('/userFeedback',Feedback.postFeedback);
+
 routes.get('/runs',Runs.getRuns);
 routes.post('/runs',Runs.postRun);
 // routes.get('/impactleague', League.getLeague);
@@ -35,5 +37,6 @@ routes.get('/teamleaderboard', League.getTeamLeaderboard);
 routes.get('/teamboard', League.getLeagueLeaderboard);
 routes.get('/messageCenter', OtherAPI.getFeeds);
 routes.get('/servertime', OtherAPI.getServerTime);
+routes.get('/faq', OtherAPI.getFaqs);
 module.exports = routes;
 

@@ -1,4 +1,4 @@
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   return sequelize.define('share_api_impactleague', {
     id: {
       type: DataTypes.INTEGER,
@@ -59,10 +59,10 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     }
   },
-  {
-    freezeTableName: true, // Model tableName will be the same as the model name
-    timestamps:false     
-  }, {
-    tableName: 'share_api_impactleague'
-  });
+    {
+      freezeTableName: true, // Model tableName will be the same as the model name
+      timestamps: false
+    }, {
+      tableName: 'share_api_impactleague'
+    });
 };

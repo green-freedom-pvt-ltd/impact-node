@@ -48,5 +48,29 @@ var feedback = {
             })
 
     },
+    postFeedback(req,res){
+        let feedback = req.body;
+        let user = req.user_id;
+        if(!feedback.is_ios){
+            feedback.is_ios = false;
+        }
+        if(!feedback.is_replied){
+            feedback.is_replied=false;
+        }
+        if(!feedback.user_id_id){
+            feedback.user_id_id=user;
+        }
+        console.log("feedback",feedback);
+        return db.feedback.create(feedback)
+                .then(result => {
+                    res.status(200).send(result);
+                })
+                .catch(err => {
+                    logger.error(err);
+                    res.status(400).send(err)
+                    throw new Error(err);
+                })
+
+    }
 };
 module.exports = feedback;

@@ -262,8 +262,8 @@ var runModel = {
         var urlQuery = req.query;
         let user = req.user_id;
         let LIMIT = paginconfig.NORMAL
-        console.log(urlQuery.is_flag)
         if (urlQuery.is_flag || urlQuery.client_version) {
+
             if (urlQuery.is_flag == "true") {
 
                 if (parseInt(urlQuery.page) && parseInt(urlQuery.page) > 0 || urlQuery.is_flag == "true") {
@@ -309,7 +309,7 @@ var runModel = {
             }
 
             else {
-                if (parseInt(urlQuery.page) && parseInt(urlQuery.page) > 0) {
+                if (parseInt(urlQuery.page) && parseInt(urlQuery.page) > 0 || urlQuery.client_version) {
                     return db.runs.findAndCountAll({
                         where: {
                             user_id_id: user,
@@ -325,6 +325,12 @@ var runModel = {
                         .then((result) => {
                             let paginate = pagin.getPagination(result, req, LIMIT);
                             res.status(200).send(paginate);
+                        })
+                        .catch((err) => {
+                            logger.error(err);
+                            res.status(400).send({
+                                'error': 'Something failed! Contact the admin.'
+                            });
                         })
                 }
                 else {

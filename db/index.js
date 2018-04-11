@@ -45,6 +45,7 @@ db.teamleaderboard = require('../models/share_api_teamleaderboard')(sequelize, S
 db.causes = require('../models/share_api_causes')(sequelize, Sequelize);
 db.sponsors = require('../models/share_api_causes')(sequelize, Sequelize);
 db.feeds = require('../models/share_api_messagecenter')(sequelize, Sequelize);
+db.faqs = require('../models/share_api_faq')(sequelize, Sequelize);
 
 //Relation 
 

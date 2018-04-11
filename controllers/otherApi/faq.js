@@ -15,39 +15,37 @@ const parameterTypes = {};
 
 var URL_FOR_IMAGE = env.PROD_DOMAIN + 'media/'
 
-var feeds = {
-    getFeeds(req, res) {
+var faqs = {
+    getFaqs(req, res) {
         var urlQuery = req.query;
         let LIMIT = paginconfig.NORMAL;
         let final_data = [];
         // checking query string is integer and page > 0
-        if ((parseInt(urlQuery.page) && parseInt(urlQuery.page) > 0)||_.isEmpty(urlQuery)) {
-           
-            db.feeds.findAndCountAll({
+        if ((parseInt(urlQuery.page) && parseInt(urlQuery.page) > 0) ||_.isEmpty(urlQuery)){
+            db.faqs.findAndCountAll({
+                attributes: [["user_id_id", "user_id"], "question", "answer", "user_email"],
+                where:{
+                    is_active:true
+                },
                 limit: LIMIT,
                 offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * LIMIT)
             })
-                .then((feed) => {
-                    let paginate = pagin.getPagination(feed, req, LIMIT);
-                    let update_data = JSON.parse(JSON.stringify(paginate));
-                    let data = _.map(update_data.results, (val) => {
-                        val.message_image = URL_FOR_IMAGE + val.message_image;
-                        final_data.push(val);
-                    })
-                    update_data.results = final_data;
-                    res.json(update_data);
+            .then((faq) => {
+                console.log("CAME IN FUN.")
+                    let paginate = pagin.getPagination(faq, req, LIMIT);
+
+                    res.json(paginate);
                 })
-                .catch((error)=>{
-                    res.status(400).send({"error":"Error occured!!"});
+                .catch((error) => {
+                    res.status(400).send({ "error": "Error occured!!" });
                 })
         }
         else {
-         
+
             res.status(400).send({ "error": "Something failed! Contact the admin." });
         }
-
     }
 
 }
 
-module.exports = feeds;
+module.exports = faqs;
