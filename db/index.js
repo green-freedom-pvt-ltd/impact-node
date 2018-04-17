@@ -40,16 +40,24 @@ db.impactLeague = require('../models/share_api_impactleague')(sequelize, Sequeli
 db.team = require('../models/share_api_team')(sequelize, Sequelize);
 db.employee = require('../models/share_api_employee')(sequelize, Sequelize);
 db.leaderboard = require('../models/share_api_leaderboard')(sequelize, Sequelize);
-db.leagueleaderboard = require('../models/share_api_leagueleaderboard')(sequelize, Sequelize);
+db.leagueleaderboardteamleaderboard = require('../models/share_api_leagueleaderboard')(sequelize, Sequelize);
 db.teamleaderboard = require('../models/share_api_teamleaderboard')(sequelize, Sequelize);
 db.causes = require('../models/share_api_causes')(sequelize, Sequelize);
-db.sponsors = require('../models/share_api_causes')(sequelize, Sequelize);
+db.sponsors = require('../models/share_api_sponsors')(sequelize, Sequelize);
 db.feeds = require('../models/share_api_messagecenter')(sequelize, Sequelize);
 db.faqs = require('../models/share_api_faq')(sequelize, Sequelize);
 db.fraudster = require('../models/share_api_fraudsters')(sequelize, Sequelize);
 db.runConfig = require('../models/share_api_runconfigurationparams')(sequelize, Sequelize);
+db.CauseSponsor = require('../models/share_api_causes_sponsors')(sequelize,Sequelize);
 
 //Relation 
+db.CauseSponsor.belongsTo(db.causes,{foreignKey:'sponsors_id'});
+db.CauseSponsor.belongsTo(db.sponsors,{ foreignKey:'causes_id'});
+
+db.causes.hasMany(db.CauseSponsor,{ foreignKey:'causes_id'});
+db.sponsors.hasMany(db.CauseSponsor,{ foreignKey:'sponsors_id'});
+
+
 
 db.leaderboard.belongsTo(db.users, { foreignKey: 'user_id' });
 db.teamleaderboard.belongsTo(db.users, { foreignKey: 'user_id' });

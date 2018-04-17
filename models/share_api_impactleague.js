@@ -1,3 +1,5 @@
+/* jshint indent: 2 */
+
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define('share_api_impactleague', {
     id: {
@@ -57,9 +59,16 @@ module.exports = function (sequelize, DataTypes) {
     end_date: {
       type: DataTypes.DATEONLY,
       allowNull: false
+    },
+    allow_all_cause: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false
+    },
+    show_team_logo: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false
     }
-  },
-    {
+  }, {
       freezeTableName: true, // Model tableName will be the same as the model name
       timestamps: false
     }, {

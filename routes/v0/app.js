@@ -21,6 +21,8 @@ routes.post('/userFeedback',Feedback.postFeedback);
 
 routes.get('/runs',Runs.getRuns);
 routes.post('/runs',Runs.postRun);
+routes.put('/updaterun',Runs.updateRun);
+routes.put('/updaterun/:id',Runs.updateRun);
 
 // routes.get('/impactleague', League.getLeague);
 routes.get('/teams', League.getTeams);
@@ -43,6 +45,7 @@ routes.get('/servertime', OtherAPI.getServerTime);
 routes.get('/faq', OtherAPI.getFaqs);
 routes.post('/fraudsters',OtherAPI.postFraudster);
 routes.get('/runconfig',OtherAPI.getClientConfig);
+routes.get('/causes',Causes.getCauses);
 
 module.exports = routes;
 
