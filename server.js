@@ -7,6 +7,7 @@ const cedAuth = require('./middleware/authenticate/ced');
 const logger = require('./logger');
 var bodyParser = require('body-parser');
 const routes = require('./routes');
+var CronJob = require('cron').CronJob;
 
 // db.connect();
 
@@ -34,6 +35,7 @@ app.use('/', routes);
 // we count the number of cpu cores and
 // run node process on each cpu
 var numCPUs = require('os').cpus().length;
+
 if (cluster.isMaster) {
     // Fork workers.
     // console.log('numCPUs--------',numCPUs);
@@ -49,6 +51,9 @@ if (cluster.isMaster) {
     const port = process.env.PORT || 8000;
     app.listen(8000);
 }
+
+
+
 
 // app.listen(8000);
 
