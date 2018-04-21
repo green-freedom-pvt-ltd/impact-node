@@ -22,8 +22,8 @@ const logger = require('../../logger');
 const pagin = require('../../middleware/pagination');
 const db = require('../../db/index');
 const env = require('../../config/settings');
-const {getTeamLeaderboard}= require('./getTeamLeaderboard');
-const {getLeagueLeaderboard} = require('./getLeagueleaderboard');
+const { getTeamLeaderboard } = require('./getTeamLeaderboard');
+const { getLeagueLeaderboard } = require('./getLeagueleaderboard');
 const paginconfig = env.pagination;
 
 
@@ -128,24 +128,41 @@ async function addEmployeeToTeam(employee_data) {
 
 var league = {
 
- 
+
     //get single league
     getLeague(req, res) {
         var urlQuery = req.query;
-        try {
-            var whereQuery = pagin.createQuery(urlQuery, filterList, parameterTypes);
-        } catch (err) {
-            // res.send({Error:err},400);
-            res.status(400).send({ error: err })
-            throw err;
-        }
+        let league_id = urlQuery.impactleague;
+        // try {
+        //     var whereQuery = pagin.createQuery(urlQuery, filterList, parameterTypes);
+        // } catch (err) {
+        //     // res.send({Error:err},400);
+        //     res.status(400).send({ error: err })
+        //     throw err;
+        // }
+
         return db.impactLeague.findAndCountAll({
-            where: whereQuery,
+            where: {
+                id: league_id
+            },
             attributes: league_fields,
             limit: paginconfig.SMALL,
             offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * paginconfig.SMALL)
         })
             .then(league => {
+                console.log(urlQuery.impactleague);
+                if (urlQuery.impactleague) {
+
+                    db.team.all({
+                        where: {
+                            impactleague_id: league_id
+                        }
+                    })
+                        .then((league_team) => {
+                            let result = JSON.parse(JSON.stringify(league_team))
+                            console.log(result);
+                        })
+                }
                 res.json(pagin.getPagination(league, req, paginconfig.SMALL));
             })
             .catch(err => {
@@ -243,21 +260,43 @@ var league = {
 
     exitTeams(req, res) {
         var req_body = req.body;
-        db.employee.update(
-            { is_logout: true },
-            {
-                where: { user_id: req_body.user_id, team_id: req_body.team_id }
-            }
-        ).then(employee => {
-            console.log('employee----', employee.rows);
-            res.json(pagin.getPagination(employee, req, paginconfig.SMALL));
-        }).catch(err => {
-            res.status(406).send({ error: 'Something failed! Contact the admin.' })
-            throw new Error(err);
+        //console.log("req_body".req_body);
+
+        db.employee.findAll({
+            where: { user_id: req_body.user, team_id: req_body.team_code }
         })
+            .then(result => {
+
+                if (result.length > 0) {
+                    let parsed_result = JSON.parse(JSON.stringify(result));
+                    if (!parsed_result[0].is_logout) {
+                        db.employee.update(
+                            { is_logout: true },
+                            {
+                                where: { user_id: req_body.user, team_id: req_body.team_code }
+                            }
+                        ).then(affectedRows => {
+                            //console.log('employee----', affectedRows);
+
+                            res.status(200).send({ success: 'employee has been exited from the league' });
+                        }).catch(err => {
+                            res.status(406).send({ error: 'Something failed! Contact the admin.' });
+                            throw new Error(err);
+                        })
+                    }
+                    else {
+                        res.status(202).send({ result: 'user is already logged out' });
+                    }
+
+                }
+                else {
+                    res.status(406).send({ error: 'employee not found with given details' });
+                }
+            })
+
     }
 }
 league.getTeamLeaderboard = getTeamLeaderboard;
-league.getLeagueLeaderboard =getLeagueLeaderboard;
+league.getLeagueLeaderboard = getLeagueLeaderboard;
 
 module.exports = league;

@@ -106,7 +106,7 @@ FROM    share_api_leaderboard ll
 WHERE   ll."distance_all" >= l."distance_all"
 
 ) AS ranking
-  FROM "share_api_leaderboard" AS l LEFT OUTER JOIN 
+  FROM "share_api_leaderboard" AS l LEFT JOIN 
   "share_api_users" AS "share_api_user" ON l."user_id" = "share_api_user"."user_id" 
 WHERE l."user_id" = :user`;
 
@@ -125,6 +125,7 @@ WHERE   ll."amount_30" >= l."amount_30"
   FROM "share_api_leaderboard" AS l LEFT OUTER JOIN 
   "share_api_users" AS "share_api_user" ON l."user_id" = "share_api_user"."user_id" 
 WHERE l."user_id" = :user`;
+
 let GET_IF_USER_NOT_AVAILABLE_LAST7_QUERY = `SELECT l."user_id", 
 l."amount_7" AS "amount", l."distance_7" AS "distance",
 "share_api_user"."first_name" AS "first_name",  "share_api_user"."last_name" AS "last_name",
@@ -137,7 +138,7 @@ FROM    share_api_leaderboard ll
 WHERE   ll."amount_7" >= l."amount_7"
 
 ) AS ranking
-  FROM "share_api_leaderboard" AS l LEFT OUTER JOIN 
+  FROM "share_api_leaderboard" AS l LEFT JOIN 
   "share_api_users" AS "share_api_user" ON l."user_id" = "share_api_user"."user_id" 
 WHERE l."user_id" = :user`;
 
@@ -168,7 +169,7 @@ function getData(top_user, my_data, user_id) {
                         data = data.concat(user_data);
                         let leaderboard_data = {};
                         leaderboard_data.count = data.length;
-                        leaderboard_data.results = data
+                        leaderboard_data.results = data;
                         return leaderboard_data;
 
                     })

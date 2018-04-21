@@ -6,7 +6,6 @@ const env = require('../../config/settings');
 const paginconfig = env.pagination;
 var Sequelize = require("sequelize");
 var sequelize = db.sequelize;
-const settings  = require('../../config/settings')
 const filterList = [];
 const parameterTypes = {};
 
@@ -22,7 +21,7 @@ var league_team_leaderboard = {
         let team_members = [];
         let final_data = {};
         logger.warn("need to remove url_for_image on stage");
-        var URL_FOR_IMAGE = settings.PROD_DOMAIN + 'media/'            //req.protocol + '://' + req.get('host')+ '/media/';
+        var URL_FOR_IMAGE = env.PROD_DOMAIN + 'media/'            //req.protocol + '://' + req.get('host')+ '/media/';
 
         let GET_LEAGUE_DETAIL_QUERY = `SELECT * FROM share_api_impactleague where id=(SELECT impactleague_id FROM share_api_team where id =(SELECT team_id  FROM public.share_api_employee
         where user_id=:user_id AND is_logout=false))`;

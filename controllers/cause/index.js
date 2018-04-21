@@ -29,7 +29,9 @@ LEFT JOIN share_api_sponsors sponsor
 ON sponsor.id = cs.sponsors_id
 LEFT JOIN share_api_company co
 ON co.company_id = sponsor.sponsor_company_id
-where c.is_active = true AND co.show_to_employees = false`
+where c.is_active = true AND co.show_to_employees = false`;
+
+
 
 
 let GET_ALL_CAUSE = `SELECT
@@ -41,7 +43,7 @@ c.cause_description,
 c.cause_image,
 c.conversion_rate,
 c.min_distance,
-share_api_causescategory.cause_category_name,
+share_api_causescategory.cause_category_name AS "cause_category",
 c.cause_thank_you_image,
 c.cause_share_message_template,
 c.app_update_id,
@@ -64,20 +66,21 @@ partners.ngo_name AS "partners.partner_ngo",
 partners.partnered_on AS "partners.partnered_on",
 partners.company_name AS "partners.partner_company",
 partners.id AS "partners.partner_id",
-cause_thank_you_image_v2.cause_thank_you_image AS "cause_thank_you_image_v2.cause_thank_you_image",
-cause_thank_you_image_v2.cause_thank_you_title AS "cause_thank_you_image_v2.cause_thank_you_title"
+cause_thank_you_image_v2.cause_thank_you_image AS "cause_thank_you_image_v2"
+--cause_thank_you_image_v2.cause_thank_you_title AS "cause_thank_you_image_v2.cause_thank_you_title"
 FROM
 public.share_api_causes_sponsors cs
 LEFT JOIN share_api_causes c ON cs.causes_id = c.cause_id
 LEFT JOIN share_api_causescategory ON c.cause_category_id = share_api_causescategory.cause_category_id 
 LEFT JOIN (
     SELECT
-       array_agg(tnq.cause_thank_you_image) AS "cause_thank_you_image",
-       array_agg(tnq.cause_thank_you_title) AS "cause_thank_you_title",
+    json_agg(tnq.cause_thank_you_image),json_agg(tnq.cause_thank_you_title),
+       json_agg(concat(tnq.cause_thank_you_image::text,'|',tnq.cause_thank_you_title::text)) "cause_thank_you_image",
+       --json_agg(tnq.cause_thank_you_title) AS "cause_thank_you_title",
        cause_tnq.causes_id
     FROM
         share_api_causes_cause_thank_you_image_v2 cause_tnq
-        JOIN share_api_causethankyouimage tnq ON cause_tnq.causethankyouimage_id = tnq.id group by causes_id) cause_thank_you_image_v2 ON c.cause_id = cause_thank_you_image_v2.causes_id
+        JOIN share_api_causethankyouimage tnq ON cause_tnq.causethankyouimage_id = tnq.id group by cause_tnq.causes_id) cause_thank_you_image_v2 ON c.cause_id = cause_thank_you_image_v2.causes_id
 LEFT JOIN (
     SELECT
         s.id,
@@ -117,6 +120,41 @@ WHERE
 c.is_active = TRUE`
 
 
+var URL_FOR_IMAGE = env.PROD_DOMAIN + 'media/'
+
+let cause_thank_you_image_v2 = [["cause_thank_you_image", "image"], "cause_thank_you_title"];
+
+function getSplitedData(data, mapping) {
+    let splitted_data = [];
+    //console.log("mapping", mapping);
+    data.map((current, index) => {
+        let partition_object = {}
+        let partition = current.split('|');
+        partition.map((part, partIndex) => {
+
+            let temp = mapping[partIndex];
+            if (temp[0].length > 1) {
+                let getImage = getImagePath(part);
+                partition_object[temp[0]] = getImage;
+            }
+            else {
+                partition_object[temp] = part
+            }
+
+            //console.log("partition_object", partition_object);
+
+        })
+        splitted_data.push(partition_object);
+
+    })
+
+   // console.log("splitted_data", splitted_data);
+    return splitted_data;
+}
+
+function getImagePath(image) {
+    return URL_FOR_IMAGE + image;
+}
 
 
 var causeModel = {
@@ -128,14 +166,14 @@ var causeModel = {
         db.causes.find({
             include: [
                 {
-                    model:db.sponsors,
+                    model: db.sponsors,
                     nested: true
                 }
             ]
         }).then(function (cause) {
             res.json(cause);
         });
-        
+
 
         // console.log("SPONSER");
         // db.causes.findAll({
@@ -160,9 +198,9 @@ var causeModel = {
     },
 
 
-   async getCauses(req, res) {
-        let causes_response = {};
-
+    async getCauses(req, res) {
+        let final_data = {};
+        let cause_result = [];
         let get_causes = await sequelize.query(GET_ALL_CAUSE,
             {
                 // replacements: { limit: env.pagination.MEDIUM },
@@ -171,9 +209,33 @@ var causeModel = {
             }
         )
         let cause_response = JSON.parse(JSON.stringify(get_causes))
-        res.json(cause_response);
-        
-            
+
+
+
+        if (cause_response.length > 0) {
+
+
+            let new_value = cause_response.map((current, index) => {
+                console.log("current", current);
+                let cause = {};
+                cause = current;
+                //console.log("current", current.cause_thank_you_image_v2);
+                let get_cause_images = getSplitedData(current.cause_thank_you_image_v2, cause_thank_you_image_v2);
+                console.log("get_cause_images", get_cause_images);
+                cause["cause_thank_you_image_v2"] = get_cause_images;
+                cause_result.push(cause)
+                //console.log("cause", cause);
+
+            })
+            // console.log("cause_result", cause_result);
+
+            final_data.count = cause_response.length;
+            final_data.results = cause_result;
+            res.json(final_data);
+        }
+
+        // res.json(cause_response);
+
     }
 
 }
