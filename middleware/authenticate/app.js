@@ -13,14 +13,15 @@ module.exports = function (options) {
       var parts = token.split(' ')
       db.usersToken.findAndCountAll({
         where: { token: parts[1] }
-      })
+      })  
         .then(userstoken => {
-          if (userstoken.rows.length == 1) {
+         
+          if (userstoken.rows.length == 1 ) {
             req.user_id=userstoken.rows[0].user_id;
             // console.log('userstoken----',req.user_id);
             next()
           } else {
-            res.status(404).send('Please contact customer care');
+            res.status(404).send({error :'Invalid access token!'});
           }
         });
     } else {

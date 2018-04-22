@@ -107,7 +107,7 @@ var userModel = {
       delete overall.token;
       results[0] = overall;
       console.log("RESULTS......", results);
-      res.json(results  );
+      res.json(results);
     }).catch(err => {
       res.status(500).send({ error: 'Something failed! Contact the admin.' })
       throw new Error(err);
@@ -132,6 +132,58 @@ var userModel = {
       })
 
   },
+
+  updateUser(req, res) {
+    let update_data = req.body;
+    let user = req.user_id;
+
+    let user_id = req.params.user ? req.params.user : update_data.user_id;
+
+
+
+    //created new object for columns which will update
+    let update_object = {};
+    if (update_data.first_name)
+      update_object.first_name = update_data.first_name;
+    if (update_data.last_name)
+      update_object.last_name = update_data.last_name;
+    if (update_data.gender_user)
+      update_object.gender_user = update_data.gender_user;
+    if (update_data.profile_picture)
+      update_object.profile_picture = update_data.profile_picture;
+    if (update_data.birthday)
+      update_object.birthday = update_data.birthday;
+    if (update_data.body_height)
+      update_object.body_height = update_data.body_height;
+    if (update_data.body_weight)
+      update_object.body_weight = update_data.body_weight;
+    if (update_data.email)
+      update_object.email = update_data.email;
+    if (update_data.phone_number)
+      update_object.phone_number = update_data.phone_number;
+
+
+    db.users.update(update_object, {
+      where: {
+        user_id: user_id || user
+      }
+    }
+    ).then(update_result => {
+
+      if (update_result.length > 0) {
+        res.status(200).send({ success: "user detail updated successfully" });
+      }
+      else {
+        logger.error("invalid data", update_data);
+        res.status(403).send({ error: "unable to update given data" });
+      }
+    })
+      .catch((error) => {
+        logger.error("error occured while updating user detail", req.body, error);
+        res.status(400).send({ error: "error occured while updating user detail" });
+      })
+
+  }
 
 }
 

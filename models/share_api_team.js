@@ -14,7 +14,10 @@ module.exports = function (sequelize, DataTypes) {
         team_code: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true
+            unique: {
+                args: true,
+                msg: 'Team already exist!'
+              }
         },
         team_captain: {
             type: DataTypes.STRING,

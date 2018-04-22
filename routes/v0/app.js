@@ -24,6 +24,7 @@ routes.post('/runs', Runs.postRun);
 routes.put('/updaterun', Runs.updateRun);
 routes.put('/updaterun/:id', Runs.updateRun);
 
+
 routes.get('/impactleagueteam', League.getLeague);
 routes.get('/teams', League.getTeams);
 // routes.get('/employee', Employee.getEmployeeList);
@@ -37,6 +38,8 @@ routes.put('/employeetoteam', League.exitTeams); // EXIT League PUT API
 
 
 routes.get('/users', User.getActualUserData);
+routes.put('/users', User.updateUser);        //Update user detail
+routes.put('/users/:user', User.updateUser);   //Update user detail
 
 routes.get('/leaderboard', NewLeaderboard.getLeaderboard); //Global Leaderboard
 routes.get('/userleaderboard', User.getLeaderboard);

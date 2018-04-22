@@ -26,7 +26,7 @@ const { getTeamLeaderboard } = require('./getTeamLeaderboard');
 const { getLeagueLeaderboard } = require('./getLeagueleaderboard');
 const paginconfig = env.pagination;
 
-
+var Sequelize = require("sequelize");
 const filterList = [];
 const parameterTypes = {};
 
@@ -206,9 +206,9 @@ var league = {
                 .then(league => {
                     res.json(pagin.getPagination(league, req, paginconfig.SMALL));
                 })
-                .catch(err => {
-                    res.status(400).send(err)
-                    throw new Error(err);
+                .catch(err => Sequelize.SequelizeUniqueConstraintError, function (err) {
+                    console.log(err);
+                    res.send(err);
                 })
         } else {
             res.status(400).send({ error: 'please check all parameters again' });
