@@ -1,3 +1,5 @@
+const { isNullOrUndefined } = require("util");
+
 // import { json } from "../../../../.cache/typescript/2.6/node_modules/@types/express";
 
 
@@ -35,11 +37,22 @@ async function getTeamId(user) {
       user_id: user,
       is_logout: false
     }
-  }).then(team => {
-    team = JSON.parse(JSON.stringify(team));
-    team = team[0].team_id
-    return team;
+  }).then(myteam => {
+    myteam = JSON.parse(JSON.stringify(myteam));
+    if (myteam.length > 0) {
+      myteam = myteam[0].team_id;
+      return myteam;
+    }
+    else {
+      return null;
+    }
+
+
   })
+    .catch(err => {
+      logger.info("Error while fetching team data", err);
+      return err;
+    })
 
   return team;
 
@@ -79,10 +92,9 @@ var userModel = {
     let user = req.user_id;
     const token = req.headers.authorization;
     let token_parts = token.split(' ');
-    let team = await getTeamId(user);
 
-
-
+    let team = await getTeamId(user) ||0;
+    
     return sequelize.query(actualUserData,
       {
         replacements: { token_id: token_parts[1] },
@@ -106,14 +118,13 @@ var userModel = {
       overall.team_code = team;
       delete overall.token;
       results[0] = overall;
-      console.log("RESULTS......", results);
+      
       res.json(results);
     }).catch(err => {
+      logger.error("Error whille getting user data ",err);
       res.status(500).send({ error: 'Something failed! Contact the admin.' })
       throw new Error(err);
     })
-
-
   },
 
 
@@ -121,7 +132,7 @@ var userModel = {
 
     var urlQuery = req.query;
     var whereQuery = pagin.createQuery(urlQuery, filterList);
-    console.log("paginconfig------------------", paginconfig.SMALL);
+    //console.log("paginconfig------------------", paginconfig.SMALL);
     return db.leaderboard.findAndCountAll({
       where: whereQuery,
       limit: paginconfig.SMALL,
@@ -167,17 +178,21 @@ var userModel = {
       where: {
         user_id: user_id || user
       }
-    }
-    ).then(update_result => {
-
-      if (update_result.length > 0) {
-        res.status(200).send({ success: "user detail updated successfully" });
-      }
-      else {
-        logger.error("invalid data", update_data);
-        res.status(403).send({ error: "unable to update given data" });
-      }
     })
+      .then(update_result => {
+        console.log("update_result", update_result);
+        if (isNaN(update_result) || isNullOrUndefined(update_result)) {
+          res.status(403).send({ error: "unable to update given data." });
+          return;
+        }
+        if (update_result.length > 0) {
+          res.status(200).send({ success: "user detail updated successfully" });
+        }
+        else {
+          logger.error("invalid data", update_data);
+          res.status(403).send({ error: "unable to update given data" });
+        }
+      })
       .catch((error) => {
         logger.error("error occured while updating user detail", req.body, error);
         res.status(400).send({ error: "error occured while updating user detail" });
