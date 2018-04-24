@@ -1,3 +1,5 @@
+const { isNumber } = require('util');
+
 var config = require('config');
 const logger = require('../../logger');
 const pagin = require('../../middleware/pagination');
@@ -9,7 +11,8 @@ const env = require('../../config/settings');
 const paginconfig = env.pagination;
 const _ = require("underscore");
 const validator = require('validator');
-
+var moment = require("moment");
+var momentDurationFormatSetup = require("moment-duration-format");
 
 const filterList = [
     'user_id_id',
@@ -120,9 +123,7 @@ function overlap(dateRanges) {
 
 async function checkDuplicateWorkout(req_body) {
     //console.log("Req body", req_body);
-    let current_date = new Date("Mar 19, 2018").setHours(5, 30);
-
-    console.log("current date", current_date);
+    let current_date = new Date("Apr 24, 2018").setHours(5, 30);
 
     let getTimestamp = await db.runs.all({
         attributes: ['run_id', 'start_time', 'end_time'],
@@ -136,7 +137,6 @@ async function checkDuplicateWorkout(req_body) {
 
 
     let time_stamp = await JSON.parse(JSON.stringify(getTimestamp, null, 2));
-    console.log("time_stamp", time_stamp);
 
     let current_timestamp = {
         start_time: new Date(req_body.start_time),
@@ -146,7 +146,6 @@ async function checkDuplicateWorkout(req_body) {
 
     let final_time_stamp = time_stamp;
     var output = JSON.stringify(overlap(final_time_stamp), null, 2);
-    console.log("output", output);
     return output;
 
 };
@@ -203,17 +202,77 @@ async function checkLegue(start_time, user, team) {
     // return check_league;
 }
 
+function getDuration(duration) {
+    let parsedValue = JSON.parse(JSON.stringify(duration));
+    let seconds = parsedValue.seconds;
+    let minutes = parsedValue.minutes;
+    let hours = parsedValue.hours;
+    let days = parsedValue.days;
+    var time = 0;
+
+    // moment.duration(parsedValue.minutes, "minutes").format();
+    if (parseInt(seconds)) {
+        time = time + seconds
+    }
+    if (parseInt(minutes)) {
+        time = time + minutes * 60
+    }
+    if (parseInt(hours)) {
+        time = time + hours * 3600
+    }
+    if (parseInt(days)) {
+        time = time + days * 86400
+    }
+    let format_time = moment.duration(time, "seconds").format("dd hh:mm:ss");
+
+    return format_time;
+
+}
+
+
 function syncRun(post_run_data) {
 
-    logger.info("post run after logging out from the league")
     return db.runs.create(
         post_run_data
     )
-        .then(postRun => {
-            return postRun;
+        .then(async postRun => {
+            let run_post = JSON.parse(JSON.stringify(postRun));
+            let returnObject = {};
+
+            let cause_title = await db.causes.findAll({
+                attributes: ["cause_title"],
+                where: {
+                    cause_id: run_post.cause_run_title_id
+                }
+            })
+            returnObject.run_id = run_post.run_id,
+                returnObject.distance = run_post.distance,
+                //returnObject.cause_run_title = run_post
+                returnObject.user_id = run_post.user_id_id;
+            returnObject.is_ios = run_post.is_ios || false;
+            returnObject.cause_run_title = cause_title[0].cause_title;
+            returnObject.start_location_long = run_post.start_location_long;
+            returnObject.end_location_long = run_post.start_location_long;
+            returnObject.start_time = run_post.start_time;
+            returnObject.client_run_id = run_post.client_run_id;
+            returnObject.peak_speed = run_post.peak_speed;
+            returnObject.no_of_steps = run_post.no_of_steps;
+            returnObject.end_location_lat = run_post.end_location_lat;
+            returnObject.version = run_post.version;
+            returnObject.end_time = run_post.end_time;
+            returnObject.start_location_lat = run_post.start_location_lat;
+            returnObject.avg_speed = run_post.avg_speed;
+            returnObject.run_duration = run_post.run_duration;
+            returnObject.run_amount = run_post.run_amount;
+            returnObject.is_flag = run_post.is_flag;
+            returnObject.run_duration = getDuration(run_post.run_duration);
+
+            return returnObject;
             //res.status(201).send(postRun);
         })
         .catch(error => {
+            logger.error("post run after logging out from the league", post_run_data);
+
             throw error;
             res.status(400).send(error);
         })
@@ -326,6 +385,28 @@ function leagueLeaderboard(data, league, update = false) {
         })
 }
 
+function getParse(data) {
+
+    
+    
+    return data.rows.forEach(data_result => {
+       
+        let temp = data_result.share_api_cause.get();
+        let workout = data_result.get();
+        workout.cause_id = workout.cause_id_id;
+        delete workout.cause_id_id;
+        workout.team_id = workout.team_id_id;
+        delete workout.team_id_id;
+        workout.user_id = workout.user_id_id;
+        delete workout.user_id_id;
+        workout.cause_run_title = temp["cause_run_title"];
+        delete workout.share_api_cause;
+        delete workout.cause_run_title_id
+        workout.run_duration = getDuration(workout.run_duration);
+
+    })
+};
+
 var runModel = {
     async getRuns(req, res) {
         var urlQuery = req.query;
@@ -341,11 +422,17 @@ var runModel = {
                             is_flag: true,
                             user_id_id: user
                         },
+                        include: [{
+                            model: db.causes,
+                            attributes: [["cause_title", "cause_run_title"]]
+                        }],
                         order: [[sequelize.col("start_time"), "DESC"]],
                         limit: LIMIT,
                         offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * LIMIT)
                     })
                         .then((result) => {
+                            let parsed_result = getParse(result);
+
                             let paginate = pagin.getPagination(result, req, LIMIT);
                             res.status(200).send(paginate);
                         })
@@ -360,11 +447,17 @@ var runModel = {
                 if (parseInt(urlQuery.page) && parseInt(urlQuery.page) > 0 || urlQuery.is_flag == "all") {
                     return db.runs.findAndCountAll({
                         where: { user_id_id: user },
+                        include: [{
+                            model: db.causes,
+                            attributes: [["cause_title", "cause_run_title"]]
+                        }],
                         order: [[sequelize.col("start_time"), "DESC"]],
                         limit: LIMIT,
                         offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * LIMIT)
                     })
                         .then((result) => {
+                            let parsed_result = getParse(result);
+
                             let paginate = pagin.getPagination(result, req, LIMIT);
                             res.status(200).send(paginate);
                         })
@@ -386,12 +479,18 @@ var runModel = {
                                 [Op.gt]: urlQuery.client_version
                             }
                         },
+                        include: [{
+                            model: db.causes,
+                            attributes: [["cause_title", "cause_run_title"]]
+                        }],
                         order: [[sequelize.col('version'), 'desc']],
                         limit: LIMIT,
                         offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * LIMIT)
 
                     })
                         .then((result) => {
+                            
+                            let parsed_result = getParse(result);
                             let paginate = pagin.getPagination(result, req, LIMIT);
                             res.status(200).send(paginate);
                         })
@@ -420,10 +519,16 @@ var runModel = {
         }
         return db.runs.findAndCountAll({
             where: whereQuery,
+            include: [{
+                model: db.causes,
+                attributes: [["cause_title", "cause_run_title"]]
+            }],
             limit: paginconfig.SMALL,
             offset: (urlQuery.page == 0 || (isNaN(urlQuery.page)) ? 1 : urlQuery.page == 1) ? 0 : ((urlQuery.page - 1) * paginconfig.SMALL)
         })
             .then(runs => {
+
+                let parsed_result = getParse(runs);
                 res.json(pagin.getPagination(runs, req, paginconfig.SMALL));
             })
             .catch(err => {
@@ -434,11 +539,38 @@ var runModel = {
 
     // This API is responsible for post the run 
     async postRun(req, res) {
+
         let post_req_body = req.body;
         const start_time = post_req_body.start_time;
         const end_time = post_req_body.end_time;
-        const user = post_req_body.user_id_id;
-        const team = post_req_body.team_id_id;
+        const user = post_req_body.user_id;
+        const team = post_req_body.team_id;
+        post_req_body.team_id_id = post_req_body.team_id;
+        delete post_req_body.team_id;
+        post_req_body.user_id_id = post_req_body.user_id;
+        delete post_req_body.user_id;
+        post_req_body.cause_run_title_id = post_req_body.cause_id;
+        post_req_body.cause_id_id = post_req_body.cause_id;
+        delete post_req_body.cause_id;
+
+
+        if (!validator.isFloat((post_req_body.run_amount).toString())) {
+
+            res.status(400).send({ error: "run amount should be in the numbers" });
+            return;
+        }
+
+        if (!validator.isFloat((post_req_body.distance).toString())) {
+
+            res.status(400).send({ error: "distance should be in the numbers" });
+            return;
+        }
+
+        if (!validator.isBoolean((post_req_body.is_flag).toString())) {
+            res.status(400).send({ error: "is_flag should be in the boolean format" });
+            return;
+        }
+
 
 
         //Adding current time in the version field
@@ -447,7 +579,7 @@ var runModel = {
 
         //checking duplicate workout by time duration is already exist or not
         let get_data = await checkDuplicateWorkout(post_req_body);
-
+        console.log(get_data);
         // If workout distance > 50 then flagging that workout
         if (post_req_body.distance > 50) {
             post_req_body.is_flag = true;
@@ -494,7 +626,6 @@ var runModel = {
         }
         else {
 
-            console.log("get data", get_data);
             let error = {};
             let workout_overlap = get_data.ranges
             error.error = "duplicate workouts present";
@@ -517,6 +648,8 @@ var runModel = {
             update_object.distance = update_data.distance;
         if (update_data.run_amount)
             update_object.run_amount = update_data.run_amount;
+        if (update_data.cause_id)
+            update_object.cause_id_id = update_data.cause_id;
         if (update_data.cause_id)
             update_object.cause_id_id = update_data.cause_id;
         if (typeof update_data.is_flag === 'boolean')

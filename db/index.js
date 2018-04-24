@@ -63,6 +63,7 @@ db.sponsors.belongsToMany(db.causes, {through: db.CauseSponsor , foreignKey:'spo
 db.leaderboard.belongsTo(db.users, { foreignKey: 'user_id' });
 db.teamleaderboard.belongsTo(db.users, { foreignKey: 'user_id' });
 
+db.runs.belongsTo(db.causes,{foreignKey: 'cause_id_id'});
 
 
 

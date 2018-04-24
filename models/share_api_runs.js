@@ -80,7 +80,9 @@
       },
       is_ios: {
         type: DataTypes.BOOLEAN,
-        allowNull: false
+        allowNull: false,
+        defaultValue: false
+        
       },
       client_run_id: {
         type: DataTypes.STRING,
@@ -92,7 +94,8 @@
       },
       end_time_epoch: {
         type: DataTypes.BIGINT,
-        allowNull: false
+        allowNull: false,
+        defaultValue:0
       },
       run_duration_epoch: {
         type: DataTypes.BIGINT,
@@ -100,7 +103,8 @@
       },
       start_time_epoch: {
         type: DataTypes.BIGINT,
-        allowNull: false
+        allowNull: false,
+        defaultValue:0
       },
       team_id_id: {
         type: DataTypes.INTEGER,
