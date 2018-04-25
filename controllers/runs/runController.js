@@ -1,4 +1,5 @@
-const { isNumber } = require('util');
+
+const { isNumber, isNull } = require('util');
 
 var config = require('config');
 const logger = require('../../logger');
@@ -386,22 +387,22 @@ function leagueLeaderboard(data, league, update = false) {
 }
 
 function getParse(data) {
-    logger.info(data.rows);
-    logger.info(data);
-    
     return data.rows.forEach(data_result => {
-       
-        let temp = data_result.share_api_cause.get();
+        let temp = "";
+        if (!isNull(data_result.share_api_cause)) {
+            temp = data_result.share_api_cause.get();
+        }
+
         let workout = data_result.get();
-        workout.cause_id = workout.cause_id_id;
+        workout.cause_id = workout.cause_run_title_id;
         delete workout.cause_id_id;
         workout.team_id = workout.team_id_id;
         delete workout.team_id_id;
         workout.user_id = workout.user_id_id;
         delete workout.user_id_id;
-        workout.cause_run_title = temp["cause_run_title"];
+        workout.cause_run_title = temp["cause_run_title"] || '';
         delete workout.share_api_cause;
-        delete workout.cause_run_title_id
+        delete workout.cause_run_title_id;
         workout.run_duration = getDuration(workout.run_duration);
 
     })
@@ -489,7 +490,7 @@ var runModel = {
 
                     })
                         .then((result) => {
-                            
+
                             let parsed_result = getParse(result);
                             let paginate = pagin.getPagination(result, req, LIMIT);
                             res.status(200).send(paginate);
