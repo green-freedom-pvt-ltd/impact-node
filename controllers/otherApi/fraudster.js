@@ -23,6 +23,15 @@ var fraudster = {
 
         return db.fraudster.create(Fraudster)
             .then(result => {
+                
+                    let parsed = result.get();
+                    parsed.user_id = parsed.user_id_id;
+                    delete parsed.user_id_id;
+                    parsed.cause_id = parsed.cause_id_id;
+                    delete parsed.cause_id_id;
+                    parsed.team_id = parsed.team_id_id;
+                    delete parsed.team_id_id;
+                
                 res.status(200).send(result);
             })
             .catch(err => {

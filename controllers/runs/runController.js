@@ -386,8 +386,8 @@ function leagueLeaderboard(data, league, update = false) {
 }
 
 function getParse(data) {
-
-    
+    logger.info(data.rows);
+    logger.info(data);
     
     return data.rows.forEach(data_result => {
        

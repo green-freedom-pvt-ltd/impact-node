@@ -24,7 +24,7 @@ const filterList = [
 
 var actualUserData = "SELECT u.user_id, o.token, u.first_name, u.last_name, u.gender_user, u.email, u.phone_number," +
   "u.address, u.locality_user, u.city, u.state, u.country,sum(r.distance) AS total_distance, sum(r.run_amount) AS total_amount," +
-  "u.social_thumb, u.birthday, u.cheat_flag, u.body_height, u.body_weight FROM public.share_api_users u " +
+  "u.social_thumb, u.birthday, u.body_height, u.body_weight FROM public.share_api_users u " +
   "LEFT JOIN public.oauth2_provider_accesstoken o ON u.user_id = o.user_id " +
   "LEFT JOIN public.share_api_runs r ON o.user_id = r.user_id_id where o.token=:token_id " +
   "GROUP BY u.user_id, o.token, u.first_name, u.last_name, u.gender_user, u.email_id, u.phone_number,u.address;"
@@ -116,6 +116,8 @@ var userModel = {
       overall.total_distance = distance;
       overall.total_amount = amount;
       overall.team_code = team;
+      overall.sign_up = false;    // hard coded (Not usefull)
+     
       delete overall.token;
       results[0] = overall;
       
