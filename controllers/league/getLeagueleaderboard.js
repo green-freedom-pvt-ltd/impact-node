@@ -23,11 +23,14 @@ var league_team_leaderboard = {
         logger.warn("need to remove url_for_image on stage");
         var URL_FOR_IMAGE = env.PROD_DOMAIN + 'media/'            //req.protocol + '://' + req.get('host')+ '/media/';
 
+        //Get impactleague id from user id
         let GET_LEAGUE_DETAIL_QUERY = `SELECT * FROM share_api_impactleague where id=(SELECT impactleague_id FROM share_api_team where id =(SELECT team_id  FROM public.share_api_employee
         where user_id=:user_id AND is_logout=false))`;
+        //Overall stats of the league
         let GET_TOTAL_STATS = `SELECT sum(total_team_amount) AS total_amount, sum(team_run_count) AS run_count, sum(total_team_distance) AS total_distance, 
          sum(total_team_member) AS members FROM public.share_api_leagueleaderboard where team_id in (SELECT id from share_api_team where impactleague_id = :league_id)`;
 
+         //Team members stats
         let GET_TEAM_STATS = `SELECT ll.team_id,t.team_name,t.team_captain,t.team_captain_email_id,t.team_logo,ll.total_team_amount,ll.team_run_count,ll.total_team_distance,ll.total_team_member FROM public.share_api_leagueleaderboard ll
        LEFT JOIN share_api_team t ON t.id = ll.team_id where ll.team_id in (SELECT id from share_api_team where impactleague_id = :league_id) AND t.invisible= false order by ll.total_team_amount DESC`
 
@@ -40,9 +43,9 @@ var league_team_leaderboard = {
                 }
             )
 
-            console.log("RESULT",get_league_detail.length);
+           // console.log("RESULT",get_league_detail.length);
             if (get_league_detail.length > 0) {
-                console.log("league_detail", get_league_detail[0]);
+             //   console.log("league_detail", get_league_detail[0]);
                 let league_data = get_league_detail[0];
                 
                 final_data.impactleague_name = league_data.impactleague_name,
@@ -52,10 +55,10 @@ var league_team_leaderboard = {
                 final_data.duration = league_data.duration,
                 final_data.impactleague_bannerr = URL_FOR_IMAGE + league_data.impactleague_banner,
                 final_data.show_team_logo = league_data.show_team_logo
-                console.log("final_data", final_data);
+              //  console.log("final_data", final_data);
             }
             else {
-                return res.status(406).send({ "error": "No record found while fetching league data" })
+                return res.status(406).send({ "error": "user is not in any league" })
             }
 
         
