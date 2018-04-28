@@ -28,7 +28,7 @@ order by sum(run_amount) desc;`
 // cron.nextInvocation(new Date('2018','04','28','13','17'));
 // cron.on()
 // console.log(cron.nextInvocation(new Date('2018','04','28','13','15')));
-let cron = new CronJob('22 3 * * *', function () {
+let cron = new CronJob('38 3 * * *', function () {
     return sequelize.transaction(function (t) {
 
         // chain all your queries here. make sure you return them.
