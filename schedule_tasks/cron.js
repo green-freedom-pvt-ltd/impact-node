@@ -28,12 +28,12 @@ order by sum(run_amount) desc;`
 // cron.nextInvocation(new Date('2018','04','28','13','17'));
 // cron.on()
 // console.log(cron.nextInvocation(new Date('2018','04','28','13','15')));
-let cron = new CronJob('38 3 * * *', function () {
+let cron = new CronJob('48 3 * * *', function () {
     return sequelize.transaction(function (t) {
 
         // chain all your queries here. make sure you return them.
 
-        return sequelize.query('delete from share_api_teamleaderboard where user_id =1213 AND team_id = 990;',
+        return sequelize.query('delete from share_api_teamleaderboard where user_id =1213 AND team_id = 291;',
             {
                 type: sequelize.QueryTypes.SELECT
             },
@@ -41,7 +41,7 @@ let cron = new CronJob('38 3 * * *', function () {
 
         )
             .then((result) => {
-                console
+                
                 if (result) {
                     return sequelize.query(INSERTION_TEAMLEDERBOAR,
                         {
@@ -61,6 +61,7 @@ let cron = new CronJob('38 3 * * *', function () {
             })
             .catch((error) => {
                 console.log("ERROR OCCURED")
+                return t.rollback();
                 //console.log(error);
             })
         // return db.sequelize({
