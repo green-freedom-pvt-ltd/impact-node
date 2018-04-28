@@ -1,4 +1,3 @@
-var schedule = require('node-schedule');
 var config = require('config');
 const logger = require('../logger');
 const db = require('../db/index');
