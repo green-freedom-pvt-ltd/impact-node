@@ -47,6 +47,10 @@ const team_parameterTypes = {
 var league_fields = ["id", "impactleague_name", "impactleague_banner", "duration", "start_date", "end_date", "is_active", "team_size", "impactleague_banner_site", "impactleague_description_site", "email_type", "module", ["company_id", "company"]]
 var team_fields = ["id", "impactleague_id", "team_name", "team_captain", "team_captain_email_id", "team_code", "team_captain_phone", "invisible"];
 
+
+
+var URL_FOR_IMAGE = env.PROD_DOMAIN + 'media/'
+
 async function checkTeamCode(team_code) {
     const team = await db.team.findAndCountAll({
         where: { team_code: team_code }
@@ -100,9 +104,21 @@ async function createEmployee(employee_data) {
 };
 
 async function getSelfEmployee(employee_data) {
+    console.log("employee_data", employee_data);
+    
     const self_employee = await db.employee.findAndCountAll({
         where: { user_id: employee_data.user_id, team_id: employee_data.team_id }
     })
+    console.log("self_employee", self_employee);
+    // const company = await db.company.findAndCountAll({
+    //     where: { company_id: employee_data.company_id }
+    // })
+    // console.log("company", company);
+    // const team = await db.team.findAndCountAll({
+    //     attributes: ["id"],
+    //     where: { id: employee_data.team_id }
+    // })
+    // console.log(team, company);
     return self_employee;
 };
 
@@ -118,12 +134,22 @@ async function addEmployeeToTeam(employee_data) {
     if (existing_employee.rows && existing_employee.rows.length === 0) {
         console.log("inside create employee");
         const new_employee = await createEmployee(employee_data);
+        parsedEmployee(new_employee);
         return new_employee;
     } else {
         await updateEmployee(employee_data);
         const self_employee = await getSelfEmployee(employee_data);
         return self_employee;
     }
+}
+
+function parsedEmployee(emp) {
+    console.log("EMP", emp);
+    new_employee.get(emp);
+    console.log("EMPLOee", emp);
+
+
+
 }
 
 var league = {
@@ -238,6 +264,7 @@ var league = {
         if (valid_team) {
             await exitOtherLeagues(user_id);
             impact_league = await getImpactLeague(valid_team.impactleague_id);
+
             team_limit = impact_league.team_size;
             team_size = await getTeamMemberCount(valid_team.id);
             if (team_size < team_limit) {
@@ -249,6 +276,14 @@ var league = {
                 }
                 const logged_in_employee = await addEmployeeToTeam(employee_data);
                 console.log("after add employee");
+                logged_in_employee.rows.forEach(parse_val => {
+                    let val = parse_val.get();
+
+                    val.impactleague_banner = URL_FOR_IMAGE + impact_league.impactleague_banner;
+                    return val;
+
+                })
+                console.log("impact_league", impact_league.impactleague_banner)
                 res.json(pagin.getPagination(logged_in_employee, req, paginconfig.SMALL));
             } else {
                 res.status(400).send("Sorry, the team is full. Please join some other team");

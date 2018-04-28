@@ -43,7 +43,7 @@ let cron = new CronJob('22 3 * * *', function () {
             .then((result) => {
                 console
                 if (result) {
-                    return sequelize.query(INSERTION_TEAMLEDERBOARD,
+                    return sequelize.query(INSERTION_TEAMLEDERBOAR,
                         {
                             type: sequelize.QueryTypes.SELECT
                         },
