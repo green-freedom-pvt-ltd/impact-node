@@ -1,4 +1,4 @@
-require('newrelic');
+// require('newrelic');
 var cluster = require('cluster');
 const express = require('express');
 // const db = require('./db/index');
@@ -7,7 +7,8 @@ const cedAuth = require('./middleware/authenticate/ced');
 const logger = require('./logger');
 var bodyParser = require('body-parser');
 const routes = require('./routes');
-var CronJob = require('cron').CronJob;
+//var CronJob = require('cron').CronJob;
+const {cron,cron1} = require('./schedule_tasks/cron');
 
 // db.connect();
 
@@ -38,9 +39,11 @@ var numCPUs = require('os').cpus().length;
 
 if (cluster.isMaster) {
     // Fork workers.
-    // console.log('numCPUs--------',numCPUs);
     for (var i = 0; i < numCPUs; i++) {
         cluster.fork();
+        console.log(process.pid);
+        // cron.start();
+        // cron1.start();
     }
     cluster.on('exit', function (worker, code, signal) {
         // handle server crashes
@@ -52,9 +55,7 @@ if (cluster.isMaster) {
     app.listen(8000);
 }
 
-
-
-
+ 
 // app.listen(8000);
 
 module.exports = app

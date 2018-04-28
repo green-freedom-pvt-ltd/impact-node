@@ -43,6 +43,7 @@ c.cause_image,
 c.conversion_rate,
 c.min_distance,
 string_agg(DISTINCT cc.cause_category_name,',') AS "cause_category",
+array_agg(DISTINCT co.show_to_employees),
 c.cause_thank_you_image,
 c.cause_share_message_template,
 c.app_update_id,
@@ -108,9 +109,11 @@ share_api_causethankyouimage cause_tnq
 GROUP BY
 cause_tnq.id) c_t_image ON c_t_image.id = CTI.causethankyouimage_id
 LEFT JOIN share_api_causescategory cc ON c.cause_category_id = cc.cause_category_id
-where c.is_active = true AND co.show_to_employees = false --AND co.company_id = (select company_id from share_api_employee where user_id= 1213 AND is_logout= false)
+where c.is_active = true AND co.company_id in ( select company_id from share_api_company where show_to_employees = false 
+union
+select company_id from share_api_employee where user_id=:user AND is_logout= false)
 group by c.cause_id
-order by c.order_priority`
+order by c.order_priority;`
 
 
 let getCauseRaisedQuery = 'select 1 as row_id, sum(run_amount) as amount_raised,count(run_id) as total_runs from share_api_runs where is_flag=false AND cause_id_id = :cause_id';
@@ -218,7 +221,6 @@ var causeModel = {
         let final_data = {};
         let cause_result = [];
 
-
         let exchange_rate = [
             {
                 "currency": "USD",
@@ -310,7 +312,7 @@ var causeModel = {
 
         let get_causes = await sequelize.query(GET_ALL_CAUSE,
             {
-                // replacements: { limit: env.pagination.MEDIUM },
+                replacements: { user:req.user_id||null },
                 nest: true,
                 type: sequelize.QueryTypes.SELECT
             }
@@ -327,7 +329,7 @@ var causeModel = {
 
                 let cause = {};
                 cause = current;
-
+              
                 //console.log("current", current.cause_thank_you_image_v2);
                 let get_cause_images = getSplitedData(current.cause_thank_you_image_v2, cause_thank_you_image_v2);
                 let get_cause_partners = getSplitedData(current.partners, partners_array);
@@ -338,15 +340,15 @@ var causeModel = {
                 cause["cause_thank_you_image_v2"] = get_cause_images;
                 cause["partners"] = get_cause_partners;
                 cause["sponsors"] = get_cause_sponsors;
-
+                cause.cause_image = getImagePath(cause.cause_image);
+                cause.app_update = cause.app_update_id;
+                delete cause.app_update_id;
+                cause.pk = current.cause_id;
+                delete cause.cause_id;
                 cause_result.push(cause)
 
             }
-         
-
             final_data.count = cause_response.length;
-
-
             final_data.results = cause_result;
             final_data["exchange_rates"] = exchange_rate;
             final_data["overall_impact"] = get_data.overall
