@@ -28,20 +28,19 @@ order by sum(run_amount) desc;`
 // cron.nextInvocation(new Date('2018','04','28','13','17'));
 // cron.on()
 // console.log(cron.nextInvocation(new Date('2018','04','28','13','15')));
-let cron = new CronJob('48 3 * * *', function () {
+let cron = new CronJob('10 4 * * *', function () {
+
     return sequelize.transaction(function (t) {
 
         // chain all your queries here. make sure you return them.
 
-        return sequelize.query('delete from share_api_teamleaderboard where user_id =1213 AND team_id = 291;',
-            {
-                type: sequelize.QueryTypes.SELECT
-            },
+        return db.teamleaderboard.destroy({ truncate: true },
+
             { transaction: t }
 
         )
             .then((result) => {
-                
+
                 if (result) {
                     return sequelize.query(INSERTION_TEAMLEDERBOAR,
                         {
@@ -54,13 +53,18 @@ let cron = new CronJob('48 3 * * *', function () {
 
                             console.log("leaderboardupdate", leaderboardupdate);
                         })
+                        .catch((error) => {
+                            console.log("ERROR OCCURED in nest", t);
+                            return t.rollback();
+                            //console.log(error);
+                        })
 
                 }
 
 
             })
             .catch((error) => {
-                console.log("ERROR OCCURED")
+                console.log("ERROR OCCURED", t);
                 return t.rollback();
                 //console.log(error);
             })
