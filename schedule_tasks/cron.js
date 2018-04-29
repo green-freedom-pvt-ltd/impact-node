@@ -12,7 +12,7 @@ let _ = require('underscore');
 
 let INSERTION_TEAMLEDERBOARD = `
 insert into public.share_api_teamleaderboard(team_id,user_id,total_amount,total_distance,run_count)
-select team_id_id,user_id_id,sum(run_amount),sum(distance),count(run_id) from share_api_runn
+select team_id_id,user_id_id,sum(run_amount),sum(distance),count(run_id) from share_api_runs
 where team_id_id IS Not NULL AND is_flag= false
 group by team_id_id,user_id_id
 order by sum(run_amount) desc;`

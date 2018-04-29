@@ -42,7 +42,7 @@ if (cluster.isMaster) {
     for (var i = 0; i < numCPUs; i++) {
         cluster.fork();
         console.log(process.pid);
-         cron.start();
+         //cron.start();
         // cron1.start();
     }
     cluster.on('exit', function (worker, code, signal) {
