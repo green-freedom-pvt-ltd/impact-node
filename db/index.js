@@ -50,7 +50,7 @@ db.fraudster = require('../models/share_api_fraudsters')(sequelize, Sequelize);
 db.runConfig = require('../models/share_api_runconfigurationparams')(sequelize, Sequelize);
 db.CauseSponsor = require('../models/share_api_causes_sponsors')(sequelize,Sequelize);
 db.company = require('../models/share_api_company')(sequelize,Sequelize);
-
+db.badges = require('../models/share_api_badges')(sequelize,Sequelize);
 //Relation 
 // db.CauseSponsor.belongsTo(db.causes,{foreignKey:'sponsors_id'});
 // db.CauseSponsor.belongsTo(db.sponsors,{ foreignKey:'causes_id'});

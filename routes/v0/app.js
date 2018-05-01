@@ -13,7 +13,7 @@ const TeamLeaderboard = require('../../controllers/league/getTeamLeaderboard');
 const LeagueLeaderboard = require('../../controllers/league/getLeagueleaderboard');
 const Causes = require('../../controllers/cause/index');
 const OtherAPI = require('../../controllers/otherApi/index');
-
+const Badge = require('../../controllers/profile/index');
 
 
 routes.get('/userFeedback', Feedback.getFeedback);
@@ -51,6 +51,9 @@ routes.get('/faq', OtherAPI.getFaqs);
 routes.post('/fraudsters', OtherAPI.postFraudster);
 routes.get('/runconfig', OtherAPI.getClientConfig);
 routes.get('/causes', Causes.getCauses);
+
+routes.get('/badges',Badge.getBadges);
+routes.post('/badges',Badge.postBadges);
 
 module.exports = routes;
 
